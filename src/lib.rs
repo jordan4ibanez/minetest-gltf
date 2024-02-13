@@ -109,7 +109,7 @@ fn read_path_to_buf_read(path: &str) -> Result<BufReader<File>, String> {
 mod tests {
   use crate::model::Mode;
   use crate::*;
-  use cgmath::*;
+  use glam::Vec3;
 
   macro_rules! assert_delta {
     ($x:expr, $y:expr, $d:expr) => {
@@ -177,7 +177,7 @@ mod tests {
     let scenes = load("tests/cube.glb", true).unwrap();
     let scene = &scenes[0];
     let cam = &scene.cameras[0];
-    assert!((cam.position() - Vector3::new(7.3589, 4.9583, 6.9258)).magnitude() < 0.1);
+    assert!((cam.position() - Vec3::new(7.3589, 4.9583, 6.9258)).length() < 0.1);
   }
 
   #[test]
@@ -192,7 +192,7 @@ mod tests {
           intensity,
           ..
         } => {
-          assert!((direction - Vector3::new(0.6068, -0.7568, -0.2427)).magnitude() < 0.1);
+          assert!((*direction - Vec3::new(0.6068, -0.7568, -0.2427)).length() < 0.1);
           assert_delta!(intensity, 542., 0.01);
         }
         Light::Point {
@@ -201,7 +201,7 @@ mod tests {
           intensity,
           ..
         } => {
-          assert!((position - Vector3::new(4.0762, 5.9039, -1.0055)).magnitude() < 0.1);
+          assert!((*position - Vec3::new(4.0762, 5.9039, -1.0055)).length() < 0.1);
           assert_delta!(intensity, 1000., 0.01);
         }
         Light::Spot {
@@ -213,8 +213,8 @@ mod tests {
           outer_cone_angle,
           ..
         } => {
-          assert!((position - Vector3::new(4.337, 15.541, -8.106)).magnitude() < 0.1);
-          assert!((direction - Vector3::new(-0.0959, -0.98623, 0.1346)).magnitude() < 0.1);
+          assert!((*position - Vec3::new(4.337, 15.541, -8.106)).length() < 0.1);
+          assert!((*direction - Vec3::new(-0.0959, -0.98623, 0.1346)).length() < 0.1);
           assert_delta!(intensity, 42., 0.01);
           assert_delta!(outer_cone_angle, 40., 0.01);
         }

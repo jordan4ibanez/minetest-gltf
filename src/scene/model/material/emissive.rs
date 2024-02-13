@@ -1,5 +1,5 @@
 use crate::utils::GltfData;
-use cgmath::*;
+use glam::Vec3;
 use image::RgbImage;
 use std::sync::Arc;
 
@@ -12,7 +12,7 @@ pub struct Emissive {
 
   /// The `emissive_factor` contains scaling factors for the red, green and
   /// blue components of this texture.
-  pub factor: Vector3<f32>,
+  pub factor: Vec3,
 }
 
 impl Emissive {
@@ -30,7 +30,7 @@ impl Default for Emissive {
   fn default() -> Self {
     Self {
       texture: None,
-      factor: Vector3::zero(),
+      factor: Vec3::ZERO,
     }
   }
 }

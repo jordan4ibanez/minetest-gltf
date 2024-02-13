@@ -4,10 +4,10 @@ mod occlusion;
 mod pbr;
 
 use crate::utils::*;
-use cgmath::*;
 use core::ops::Deref;
+use glam::{Vec2, Vec3, Vec4};
 use image::{ImageBuffer, Pixel};
-use std::sync::Arc;
+use std::{ops::Mul, sync::Arc};
 
 pub use emissive::Emissive;
 pub use normal::NormalMap;
@@ -46,17 +46,17 @@ impl Material {
   ///
   /// **Important**: `tex_coords` must contain values between `[0., 1.]`
   /// otherwise the function will fail.
-  pub fn get_base_color_alpha(&self, tex_coords: Vector2<f32>) -> Vector4<f32> {
+  pub fn get_base_color_alpha(&self, tex_coords: Vec2) -> Vec4 {
     let mut res = self.pbr.base_color_factor;
     if let Some(texture) = &self.pbr.base_color_texture {
       let px_u = Self::get_pixel(tex_coords, texture);
       // Transform to float
-      let mut px_f = Vector4::new(0., 0., 0., 0.);
+      let mut px_f = Vec4::new(0., 0., 0., 0.);
       for i in 0..4 {
         px_f[i] = (px_u[i] as f32) / 255.;
       }
       // Convert sRGB to RGB
-      let pixel = Vector4::new(px_f.x.powf(2.2), px_f.y.powf(2.2), px_f.z.powf(2.2), px_f.w);
+      let pixel = Vec4::new(px_f.x.powf(2.2), px_f.y.powf(2.2), px_f.z.powf(2.2), px_f.w);
       // Multiply to the scale factor
       for i in 0..4 {
         res[i] *= pixel[i];
@@ -71,7 +71,7 @@ impl Material {
   ///
   /// **Important**: `tex_coords` must contain values between `[0., 1.]`
   /// otherwise the function will fail.
-  pub fn get_base_color(&self, tex_coords: Vector2<f32>) -> Vector3<f32> {
+  pub fn get_base_color(&self, tex_coords: Vec2) -> Vec3 {
     self.get_base_color_alpha(tex_coords).truncate()
   }
 
@@ -80,7 +80,7 @@ impl Material {
   ///
   /// **Important**: `tex_coords` must contain values between `[0., 1.]`
   /// otherwise the function will fail.
-  pub fn get_metallic(&self, tex_coords: Vector2<f32>) -> f32 {
+  pub fn get_metallic(&self, tex_coords: Vec2) -> f32 {
     self.pbr.metallic_factor
       * if let Some(texture) = &self.pbr.metallic_texture {
         Self::get_pixel(tex_coords, texture)[0] as f32 / 255.
@@ -94,7 +94,7 @@ impl Material {
   ///
   /// **Important**: `tex_coords` must contain values between `[0., 1.]`
   /// otherwise the function will fail.
-  pub fn get_roughness(&self, tex_coords: Vector2<f32>) -> f32 {
+  pub fn get_roughness(&self, tex_coords: Vec2) -> f32 {
     self.pbr.roughness_factor
       * if let Some(texture) = &self.pbr.roughness_texture {
         Self::get_pixel(tex_coords, texture)[0] as f32 / 255.
@@ -108,12 +108,12 @@ impl Material {
   ///
   /// **Important**: `tex_coords` must contain values between `[0., 1.]`
   /// otherwise the function will fail.
-  pub fn get_normal(&self, tex_coords: Vector2<f32>) -> Option<Vector3<f32>> {
+  pub fn get_normal(&self, tex_coords: Vec2) -> Option<Vec3> {
     let normal = self.normal.as_ref()?;
     let pixel = Self::get_pixel(tex_coords, &normal.texture);
     Some(
       normal.factor
-        * Vector3::new(
+        * Vec3::new(
           (pixel[0] as f32) / 127.5 - 1.,
           (pixel[1] as f32) / 127.5 - 1.,
           (pixel[2] as f32) / 127.5 - 1.,
@@ -126,7 +126,7 @@ impl Material {
   ///
   /// **Important**: `tex_coords` must contain values between `[0., 1.]`
   /// otherwise the function will fail.
-  pub fn get_occlusion(&self, tex_coords: Vector2<f32>) -> Option<f32> {
+  pub fn get_occlusion(&self, tex_coords: Vec2) -> Option<f32> {
     let occlusion = self.occlusion.as_ref()?;
     Some(occlusion.factor * (Self::get_pixel(tex_coords, &occlusion.texture)[0] as f32 / 255.))
   }
@@ -137,7 +137,7 @@ impl Material {
   ///
   /// **Important**: `tex_coords` must contain values between `[0., 1.]`
   /// otherwise the function will fail.
-  pub fn get_emissive(&self, tex_coords: Vector2<f32>) -> Vector3<f32> {
+  pub fn get_emissive(&self, tex_coords: Vec2) -> Vec3 {
     let mut res = self.emissive.factor;
     if let Some(texture) = &self.emissive.texture {
       let pixel = Self::get_pixel(tex_coords, texture);
@@ -148,16 +148,13 @@ impl Material {
     res
   }
 
-  fn get_pixel<P, Container>(tex_coords: Vector2<f32>, texture: &ImageBuffer<P, Container>) -> P
+  fn get_pixel<P, Container>(tex_coords: Vec2, texture: &ImageBuffer<P, Container>) -> P
   where
     P: Pixel + 'static,
     P::Subpixel: 'static,
     Container: Deref<Target = [P::Subpixel]>,
   {
-    let coords = tex_coords.mul_element_wise(Vector2::new(
-      texture.width() as f32,
-      texture.height() as f32,
-    ));
+    let coords = tex_coords.mul(Vec2::new(texture.width() as f32, texture.height() as f32));
 
     texture[(
       (coords.x as i64).rem_euclid(texture.width() as i64) as u32,

@@ -1,4 +1,4 @@
-use cgmath::*;
+use glam::{Mat4, Vec2, Vec3, Vec4};
 use gltf::camera::Projection as GltfProjection;
 
 /// Contains camera properties.
@@ -13,7 +13,7 @@ pub struct Camera {
   pub extras: gltf::json::extras::Extras,
 
   /// Transform matrix (also called world to camera matrix)
-  pub transform: Matrix4<f32>,
+  pub transform: Mat4,
 
   /// Projection type and specific parameters
   pub projection: Projection,
@@ -33,20 +33,20 @@ pub enum Projection {
   /// Perspective projection
   Perspective {
     /// Y-axis FOV, in radians
-    yfov: Rad<f32>,
+    yfov: f32,
     /// Aspect ratio, if specified
     aspect_ratio: Option<f32>,
   },
   /// Orthographic projection
   Orthographic {
     /// Projection scale
-    scale: Vector2<f32>,
+    scale: Vec2,
   },
 }
 impl Default for Projection {
   fn default() -> Self {
     Self::Perspective {
-      yfov: Rad(0.399),
+      yfov: 0.399,
       aspect_ratio: None,
     }
   }
@@ -54,40 +54,44 @@ impl Default for Projection {
 
 impl Camera {
   /// Position of the camera.
-  pub fn position(&self) -> Vector3<f32> {
-    Vector3::new(
-      self.transform[3][0],
-      self.transform[3][1],
-      self.transform[3][2],
+  pub fn position(&self) -> Vec3 {
+    let raw_transform = self.transform.to_cols_array_2d();
+    Vec3::new(
+      raw_transform[3][0],
+      raw_transform[3][1],
+      raw_transform[3][2],
     )
   }
 
   /// Right vector of the camera.
-  pub fn right(&self) -> Vector3<f32> {
-    Vector3::new(
-      self.transform[0][0],
-      self.transform[0][1],
-      self.transform[0][2],
+  pub fn right(&self) -> Vec3 {
+    let raw_transform = self.transform.to_cols_array_2d();
+    Vec3::new(
+      raw_transform[0][0],
+      raw_transform[0][1],
+      raw_transform[0][2],
     )
     .normalize()
   }
 
   /// Up vector of the camera.
-  pub fn up(&self) -> Vector3<f32> {
-    Vector3::new(
-      self.transform[1][0],
-      self.transform[1][1],
-      self.transform[1][2],
+  pub fn up(&self) -> Vec3 {
+    let raw_transform = self.transform.to_cols_array_2d();
+    Vec3::new(
+      raw_transform[1][0],
+      raw_transform[1][1],
+      raw_transform[1][2],
     )
     .normalize()
   }
 
   /// Forward vector of the camera (backside direction).
-  pub fn forward(&self) -> Vector3<f32> {
-    Vector3::new(
-      self.transform[2][0],
-      self.transform[2][1],
-      self.transform[2][2],
+  pub fn forward(&self) -> Vec3 {
+    let raw_transform = self.transform.to_cols_array_2d();
+    Vec3::new(
+      raw_transform[2][0],
+      raw_transform[2][1],
+      raw_transform[2][2],
     )
     .normalize()
   }
@@ -97,17 +101,17 @@ impl Camera {
   /// # Example
   /// ```
   /// # use minetest_gltf::Camera;
-  /// # use cgmath::*;
+  /// # use glam::Vec3;
   /// # let cam = Camera::default();
-  /// let ray_dir = Vector3::new(1., 0., 0.);
+  /// let ray_dir = Vec3::new(1., 0., 0.);
   /// let ray_dir = cam.apply_transform_vector(&ray_dir);
   /// ```
-  pub fn apply_transform_vector(&self, pos: &Vector3<f32>) -> Vector3<f32> {
-    let pos = Vector4::new(pos[0], pos[1], pos[2], 0.);
+  pub fn apply_transform_vector(&self, pos: &Vec3) -> Vec3 {
+    let pos = Vec4::new(pos[0], pos[1], pos[2], 0.);
     (self.transform * pos).truncate()
   }
 
-  pub(crate) fn load(gltf_cam: gltf::Camera, transform: &Matrix4<f32>) -> Self {
+  pub(crate) fn load(gltf_cam: gltf::Camera, transform: &Mat4) -> Self {
     let mut cam = Self {
       transform: *transform,
       ..Default::default()
@@ -125,14 +129,14 @@ impl Camera {
     match gltf_cam.projection() {
       GltfProjection::Orthographic(ortho) => {
         cam.projection = Projection::Orthographic {
-          scale: Vector2::new(ortho.xmag(), ortho.ymag()),
+          scale: Vec2::new(ortho.xmag(), ortho.ymag()),
         };
         cam.zfar = ortho.zfar();
         cam.znear = ortho.znear();
       }
       GltfProjection::Perspective(pers) => {
         cam.projection = Projection::Perspective {
-          yfov: Rad(pers.yfov()),
+          yfov: pers.yfov(),
           aspect_ratio: pers.aspect_ratio(),
         };
         cam.zfar = pers.zfar().unwrap_or(f32::INFINITY);
@@ -150,7 +154,7 @@ impl Default for Camera {
       name: None,
       #[cfg(feature = "extras")]
       extras: None,
-      transform: Zero::zero(),
+      transform: Mat4::ZERO,
       projection: Projection::default(),
       zfar: f32::INFINITY,
       znear: 0.,

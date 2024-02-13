@@ -8,10 +8,10 @@ pub mod model;
 use crate::utils::transform_to_matrix;
 use crate::GltfData;
 pub use camera::{Camera, Projection};
+use glam::Mat4;
 pub use light::Light;
 pub use model::{Material, Model};
 
-use cgmath::*;
 use gltf::scene::Node;
 
 /// Contains cameras, models and lights of a scene.
@@ -45,7 +45,7 @@ impl Scene {
     }
 
     for node in gltf_scene.nodes() {
-      scene.read_node(&node, &One::one(), data, load_materials);
+      scene.read_node(&node, &Mat4::IDENTITY, data, load_materials);
     }
     scene
   }
@@ -53,12 +53,12 @@ impl Scene {
   fn read_node(
     &mut self,
     node: &Node,
-    parent_transform: &Matrix4<f32>,
+    parent_transform: &Mat4,
     data: &mut GltfData,
     load_materials: bool,
   ) {
     // Compute transform of the current node
-    let transform = parent_transform * transform_to_matrix(node.transform());
+    let transform = *parent_transform * transform_to_matrix(node.transform());
 
     // Recurse on children
     for child in node.children() {

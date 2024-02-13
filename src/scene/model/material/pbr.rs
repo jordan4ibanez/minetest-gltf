@@ -1,5 +1,5 @@
 use crate::utils::GltfData;
-use cgmath::*;
+use glam::Vec4;
 use image::{GrayImage, RgbaImage};
 use std::sync::Arc;
 
@@ -10,7 +10,7 @@ pub struct PbrMaterial {
   /// The `base_color_factor` contains scaling factors for the red, green,
   /// blue and alpha component of the color. If no texture is used, these
   /// values will define the color of the whole object in **RGB** color space.
-  pub base_color_factor: Vector4<f32>,
+  pub base_color_factor: Vec4,
 
   /// The `base_color_texture` is the main texture that will be applied to the
   /// object.
@@ -64,7 +64,7 @@ impl PbrMaterial {
 impl Default for PbrMaterial {
   fn default() -> Self {
     PbrMaterial {
-      base_color_factor: Vector4::new(1., 1., 1., 1.),
+      base_color_factor: Vec4::new(1., 1., 1., 1.),
       base_color_texture: None,
       metallic_factor: 0.,
       metallic_texture: None,

@@ -3,7 +3,7 @@ mod mode;
 mod vertex;
 
 use crate::utils::*;
-use cgmath::*;
+use glam::{Mat4, Vec2, Vec3, Vec4};
 use std::sync::Arc;
 
 pub use material::*;
@@ -256,20 +256,20 @@ impl Model {
     self.has_tex_coords
   }
 
-  fn apply_transform_position(pos: [f32; 3], transform: &Matrix4<f32>) -> Vector3<f32> {
-    let pos = Vector4::new(pos[0], pos[1], pos[2], 1.);
-    let res = transform * pos;
-    Vector3::new(res.x / res.w, res.y / res.w, res.z / res.w)
+  fn apply_transform_position(pos: [f32; 3], transform: &Mat4) -> Vec3 {
+    let pos = Vec4::new(pos[0], pos[1], pos[2], 1.);
+    let res = *transform * pos;
+    Vec3::new(res.x / res.w, res.y / res.w, res.z / res.w)
   }
 
-  fn apply_transform_vector(vec: [f32; 3], transform: &Matrix4<f32>) -> Vector3<f32> {
-    let vec = Vector4::new(vec[0], vec[1], vec[2], 0.);
-    (transform * vec).truncate()
+  fn apply_transform_vector(vec: [f32; 3], transform: &Mat4) -> Vec3 {
+    let vec = Vec4::new(vec[0], vec[1], vec[2], 0.);
+    (*transform * vec).truncate()
   }
 
-  fn apply_transform_tangent(tangent: [f32; 4], transform: &Matrix4<f32>) -> Vector4<f32> {
-    let tang = Vector4::new(tangent[0], tangent[1], tangent[2], 0.);
-    let mut tang = transform * tang;
+  fn apply_transform_tangent(tangent: [f32; 4], transform: &Mat4) -> Vec4 {
+    let tang = Vec4::new(tangent[0], tangent[1], tangent[2], 0.);
+    let mut tang = *transform * tang;
     tang[3] = tangent[3];
     tang
   }
@@ -278,7 +278,7 @@ impl Model {
     mesh: &gltf::Mesh,
     primitive_index: usize,
     primitive: gltf::Primitive,
-    transform: &Matrix4<f32>,
+    transform: &Mat4,
     data: &mut GltfData,
     load_materials: bool,
   ) -> Self {
@@ -327,7 +327,7 @@ impl Model {
     // Texture coordinates
     let has_tex_coords = if let Some(tex_coords) = reader.read_tex_coords(0) {
       for (i, tex_coords) in tex_coords.into_f32().enumerate() {
-        vertices[i].tex_coords = Vector2::from(tex_coords);
+        vertices[i].tex_coords = Vec2::from(tex_coords);
       }
       true
     } else {
