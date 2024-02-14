@@ -146,11 +146,11 @@ pub fn load(path: &str, load_materials: bool) -> Result<Vec<Scene>, Box<dyn Erro
   let mut data = GltfData::new(buffers, images, path);
 
   // Convert gltf -> minetest_gltf
-  let mut res = vec![];
+  let mut scenes = vec![];
   for scene in gltf_data.scenes() {
-    res.push(Scene::load(scene, &mut data, load_materials));
+    scenes.push(Scene::load(scene, &mut data, load_materials));
   }
-  Ok(res)
+  Ok(scenes)
 }
 
 ///
