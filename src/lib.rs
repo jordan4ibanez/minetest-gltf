@@ -26,6 +26,7 @@
 //! }
 //! ```
 
+mod mine_gltf;
 mod scene;
 mod utils;
 
