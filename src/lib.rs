@@ -31,6 +31,7 @@ mod scene;
 mod utils;
 
 use gltf::Gltf;
+use mine_gltf::MineGLTF;
 use scene::animation::{AnimationClip, Keyframes};
 use std::error::Error;
 use std::fs::File;
@@ -56,7 +57,7 @@ pub use scene::*;
 /// println!("Lights: #{}", scene.lights.len());
 /// println!("Models: #{}", scene.models.len());
 /// ```
-pub fn load(path: &str, load_materials: bool) -> Result<Vec<Scene>, Box<dyn Error + Send + Sync>> {
+pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error + Send + Sync>> {
   // Run gltf
 
   // We need the base path for the GLTF lib. We want to choose if we load textures.
@@ -88,7 +89,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<Vec<Scene>, Box<dyn Erro
 
   // We always want the animation data as well.
   // You can thank: https://whoisryosuke.com/blog/2022/importing-gltf-with-wgpu-and-rust
-  let mut animation_clips = Vec::new();
+  let mut animations = Vec::new();
   for animation in gltf_data.animations() {
     for channel in animation.channels() {
       let reader = channel.reader(|buffer| Some(&buffers[buffer.index()]));
@@ -134,7 +135,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<Vec<Scene>, Box<dyn Erro
         Keyframes::Other
       };
 
-      animation_clips.push(AnimationClip {
+      animations.push(AnimationClip {
         name: animation.name().unwrap_or("Default").to_string(),
         keyframes,
         timestamps,
@@ -150,7 +151,8 @@ pub fn load(path: &str, load_materials: bool) -> Result<Vec<Scene>, Box<dyn Erro
   for scene in gltf_data.scenes() {
     scenes.push(Scene::load(scene, &mut data, load_materials));
   }
-  Ok(scenes)
+
+  Ok(MineGLTF { scenes, animations })
 }
 
 ///
