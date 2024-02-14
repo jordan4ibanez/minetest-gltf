@@ -30,6 +30,7 @@ mod scene;
 mod utils;
 
 use gltf::Gltf;
+use scene::animation::{AnimationClip, Keyframes};
 use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
@@ -83,6 +84,62 @@ pub fn load(path: &str, load_materials: bool) -> Result<Vec<Scene>, Box<dyn Erro
     )?),
     false => None,
   };
+
+  // We always want the animation data as well.
+  // You can thank: https://whoisryosuke.com/blog/2022/importing-gltf-with-wgpu-and-rust
+  let mut animation_clips = Vec::new();
+  for animation in gltf_data.animations() {
+    for channel in animation.channels() {
+      let reader = channel.reader(|buffer| Some(&buffers[buffer.index()]));
+      let timestamps = if let Some(inputs) = reader.read_inputs() {
+        match inputs {
+          gltf::accessor::Iter::Standard(times) => {
+            let times: Vec<f32> = times.collect();
+            println!("Time: {}", times.len());
+            // dbg!(times);
+            times
+          }
+          gltf::accessor::Iter::Sparse(_) => {
+            println!("Sparse keyframes not supported");
+            let times: Vec<f32> = Vec::new();
+            times
+          }
+        }
+      } else {
+        println!("We got problems");
+        let times: Vec<f32> = Vec::new();
+        times
+      };
+
+      let keyframes = if let Some(outputs) = reader.read_outputs() {
+        match outputs {
+          gltf::animation::util::ReadOutputs::Translations(translation) => {
+            let translation_vec = translation
+              .map(|tr| {
+                // println!("Translation:");
+                // dbg!(tr);
+                let vector: Vec<f32> = tr.into();
+                vector
+              })
+              .collect();
+            Keyframes::Translation(translation_vec)
+          }
+          _other => Keyframes::Other, // gltf::animation::util::ReadOutputs::Rotations(_) => todo!(),
+                                      // gltf::animation::util::ReadOutputs::Scales(_) => todo!(),
+                                      // gltf::animation::util::ReadOutputs::MorphTargetWeights(_) => todo!(),
+        }
+      } else {
+        println!("We got problems");
+        Keyframes::Other
+      };
+
+      animation_clips.push(AnimationClip {
+        name: animation.name().unwrap_or("Default").to_string(),
+        keyframes,
+        timestamps,
+      })
+    }
+  }
 
   // Init data and collection useful for conversion
   let mut data = GltfData::new(buffers, images, path);

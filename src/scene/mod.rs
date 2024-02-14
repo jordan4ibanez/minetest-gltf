@@ -1,3 +1,4 @@
+pub mod animation;
 mod camera;
 mod light;
 /// Contains model and material
