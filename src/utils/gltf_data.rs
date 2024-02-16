@@ -83,33 +83,64 @@ impl GltfData {
         let parent_buffer_data = &buffers[view.buffer().index()].0;
         let data = &parent_buffer_data[view.offset()..view.offset() + view.length()];
         let mime_type = mime_type.replace('/', ".");
-        image::load_from_memory_with_format(data, ImageFormat::from_path(mime_type).unwrap())
-          .unwrap()
+        match image::load_from_memory_with_format(
+          data,
+          match ImageFormat::from_path(mime_type.clone()) {
+            Ok(format) => format,
+            Err(e) => panic!(
+              "Failed to get image format from image [{}], {}",
+              mime_type.clone(),
+              e
+            ),
+          },
+        ) {
+          Ok(dynamic_image) => dynamic_image,
+          Err(e) => panic!("Failed to load image [{}]. {}", mime_type, e),
+        }
       }
       Source::Uri { uri, mime_type } => {
         if uri.starts_with("data:") {
-          let encoded = uri.split(',').nth(1).unwrap();
-          let data = URL_SAFE_NO_PAD.decode(encoded).unwrap();
+          let encoded = match uri.split(',').nth(1) {
+            Some(data) => data,
+            None => panic!("Failed to retrieve URI data."),
+          };
+          let data = match URL_SAFE_NO_PAD.decode(encoded) {
+            Ok(data) => data,
+            Err(e) => panic!("Failed to decode data. {}", e),
+          };
+
           let mime_type = if let Some(ty) = mime_type {
             ty
           } else {
-            uri
-              .split(',')
-              .next()
-              .unwrap()
-              .split(':')
-              .nth(1)
-              .unwrap()
-              .split(';')
-              .next()
-              .unwrap()
+            match uri.split(',').next() {
+              Some(raw_1) => match raw_1.split(':').nth(1) {
+                Some(raw_2) => match raw_2.split(';').next() {
+                  Some(final_mime_type) => final_mime_type,
+                  None => panic!("Failed to split mime type by semicolon. [raw_2]"),
+                },
+                None => panic!("Failed to split mime type by colon. [raw_1]"),
+              },
+              None => panic!("Failed to split mime type by comma. [uri]"),
+            }
           };
           let mime_type = mime_type.replace('/', ".");
-          image::load_from_memory_with_format(&data, ImageFormat::from_path(mime_type).unwrap())
-            .unwrap()
+
+          match image::load_from_memory_with_format(
+            &data,
+            match ImageFormat::from_path(mime_type) {
+              Ok(format) => format,
+              Err(e) => panic!("Failed to get image format from path. {}", e),
+            },
+          ) {
+            Ok(dynamic_image) => dynamic_image,
+            Err(e) => panic!("Failed to load image from memory with format. {}", e),
+          }
         } else {
           let path = self.base_dir.join(uri);
-          open(path).unwrap()
+          match open(path) {
+            Ok(dynamic_image) => dynamic_image,
+            Err(e) => panic!("Failed to open the image at the specified path. {}", e),
+          }
         }
       }
     }
