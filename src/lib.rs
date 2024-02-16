@@ -1,5 +1,3 @@
-#![deny(missing_docs)]
-
 //! This crate is intended to load [glTF 2.0](https://www.khronos.org/gltf), a
 //! file format designed for the efficient transmission of 3D assets.
 //!
