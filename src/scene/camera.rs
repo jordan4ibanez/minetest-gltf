@@ -111,6 +111,9 @@ impl Camera {
     (self.transform * pos).truncate()
   }
 
+  ///
+  /// Load up a camera.
+  ///
   pub(crate) fn load(gltf_cam: gltf::Camera, transform: &Mat4) -> Self {
     let mut cam = Self {
       transform: *transform,

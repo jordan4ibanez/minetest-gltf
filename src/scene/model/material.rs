@@ -1,6 +1,10 @@
+/// Module for loading up emissive materials. (lit material)
 mod emissive;
+/// Module for loading up normal maps. (fake bumps and dents)
 mod normal;
+/// Module for loading up occlusion textures. (light distribution)
 mod occlusion;
+/// Module for loading up pbr materials. (metallic roughness)
 mod pbr;
 
 use crate::utils::*;
@@ -148,6 +152,9 @@ impl Material {
     res
   }
 
+  ///
+  /// Get a pixel from a material.
+  ///
   fn get_pixel<P, Container>(tex_coords: Vec2, texture: &ImageBuffer<P, Container>) -> P
   where
     P: Pixel + 'static,
@@ -162,6 +169,9 @@ impl Material {
     )]
   }
 
+  ///
+  /// Load a material into this container for future use.
+  ///
   pub(crate) fn load(gltf_mat: gltf::Material, data: &mut GltfData) -> Arc<Self> {
     if let Some(material) = data.materials.get(&gltf_mat.index()) {
       return material.clone();

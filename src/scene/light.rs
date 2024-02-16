@@ -76,6 +76,9 @@ pub enum Light {
 }
 
 impl Light {
+  ///
+  /// Load up a light.
+  ///
   pub(crate) fn load(gltf_light: GltfLight, transform: &Mat4) -> Self {
     let transform_raw = transform.to_cols_array_2d();
     match gltf_light.kind() {

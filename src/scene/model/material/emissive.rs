@@ -16,6 +16,9 @@ pub struct Emissive {
 }
 
 impl Emissive {
+  ///
+  /// Load up an emmisive texture into itself.
+  ///
   pub(crate) fn load(gltf_mat: &gltf::Material, data: &mut GltfData) -> Self {
     Self {
       texture: gltf_mat

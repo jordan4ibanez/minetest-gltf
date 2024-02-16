@@ -36,6 +36,9 @@ pub struct PbrMaterial {
 }
 
 impl PbrMaterial {
+  ///
+  /// Load up a PBR material.
+  ///
   pub(crate) fn load(pbr: gltf::material::PbrMetallicRoughness, data: &mut GltfData) -> Self {
     let mut material = Self {
       base_color_factor: pbr.base_color_factor().into(),
