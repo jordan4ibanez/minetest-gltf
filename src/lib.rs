@@ -181,7 +181,7 @@ mod tests {
 
   #[test]
   fn load_snowman() {
-    let scenes = match load("tests/snowman.gltf", false) {
+    let mine_gltf = match load("tests/snowman.gltf", false) {
       Ok(scenes) => {
         println!("Snowman loaded!");
         scenes
@@ -189,14 +189,14 @@ mod tests {
       Err(e) => panic!("Snowman failed: {}", e),
     };
 
-    assert_eq!(scenes.first().unwrap().models.len(), 5);
+    assert_eq!(mine_gltf.scenes.first().unwrap().models.len(), 5);
   }
 
   #[test]
   fn check_cube_glb() {
-    let scenes = load("tests/cube.glb", true).unwrap();
-    assert_eq!(scenes.len(), 1);
-    let scene = &scenes[0];
+    let mine_gltf = load("tests/cube.glb", true).unwrap();
+    assert_eq!(mine_gltf.scenes.len(), 1);
+    let scene = &mine_gltf.scenes[0];
     assert_eq!(scene.cameras.len(), 1);
     assert_eq!(scene.lights.len(), 3);
     assert_eq!(scene.models.len(), 1);
@@ -204,9 +204,9 @@ mod tests {
 
   #[test]
   fn check_different_meshes() {
-    let scenes = load("tests/complete.glb", true).unwrap();
-    assert_eq!(scenes.len(), 1);
-    let scene = &scenes[0];
+    let mine_gltf = load("tests/complete.glb", true).unwrap();
+    assert_eq!(mine_gltf.scenes.len(), 1);
+    let scene = &mine_gltf.scenes[0];
     for model in scene.models.iter() {
       match model.mode() {
         Mode::Triangles | Mode::TriangleFan | Mode::TriangleStrip => {
@@ -234,16 +234,16 @@ mod tests {
 
   #[test]
   fn check_camera() {
-    let scenes = load("tests/cube.glb", true).unwrap();
-    let scene = &scenes[0];
+    let mine_gltf = load("tests/cube.glb", true).unwrap();
+    let scene = &mine_gltf.scenes[0];
     let cam = &scene.cameras[0];
     assert!((cam.position() - Vec3::new(7.3589, 4.9583, 6.9258)).length() < 0.1);
   }
 
   #[test]
   fn check_lights() {
-    let scenes = load("tests/cube.glb", true).unwrap();
-    let scene = &scenes[0];
+    let mine_gltf = load("tests/cube.glb", true).unwrap();
+    let scene = &mine_gltf.scenes[0];
     for light in scene.lights.iter() {
       match light {
         Light::Directional {
@@ -284,8 +284,8 @@ mod tests {
 
   #[test]
   fn check_model() {
-    let scenes = load("tests/cube.glb", true).unwrap();
-    let scene = &scenes[0];
+    let mine_gltf = load("tests/cube.glb", true).unwrap();
+    let scene = &mine_gltf.scenes[0];
     let model = &scene.models[0];
     assert!(model.has_normals());
     assert!(model.has_tex_coords());
@@ -303,8 +303,8 @@ mod tests {
 
   #[test]
   fn check_material() {
-    let scenes = load("tests/head.glb", true).unwrap();
-    let scene = &scenes[0];
+    let mine_gltf = load("tests/head.glb", true).unwrap();
+    let scene = &mine_gltf.scenes[0];
     let mat = &scene.models[0].material.as_ref().unwrap();
     assert!(mat.pbr.base_color_texture.is_some());
     assert_eq!(mat.pbr.metallic_factor, 0.);
