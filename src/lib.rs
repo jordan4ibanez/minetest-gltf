@@ -131,9 +131,9 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
               .collect();
             Keyframes::Translation(translation_vec)
           }
-          _other => Keyframes::Other, // gltf::animation::util::ReadOutputs::Rotations(_) => todo!(),
-                                      // gltf::animation::util::ReadOutputs::Scales(_) => todo!(),
-                                      // gltf::animation::util::ReadOutputs::MorphTargetWeights(_) => todo!(),
+          gltf::animation::util::ReadOutputs::Rotations(_) => todo!(),
+          gltf::animation::util::ReadOutputs::Scales(_) => todo!(),
+          gltf::animation::util::ReadOutputs::MorphTargetWeights(_) => todo!(),
         }
       } else {
         error!(
