@@ -72,10 +72,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
   let model_reader = read_path_to_buf_read(path)?;
 
   // Now we need to get the "Document" from the GLTF lib.
-  let gltf_data = match Gltf::from_reader(model_reader) {
-    Ok(data) => data,
-    Err(e) => panic!("{}", e),
-  };
+  let gltf_data = Gltf::from_reader(model_reader)?;
 
   // We're going to do some manual integration here.
 
