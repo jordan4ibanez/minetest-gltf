@@ -107,7 +107,10 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
             times
           }
           gltf::accessor::Iter::Sparse(_) => {
-            println!("minetest-gltf: Sparse keyframes not supported.");
+            error!(
+              "minetest-gltf: Sparse keyframes not supported. Model: [{}]",
+              file_name
+            );
             let times: Vec<f32> = Vec::new();
             times
           }
@@ -136,7 +139,10 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
                                       // gltf::animation::util::ReadOutputs::MorphTargetWeights(_) => todo!(),
         }
       } else {
-        println!("We got problems");
+        error!(
+          "minetest-gltf: Unknown keyframe in model [{}]. This model is probably corrupted.",
+          file_name
+        );
         Keyframes::Other
       };
 
