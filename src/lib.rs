@@ -29,6 +29,7 @@ mod scene;
 mod utils;
 
 use gltf::Gltf;
+use log::error;
 use mine_gltf::MineGLTF;
 use scene::animation::{AnimationClip, Keyframes};
 use std::error::Error;
@@ -57,6 +58,12 @@ pub use scene::*;
 /// ```
 pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error + Send + Sync>> {
   // Run gltf
+
+  // Set up the environment logger. But only if it wasn't set up before.
+  if env_logger::try_init().is_ok() {};
+
+  // Try to get the file name. If this fails, the path probably doesn't exist.
+  let file_name = file_name_from_path(path)?;
 
   // We need the base path for the GLTF lib. We want to choose if we load textures.
   let base = Path::new(path).parent().unwrap_or_else(|| Path::new("./"));
@@ -89,24 +96,24 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
   // You can thank: https://whoisryosuke.com/blog/2022/importing-gltf-with-wgpu-and-rust
   let mut animations = Vec::new();
   for animation in gltf_data.animations() {
-    for channel in animation.channels() {
+    for (channel_index, channel) in animation.channels().enumerate() {
       let reader = channel.reader(|buffer| Some(&buffers[buffer.index()]));
       let timestamps = if let Some(inputs) = reader.read_inputs() {
         match inputs {
           gltf::accessor::Iter::Standard(times) => {
             let times: Vec<f32> = times.collect();
-            println!("Time: {}", times.len());
+            // println!("Time: {}", times.len());
             // dbg!(times);
             times
           }
           gltf::accessor::Iter::Sparse(_) => {
-            println!("Sparse keyframes not supported");
+            println!("minetest-gltf: Sparse keyframes not supported.");
             let times: Vec<f32> = Vec::new();
             times
           }
         }
       } else {
-        println!("We got problems");
+        error!("minetest-gltf: No animation data detected in animation channel [{}]. [{}] is probably a broken model.", channel_index, file_name);
         let times: Vec<f32> = Vec::new();
         times
       };
@@ -160,6 +167,25 @@ fn read_path_to_buf_read(path: &str) -> Result<BufReader<File>, String> {
   match File::open(path) {
     Ok(file) => Ok(BufReader::new(file)),
     Err(e) => Err(format!("Path to BufReader failure. {}", e)),
+  }
+}
+
+///
+/// Get a file name from the path provided.
+///
+fn file_name_from_path(path: &str) -> Result<&str, &str> {
+  let new_path = Path::new(path);
+
+  if !new_path.exists() {
+    return Err("File name from file path. Path does not exist.");
+  }
+
+  match new_path.file_name() {
+    Some(os_str) => match os_str.to_str() {
+      Some(final_str) => Ok(final_str),
+      None => Err("File name from file path. Failed to convert OsStr to str."),
+    },
+    None => Err("File name from file path. Failed to parse OS Path str."),
   }
 }
 
