@@ -88,25 +88,25 @@ impl GltfData {
           match ImageFormat::from_path(mime_type.clone()) {
             Ok(format) => format,
             Err(e) => panic!(
-              "Failed to get image format from image [{}], {}",
+              "GltfData: Failed to get image format from image [{}], {}",
               mime_type.clone(),
               e
             ),
           },
         ) {
           Ok(dynamic_image) => dynamic_image,
-          Err(e) => panic!("Failed to load image [{}]. {}", mime_type, e),
+          Err(e) => panic!("GltfData: Failed to load image [{}]. {}", mime_type, e),
         }
       }
       Source::Uri { uri, mime_type } => {
         if uri.starts_with("data:") {
           let encoded = match uri.split(',').nth(1) {
             Some(data) => data,
-            None => panic!("Failed to retrieve URI data."),
+            None => panic!("GltfData: Failed to retrieve URI data."),
           };
           let data = match URL_SAFE_NO_PAD.decode(encoded) {
             Ok(data) => data,
-            Err(e) => panic!("Failed to decode data. {}", e),
+            Err(e) => panic!("GltfData: Failed to decode data. {}", e),
           };
 
           let mime_type = if let Some(ty) = mime_type {
@@ -116,11 +116,11 @@ impl GltfData {
               Some(raw_1) => match raw_1.split(':').nth(1) {
                 Some(raw_2) => match raw_2.split(';').next() {
                   Some(final_mime_type) => final_mime_type,
-                  None => panic!("Failed to split mime type by semicolon. [raw_2]"),
+                  None => panic!("GltfData: Failed to split mime type by semicolon. [raw_2]"),
                 },
-                None => panic!("Failed to split mime type by colon. [raw_1]"),
+                None => panic!("GltfData: Failed to split mime type by colon. [raw_1]"),
               },
-              None => panic!("Failed to split mime type by comma. [uri]"),
+              None => panic!("GltfData: Failed to split mime type by comma. [uri]"),
             }
           };
           let mime_type = mime_type.replace('/', ".");
@@ -129,17 +129,23 @@ impl GltfData {
             &data,
             match ImageFormat::from_path(mime_type) {
               Ok(format) => format,
-              Err(e) => panic!("Failed to get image format from path. {}", e),
+              Err(e) => panic!("GltfData: Failed to get image format from path. {}", e),
             },
           ) {
             Ok(dynamic_image) => dynamic_image,
-            Err(e) => panic!("Failed to load image from memory with format. {}", e),
+            Err(e) => panic!(
+              "GltfData: Failed to load image from memory with format. {}",
+              e
+            ),
           }
         } else {
           let path = self.base_dir.join(uri);
           match open(path) {
             Ok(dynamic_image) => dynamic_image,
-            Err(e) => panic!("Failed to open the image at the specified path. {}", e),
+            Err(e) => panic!(
+              "GltfData: Failed to open the image at the specified path. {}",
+              e
+            ),
           }
         }
       }
