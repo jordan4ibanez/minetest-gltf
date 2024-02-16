@@ -180,19 +180,29 @@ mod tests {
   #[test]
   fn load_snowman() {
     let mine_gltf = match load("tests/snowman.gltf", false) {
-      Ok(scenes) => {
+      Ok(mine_gltf) => {
         println!("Snowman loaded!");
-        scenes
+        mine_gltf
       }
-      Err(e) => panic!("Snowman failed: {}", e),
+      Err(e) => panic!("Snowman: failed to load. {}", e),
     };
 
-    assert_eq!(mine_gltf.scenes.first().unwrap().models.len(), 5);
+    match mine_gltf.scenes.first() {
+      Some(scene) => assert_eq!(scene.models.len(), 5),
+      None => panic!("Snowman: has no scenes."),
+    }
   }
 
   #[test]
   fn check_cube_glb() {
-    let mine_gltf = load("tests/cube.glb", true).unwrap();
+    let mine_gltf = match load("tests/cube.glb", true) {
+      Ok(mine_gltf) => {
+        println!("Cube loaded!");
+        mine_gltf
+      }
+      Err(e) => panic!("Cube: failed to load. {}", e),
+    };
+
     assert_eq!(mine_gltf.scenes.len(), 1);
     let scene = &mine_gltf.scenes[0];
     assert_eq!(scene.cameras.len(), 1);
@@ -202,7 +212,13 @@ mod tests {
 
   #[test]
   fn check_different_meshes() {
-    let mine_gltf = load("tests/complete.glb", true).unwrap();
+    let mine_gltf = match load("tests/complete.glb", true) {
+      Ok(mine_gltf) => {
+        println!("Complete loaded!");
+        mine_gltf
+      }
+      Err(e) => panic!("Complete: failed to load. {}", e),
+    };
     assert_eq!(mine_gltf.scenes.len(), 1);
     let scene = &mine_gltf.scenes[0];
     for model in scene.models.iter() {
@@ -222,17 +238,35 @@ mod tests {
 
   #[test]
   fn check_cube_gltf() {
-    let _ = load("tests/cube_classic.gltf", true).unwrap();
+    let _ = match load("tests/cube_classic.gltf", true) {
+      Ok(mine_gltf) => {
+        println!("cube_classic loaded!");
+        mine_gltf
+      }
+      Err(e) => panic!("cube_classic: failed to load. {}", e),
+    };
   }
 
   #[test]
   fn check_default_texture() {
-    let _ = load("tests/box_sparse.glb", true).unwrap();
+    let _ = match load("tests/box_sparse.glb", true) {
+      Ok(mine_gltf) => {
+        println!("box_sparse loaded!");
+        mine_gltf
+      }
+      Err(e) => panic!("box_sparse: failed to load. {}", e),
+    };
   }
 
   #[test]
   fn check_camera() {
-    let mine_gltf = load("tests/cube.glb", true).unwrap();
+    let mine_gltf = match load("tests/cube.glb", true) {
+      Ok(mine_gltf) => {
+        println!("cube loaded!");
+        mine_gltf
+      }
+      Err(e) => panic!("cube: failed to load. {}", e),
+    };
     let scene = &mine_gltf.scenes[0];
     let cam = &scene.cameras[0];
     assert!((cam.position() - Vec3::new(7.3589, 4.9583, 6.9258)).length() < 0.1);
@@ -240,7 +274,13 @@ mod tests {
 
   #[test]
   fn check_lights() {
-    let mine_gltf = load("tests/cube.glb", true).unwrap();
+    let mine_gltf = match load("tests/cube.glb", true) {
+      Ok(mine_gltf) => {
+        println!("cube loaded!");
+        mine_gltf
+      }
+      Err(e) => panic!("cube: failed to load. {}", e),
+    };
     let scene = &mine_gltf.scenes[0];
     for light in scene.lights.iter() {
       match light {
@@ -282,13 +322,25 @@ mod tests {
 
   #[test]
   fn check_model() {
-    let mine_gltf = load("tests/cube.glb", true).unwrap();
+    let mine_gltf = match load("tests/cube.glb", true) {
+      Ok(mine_gltf) => {
+        println!("cube loaded!");
+        mine_gltf
+      }
+      Err(e) => panic!("cube: failed to load. {}", e),
+    };
     let scene = &mine_gltf.scenes[0];
     let model = &scene.models[0];
     assert!(model.has_normals());
     assert!(model.has_tex_coords());
     assert!(model.has_tangents());
-    for t in model.triangles().unwrap().iter().flatten() {
+    for t in match model.triangles() {
+      Ok(tris) => tris,
+      Err(e) => panic!("Failed to get cube tris. {}", e),
+    }
+    .iter()
+    .flatten()
+    {
       let pos = t.position;
       assert!(pos.x > -0.01 && pos.x < 1.01);
       assert!(pos.y > -0.01 && pos.y < 1.01);
@@ -301,9 +353,18 @@ mod tests {
 
   #[test]
   fn check_material() {
-    let mine_gltf = load("tests/head.glb", true).unwrap();
+    let mine_gltf = match load("tests/head.glb", true) {
+      Ok(mine_gltf) => {
+        println!("head loaded!");
+        mine_gltf
+      }
+      Err(e) => panic!("cube: failed to load. {}", e),
+    };
     let scene = &mine_gltf.scenes[0];
-    let mat = &scene.models[0].material.as_ref().unwrap();
+    let mat = match scene.models[0].material.as_ref() {
+      Some(mat) => mat,
+      None => panic!("Failed to load material for head."),
+    };
     assert!(mat.pbr.base_color_texture.is_some());
     assert_eq!(mat.pbr.metallic_factor, 0.);
   }
