@@ -1,5 +1,8 @@
+/// Material module. Handles normal, pbr, occlusions, and emmisive data.
 mod material;
+/// Primitive type module. Tells how to draw. Points, lines, lineloop, linestrip, triangles, trianglestrip, and trianglefan.
 mod mode;
+/// Raw gpu vertex definition module.
 mod vertex;
 
 use crate::utils::*;
