@@ -8,6 +8,21 @@ license = "MIT"
 keywords = ["glTF", "3D", "asset", "model", "minetest"]
 exclude = [".github/"]
 
+[lints.rust]
+# DO NOT allow unsafe code.
+unsafe_code = "forbid"
+# These can be turned on and off for active development.
+# dead_code = "allow"
+# unused_variables = "allow"
+missing_docs = "forbid"
+
+[lints.clippy]
+# These ones are REALLY annoying.
+unwrap_used = "warn"
+panicking_unwrap = "warn"
+expect_used = "warn"
+# missing_docs_in_private_items = "forbid"
+
 [features]
 default = []
 names = ["gltf/names"]
