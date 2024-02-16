@@ -15,8 +15,8 @@
 //! # Example
 //!
 //! ```
-//! let scenes = minetest_gltf::load("tests/cube.glb", true).expect("Failed to load glTF");
-//! for scene in scenes {
+//! let mine_gltf = minetest_gltf::load("tests/cube.glb", true).expect("Failed to load glTF");
+//! for scene in mine_gltf.scenes {
 //!     println!(
 //!         "Cameras: #{}  Lights: #{}  Models: #{}",
 //!         scene.cameras.len(),
@@ -50,9 +50,9 @@ pub use scene::*;
 /// # Example
 ///
 /// ```
-/// let scenes = minetest_gltf::load("tests/cube.glb", true).expect("Failed to load glTF");
-/// println!("Scenes: #{}", scenes.len()); // Output "Scenes: #1"
-/// let scene = &scenes[0]; // Retrieve the first and only scene
+/// let mine_gltf = minetest_gltf::load("tests/cube.glb", true).expect("Failed to load glTF");
+/// println!("Scenes: #{}", mine_gltf.scenes.len()); // Output "Scenes: #1"
+/// let scene = &mine_gltf.scenes[0]; // Retrieve the first and only scene
 /// println!("Cameras: #{}", scene.cameras.len());
 /// println!("Lights: #{}", scene.lights.len());
 /// println!("Models: #{}", scene.models.len());
