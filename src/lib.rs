@@ -60,7 +60,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
   // Run gltf
 
   // Set up the environment logger. But only if it wasn't set up before.
-  let _ = env_logger::try_init();
+  drop(env_logger::try_init());
 
   // Try to get the file name. If this fails, the path probably doesn't exist.
   let file_name = file_name_from_path(path)?;
