@@ -52,6 +52,17 @@ macro_rules! quaternionify {
   };
 }
 
+///
+/// This cleans up the implementation when parsing the GLTF morph target weights.
+///
+/// It converts &[T] into a Vec<f32> which is the Keyframes::Weights enum.
+///
+macro_rules! weightify {
+  ($x:expr) => {
+    Keyframes::Weights($x.map(|we| we as f32).collect())
+  };
+}
+
 /// Load scenes from path to a glTF 2.0.
 ///
 /// You can choose to enable material loading.
