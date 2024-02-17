@@ -44,7 +44,7 @@ pub use scene::*;
 ///
 /// This cleans up the implementation when parsing the GLTF rotation data.
 ///
-/// It converts [T; 4] into a Vec<f32>.
+/// It converts &[[T; 4]] into a Vec<Vec<f32>> which is the Keyframes::Rotation enum.
 ///
 macro_rules! quaternionify {
   ($x:expr) => {
