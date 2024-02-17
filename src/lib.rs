@@ -142,7 +142,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
             util::Rotations::U16(rotation) => quaternionify!(rotation),
             util::Rotations::F32(rotation) => quaternionify!(rotation),
           },
-          util::ReadOutputs::Scales(_) => todo!(),
+          util::ReadOutputs::Scales(scale) => Keyframes::Scale(scale.map(|sc| sc.into()).collect()),
           util::ReadOutputs::MorphTargetWeights(_) => todo!(),
         }
       } else {
