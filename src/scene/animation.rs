@@ -1,26 +1,26 @@
 // Based on https://whoisryosuke.com/blog/2022/importing-gltf-with-wgpu-and-rust
 // You can thank ryosuke for this information.
 
-/// todo:
+/// Raw animation data.
 pub enum Keyframes {
-  /// todo:
+  /// Translation raw data.
   Translation(Vec<Vec<f32>>),
-  /// todo:
+  /// Rotation raw data.
   Rotation(Vec<Vec<f32>>),
-  /// todo:
+  /// Scale raw data.
   Scale(Vec<Vec<f32>>),
-  /// todo:
+  /// Morph Target Weights raw data.
   Weights(Vec<f32>),
-  /// todo:
+  /// Something blew up in your GLTF model. If you get this it's broken.
   Other,
 }
 
-/// todo:
+/// Container for raw animation data.
 pub struct AnimationClip {
-  /// todo:
+  /// The name of the animation.
   pub name: String,
-  /// todo:
+  /// The raw keyframe data.
   pub keyframes: Keyframes,
-  /// todo:
+  /// The raw keyframe timestamps.
   pub timestamps: Vec<f32>,
 }
