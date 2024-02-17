@@ -122,12 +122,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
       let keyframes = if let Some(outputs) = reader.read_outputs() {
         match outputs {
           util::ReadOutputs::Translations(translation) => {
-            let translation_vec = translation
-              .map(|tr| {
-                let vector: Vec<f32> = tr.into();
-                vector
-              })
-              .collect();
+            let translation_vec = translation.map(|tr| tr.into()).collect();
             Keyframes::Translation(translation_vec)
           }
           util::ReadOutputs::Rotations(rotation) => match rotation {
