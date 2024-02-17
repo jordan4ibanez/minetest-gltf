@@ -41,6 +41,17 @@ use utils::GltfData;
 
 pub use scene::*;
 
+///
+/// This cleans up the implementation when parsing the GLTF rotation data.
+///
+/// It converts [T; 4] into a Vec<f32>.
+///
+macro_rules! quaternionify {
+  ($x:expr) => {
+    Keyframes::Rotation($x.map(|rot| rot.map(|input| input as f32).into()).collect())
+  };
+}
+
 /// Load scenes from path to a glTF 2.0.
 ///
 /// You can choose to enable material loading.
