@@ -133,8 +133,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
       let keyframes = if let Some(outputs) = reader.read_outputs() {
         match outputs {
           util::ReadOutputs::Translations(translation) => {
-            let translation_vec = translation.map(|tr| tr.into()).collect();
-            Keyframes::Translation(translation_vec)
+            Keyframes::Translation(translation.map(|tr| tr.into()).collect())
           }
           util::ReadOutputs::Rotations(rotation) => match rotation {
             util::Rotations::I8(rotation) => quaternionify!(rotation),
