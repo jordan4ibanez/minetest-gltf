@@ -8,6 +8,8 @@ pub enum Keyframes {
   /// todo:
   Rotation(Vec<Vec<f32>>),
   /// todo:
+  Scale(Vec<Vec<f32>>),
+  /// todo:
   Other,
 }
 
