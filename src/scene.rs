@@ -1,4 +1,4 @@
-/// todo:
+/// Contains animation data for the models.
 pub mod animation;
 mod camera;
 mod light;
