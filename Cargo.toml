@@ -30,8 +30,8 @@ extras = ["gltf/extras"]
 
 [dependencies]
 glam = "0.25.0"
-gltf = { version = "1.3.0", features = ["KHR_lights_punctual"] }
-image = "0.24.7"
-base64 = "0.21.5"
-env_logger = "*"
-log = "*"
+gltf = { version = "1.4.0", features = ["KHR_lights_punctual"] }
+image = "0.24.8"
+base64 = "0.21.7"
+env_logger = "0.11.2"
+log = "0.4.20"
