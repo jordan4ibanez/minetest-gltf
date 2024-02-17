@@ -28,6 +28,7 @@ mod mine_gltf;
 mod scene;
 mod utils;
 
+use gltf::animation::util;
 use gltf::Gltf;
 use log::error;
 use mine_gltf::MineGLTF;
@@ -120,7 +121,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
 
       let keyframes = if let Some(outputs) = reader.read_outputs() {
         match outputs {
-          gltf::animation::util::ReadOutputs::Translations(translation) => {
+          util::ReadOutputs::Translations(translation) => {
             let translation_vec = translation
               .map(|tr| {
                 let vector: Vec<f32> = tr.into();
@@ -129,15 +130,15 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
               .collect();
             Keyframes::Translation(translation_vec)
           }
-          gltf::animation::util::ReadOutputs::Rotations(rotation) => match rotation {
-            gltf::animation::util::Rotations::I8(data) => todo!(),
-            gltf::animation::util::Rotations::U8(data) => todo!(),
-            gltf::animation::util::Rotations::I16(data) => todo!(),
-            gltf::animation::util::Rotations::U16(data) => todo!(),
-            gltf::animation::util::Rotations::F32(data) => todo!(),
+          util::ReadOutputs::Rotations(rotation) => match rotation {
+            util::Rotations::I8(data) => todo!(),
+            util::Rotations::U8(data) => todo!(),
+            util::Rotations::I16(data) => todo!(),
+            util::Rotations::U16(data) => todo!(),
+            util::Rotations::F32(data) => todo!(),
           },
-          gltf::animation::util::ReadOutputs::Scales(_) => todo!(),
-          gltf::animation::util::ReadOutputs::MorphTargetWeights(_) => todo!(),
+          util::ReadOutputs::Scales(_) => todo!(),
+          util::ReadOutputs::MorphTargetWeights(_) => todo!(),
         }
       } else {
         error!(
