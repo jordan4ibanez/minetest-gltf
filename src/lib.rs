@@ -154,7 +154,13 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
             util::Rotations::F32(rotation) => quaternionify!(rotation),
           },
           util::ReadOutputs::Scales(scale) => Keyframes::Scale(scale.map(|sc| sc.into()).collect()),
-          util::ReadOutputs::MorphTargetWeights(_) => todo!(),
+          util::ReadOutputs::MorphTargetWeights(target_weight) => match target_weight {
+            util::MorphTargetWeights::I8(weights) => weightify!(weights),
+            util::MorphTargetWeights::U8(weights) => weightify!(weights),
+            util::MorphTargetWeights::I16(weights) => weightify!(weights),
+            util::MorphTargetWeights::U16(weights) => weightify!(weights),
+            util::MorphTargetWeights::F32(weights) => weightify!(weights),
+          },
         }
       } else {
         error!(
