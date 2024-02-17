@@ -6,6 +6,8 @@ pub enum Keyframes {
   /// todo:
   Translation(Vec<Vec<f32>>),
   /// todo:
+  Rotation(Vec<Vec<f32>>),
+  /// todo:
   Other,
 }
 
