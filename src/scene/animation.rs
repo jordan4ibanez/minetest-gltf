@@ -10,6 +10,8 @@ pub enum Keyframes {
   /// todo:
   Scale(Vec<Vec<f32>>),
   /// todo:
+  Weights(Vec<f32>),
+  /// todo:
   Other,
 }
 
