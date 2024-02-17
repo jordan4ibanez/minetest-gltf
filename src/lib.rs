@@ -123,15 +123,19 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
           gltf::animation::util::ReadOutputs::Translations(translation) => {
             let translation_vec = translation
               .map(|tr| {
-                // println!("Translation:");
-                // dbg!(tr);
                 let vector: Vec<f32> = tr.into();
                 vector
               })
               .collect();
             Keyframes::Translation(translation_vec)
           }
-          gltf::animation::util::ReadOutputs::Rotations(_) => todo!(),
+          gltf::animation::util::ReadOutputs::Rotations(rotation) => match rotation {
+            gltf::animation::util::Rotations::I8(data) => todo!(),
+            gltf::animation::util::Rotations::U8(data) => todo!(),
+            gltf::animation::util::Rotations::I16(data) => todo!(),
+            gltf::animation::util::Rotations::U16(data) => todo!(),
+            gltf::animation::util::Rotations::F32(data) => todo!(),
+          },
           gltf::animation::util::ReadOutputs::Scales(_) => todo!(),
           gltf::animation::util::ReadOutputs::MorphTargetWeights(_) => todo!(),
         }
