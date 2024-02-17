@@ -137,11 +137,11 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
             Keyframes::Translation(translation_vec)
           }
           util::ReadOutputs::Rotations(rotation) => match rotation {
-            util::Rotations::I8(data) => todo!(),
-            util::Rotations::U8(data) => todo!(),
-            util::Rotations::I16(data) => todo!(),
-            util::Rotations::U16(data) => todo!(),
-            util::Rotations::F32(data) => todo!(),
+            util::Rotations::I8(rotation) => quaternionify!(rotation),
+            util::Rotations::U8(rotation) => quaternionify!(rotation),
+            util::Rotations::I16(rotation) => quaternionify!(rotation),
+            util::Rotations::U16(rotation) => quaternionify!(rotation),
+            util::Rotations::F32(rotation) => quaternionify!(rotation),
           },
           util::ReadOutputs::Scales(_) => todo!(),
           util::ReadOutputs::MorphTargetWeights(_) => todo!(),
