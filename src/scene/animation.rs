@@ -13,8 +13,6 @@ pub enum Keyframes {
   Scale(Vec<Vec3>),
   /// Morph Target Weights raw data.
   Weights(Vec<f32>),
-  /// Something blew up in your GLTF model. If you get this it's broken.
-  Other,
 }
 
 /// Container for raw animation data.
