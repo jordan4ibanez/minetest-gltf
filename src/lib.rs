@@ -28,11 +28,12 @@ mod mine_gltf;
 mod scene;
 mod utils;
 
+use glam::{Quat, Vec3};
 use gltf::animation::util;
 use gltf::Gltf;
 use log::error;
 use mine_gltf::MineGLTF;
-use scene::animation::{AnimationClip, Keyframes};
+pub use scene::animation::{AnimationClip, Keyframes};
 use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
@@ -42,13 +43,31 @@ use utils::GltfData;
 pub use scene::*;
 
 ///
+/// This is an extremely specific macro to raw cast an Array4 into an f32 Array4.
+///
+/// ! This is for testing.
+///
+macro_rules! raw_cast_array4 {
+  ($x:expr) => {{
+    let mut returning_array: [f32; 4] = [0.0, 0.0, 0.0, 0.0];
+    for (i, v) in $x.iter().enumerate() {
+      returning_array[i] = *v as f32;
+    }
+    returning_array
+  }};
+}
+
+///
 /// This cleans up the implementation when parsing the GLTF rotation data.
 ///
-/// It converts &[[T; 4]] into a Vec<Vec<f32>> which is the Keyframes::Rotation enum.
+/// It converts &[[T; 4]] into a Vec<Quat> which is the Keyframes::Rotation enum.
 ///
 macro_rules! quaternionify {
   ($x:expr) => {
-    Keyframes::Rotation($x.map(|rot| rot.map(|input| input as f32).into()).collect())
+    Keyframes::Rotation(
+      $x.map(|rot| Quat::from_array(raw_cast_array4!(rot)))
+        .collect(),
+    )
   };
 }
 
@@ -156,7 +175,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
       let keyframes = if let Some(outputs) = reader.read_outputs() {
         match outputs {
           util::ReadOutputs::Translations(translation) => {
-            Keyframes::Translation(translation.map(|tr| tr.into()).collect())
+            Keyframes::Translation(translation.map(Vec3::from_array).collect())
           }
           util::ReadOutputs::Rotations(rotation) => match rotation {
             util::Rotations::I8(rotation) => quaternionify!(rotation),
@@ -165,7 +184,9 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
             util::Rotations::U16(rotation) => quaternionify!(rotation),
             util::Rotations::F32(rotation) => quaternionify!(rotation),
           },
-          util::ReadOutputs::Scales(scale) => Keyframes::Scale(scale.map(|sc| sc.into()).collect()),
+          util::ReadOutputs::Scales(scale) => {
+            Keyframes::Scale(scale.map(Vec3::from_array).collect())
+          }
           util::ReadOutputs::MorphTargetWeights(target_weight) => match target_weight {
             util::MorphTargetWeights::I8(weights) => weightify!(weights),
             util::MorphTargetWeights::U8(weights) => weightify!(weights),
