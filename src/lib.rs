@@ -33,7 +33,7 @@ use gltf::animation::util;
 use gltf::Gltf;
 use log::error;
 use mine_gltf::MineGLTF;
-pub use scene::animation::{AnimationClip, Keyframes};
+use scene::animation::{AnimationClip, Keyframes};
 use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
