@@ -155,65 +155,75 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
       println!("{}", x);
 
       let reader = channel.reader(|buffer| Some(&buffers[buffer.index()]));
-      let timestamps = if let Some(inputs) = reader.read_inputs() {
+
+      // * If the timestamp accessor is sparse, or something has gone horribly wrong, it's a static model.
+      let result_timestamps = if let Some(inputs) = reader.read_inputs() {
         match inputs {
           gltf::accessor::Iter::Standard(times) => {
             let times: Vec<f32> = times.collect();
             // println!("Time: {}", times.len());
             // dbg!(times);
-            times
+            Ok(times)
           }
-          gltf::accessor::Iter::Sparse(_) => {
+          gltf::accessor::Iter::Sparse(_) => Err(format!(
+            "minetest-gltf: Sparse keyframes not supported. Model: [{}]. Model will not be animated.",
+            file_name
+          )),
+        }
+      } else {
+        Err(format!("minetest-gltf: No animation data detected in animation channel [{}]. [{}] is probably a broken model. Model will not be animated.", channel_index, file_name))
+      };
+
+      // * If something blows up when parsing the model animations, it's now a static model.
+
+      match result_timestamps {
+        Ok(timestamps) => {
+          let keyframes = if let Some(outputs) = reader.read_outputs() {
+            match outputs {
+              util::ReadOutputs::Translations(translation) => {
+                Keyframes::Translation(translation.map(Vec3::from_array).collect())
+              }
+              util::ReadOutputs::Rotations(rotation) => match rotation {
+                util::Rotations::I8(rotation) => quaternionify!(rotation),
+                util::Rotations::U8(rotation) => quaternionify!(rotation),
+                util::Rotations::I16(rotation) => quaternionify!(rotation),
+                util::Rotations::U16(rotation) => quaternionify!(rotation),
+                util::Rotations::F32(rotation) => quaternionify!(rotation),
+              },
+              util::ReadOutputs::Scales(scale) => {
+                Keyframes::Scale(scale.map(Vec3::from_array).collect())
+              }
+              util::ReadOutputs::MorphTargetWeights(target_weight) => match target_weight {
+                util::MorphTargetWeights::I8(weights) => weightify!(weights),
+                util::MorphTargetWeights::U8(weights) => weightify!(weights),
+                util::MorphTargetWeights::I16(weights) => weightify!(weights),
+                util::MorphTargetWeights::U16(weights) => weightify!(weights),
+                util::MorphTargetWeights::F32(weights) => weightify!(weights),
+              },
+            }
+          } else {
+            // * Something blew up, it's now a static model.
             error!(
-              "minetest-gltf: Sparse keyframes not supported. Model: [{}]",
+              "minetest-gltf: Unknown keyframe in model [{}]. This model is probably corrupted. Model will not be animated.",
               file_name
             );
-            let times: Vec<f32> = Vec::new();
-            times
-          }
-        }
-      } else {
-        error!("minetest-gltf: No animation data detected in animation channel [{}]. [{}] is probably a broken model.", channel_index, file_name);
-        let times: Vec<f32> = Vec::new();
-        times
-      };
+            animations.clear();
+            break;
+          };
 
-      let keyframes = if let Some(outputs) = reader.read_outputs() {
-        match outputs {
-          util::ReadOutputs::Translations(translation) => {
-            Keyframes::Translation(translation.map(Vec3::from_array).collect())
-          }
-          util::ReadOutputs::Rotations(rotation) => match rotation {
-            util::Rotations::I8(rotation) => quaternionify!(rotation),
-            util::Rotations::U8(rotation) => quaternionify!(rotation),
-            util::Rotations::I16(rotation) => quaternionify!(rotation),
-            util::Rotations::U16(rotation) => quaternionify!(rotation),
-            util::Rotations::F32(rotation) => quaternionify!(rotation),
-          },
-          util::ReadOutputs::Scales(scale) => {
-            Keyframes::Scale(scale.map(Vec3::from_array).collect())
-          }
-          util::ReadOutputs::MorphTargetWeights(target_weight) => match target_weight {
-            util::MorphTargetWeights::I8(weights) => weightify!(weights),
-            util::MorphTargetWeights::U8(weights) => weightify!(weights),
-            util::MorphTargetWeights::I16(weights) => weightify!(weights),
-            util::MorphTargetWeights::U16(weights) => weightify!(weights),
-            util::MorphTargetWeights::F32(weights) => weightify!(weights),
-          },
+          animations.push(AnimationClip {
+            name: first_animation.name().unwrap_or("Default").to_string(),
+            keyframes,
+            timestamps,
+          })
         }
-      } else {
-        error!(
-          "minetest-gltf: Unknown keyframe in model [{}]. This model is probably corrupted.",
-          file_name
-        );
-        Keyframes::Other
-      };
-
-      animations.push(AnimationClip {
-        name: first_animation.name().unwrap_or("Default").to_string(),
-        keyframes,
-        timestamps,
-      })
+        // * Something blew up, it's now a static model.
+        Err(e) => {
+          error!("{}", e);
+          animations.clear();
+          break;
+        }
+      }
     }
   }
 
