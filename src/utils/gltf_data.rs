@@ -1,9 +1,9 @@
 use crate::Material;
+use ahash::AHashMap;
 use base64::engine::general_purpose::URL_SAFE_NO_PAD;
 use base64::Engine;
 use gltf::image::Source;
 use image::*;
-use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
@@ -12,10 +12,10 @@ pub struct GltfData {
   pub buffers: Vec<gltf::buffer::Data>,
   pub images: Option<Vec<gltf::image::Data>>,
   pub base_dir: PathBuf,
-  pub materials: HashMap<Option<usize>, Arc<Material>>,
-  pub rgb_images: HashMap<usize, Arc<RgbImage>>,
-  pub rgba_images: HashMap<usize, Arc<RgbaImage>>,
-  pub gray_images: HashMap<(usize, usize), Arc<GrayImage>>,
+  pub materials: AHashMap<Option<usize>, Arc<Material>>,
+  pub rgb_images: AHashMap<usize, Arc<RgbImage>>,
+  pub rgba_images: AHashMap<usize, Arc<RgbaImage>>,
+  pub gray_images: AHashMap<(usize, usize), Arc<GrayImage>>,
 }
 
 impl GltfData {
