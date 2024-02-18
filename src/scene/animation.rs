@@ -3,7 +3,7 @@
 
 use glam::{Quat, Vec3};
 
-/// Raw animation data.
+/// Raw animation data. Unionized.
 pub enum Keyframes {
   /// Translation raw data.
   Translation(Vec<Vec3>),
