@@ -462,4 +462,22 @@ mod tests {
   fn check_invalid_path() {
     assert!(load("tests/invalid.glb", true).is_err());
   }
+
+  #[test]
+  fn test_the_spider_animations() {
+    let spider = match load("tests/spider_animated.gltf", true) {
+      Ok(mine_gltf) => {
+        println!("spider loaded!");
+        mine_gltf
+      }
+      Err(e) => panic!("spider: failed to load. {}", e),
+    };
+
+    let animation = match spider.animations.first() {
+      Some(anim) => anim,
+      None => panic!("spider: has no animation!"),
+    };
+
+    // let keyframe = animation.keyframes
+  }
 }
