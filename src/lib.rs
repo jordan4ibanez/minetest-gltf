@@ -175,7 +175,6 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
       };
 
       // * If something blows up when parsing the model animations, it's now a static model.
-
       match result_timestamps {
         Ok(timestamps) => {
           let keyframes = if let Some(outputs) = reader.read_outputs() {
@@ -212,11 +211,12 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
           };
 
           animations.push(AnimationClip {
-            name: first_animation.name().unwrap_or("Default").to_string(),
+            name: first_animation.name().unwrap_or("default").to_string(),
             keyframes,
             timestamps,
           })
         }
+
         // * Something blew up, it's now a static model.
         Err(e) => {
           error!("{}", e);
