@@ -28,12 +28,13 @@ mod mine_gltf;
 mod scene;
 mod utils;
 
+use ahash::AHashMap;
 use glam::{Quat, Vec3};
 use gltf::animation::util;
 use gltf::Gltf;
 use log::error;
 use mine_gltf::MineGLTF;
-use scene::animation::{AnimationComponent, Keyframes};
+use scene::animation::{BoneAnimation, Keyframes};
 use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
@@ -113,9 +114,6 @@ macro_rules! weightify {
 pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error + Send + Sync>> {
   // Run gltf
 
-  // Set up the environment logger. But only if it wasn't set up before.
-  drop(env_logger::try_init());
-
   // Try to get the file name. If this fails, the path probably doesn't exist.
   let file_name = file_name_from_path(path)?;
 
@@ -145,7 +143,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
 
   // We always want the animation data as well.
   // You can thank: https://whoisryosuke.com/blog/2022/importing-gltf-with-wgpu-and-rust
-  let mut animations = Vec::new();
+  let mut bone_animations: AHashMap<i32, BoneAnimation> = AHashMap::new();
 
   // ? We are mimicking minetest C++ and only getting the first animation.
   if let Some(first_animation) = gltf_data.animations().next() {
@@ -206,11 +204,11 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
               "minetest-gltf: Unknown keyframe in model [{}]. This model is probably corrupted. Model will not be animated.",
               file_name
             );
-            animations.clear();
+            bone_animations.clear();
             break;
           };
 
-          animations.push(AnimationComponent {
+          bone_animations.push(BoneAnimation {
             name: first_animation.name().unwrap_or("default").to_string(),
             keyframes,
             timestamps,
@@ -220,7 +218,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
         // * Something blew up, it's now a static model.
         Err(e) => {
           error!("{}", e);
-          animations.clear();
+          bone_animations.clear();
           break;
         }
       }
@@ -236,7 +234,10 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
     scenes.push(Scene::load(scene, &mut data, load_materials));
   }
 
-  Ok(MineGLTF { scenes, animations })
+  Ok(MineGLTF {
+    scenes,
+    animations: bone_animations,
+  })
 }
 
 ///
