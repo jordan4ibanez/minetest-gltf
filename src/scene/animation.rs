@@ -19,8 +19,24 @@ pub enum Keyframes {
 pub struct BoneAnimation {
   /// The name of the animation.
   pub name: String,
-  /// The raw keyframe data.
-  pub keyframes: Keyframes,
-  /// The raw keyframe timestamps.
+  /// Translation data.
+  pub translations: Vec<Vec3>,
+  /// Rotation data.
+  pub rotations: Vec<Quat>,
+  /// Scale data.
+  pub scales: Vec<Vec3>,
+  /// Keyframe timestamps.
   pub timestamps: Vec<f32>,
+}
+
+impl Default for BoneAnimation {
+  fn default() -> Self {
+    Self {
+      name: Default::default(),
+      translations: Default::default(),
+      rotations: Default::default(),
+      scales: Default::default(),
+      timestamps: Default::default(),
+    }
+  }
 }
