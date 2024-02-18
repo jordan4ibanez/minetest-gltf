@@ -33,7 +33,7 @@ use gltf::animation::util;
 use gltf::Gltf;
 use log::error;
 use mine_gltf::MineGLTF;
-use scene::animation::{AnimationClip, Keyframes};
+use scene::animation::{AnimationComponent, Keyframes};
 use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
@@ -210,7 +210,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
             break;
           };
 
-          animations.push(AnimationClip {
+          animations.push(AnimationComponent {
             name: first_animation.name().unwrap_or("default").to_string(),
             keyframes,
             timestamps,

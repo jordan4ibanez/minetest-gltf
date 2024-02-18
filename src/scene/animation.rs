@@ -15,8 +15,8 @@ pub enum Keyframes {
   Weights(Vec<f32>),
 }
 
-/// Container for raw animation data.
-pub struct AnimationClip {
+/// Container for raw animation data for a node (bone).
+pub struct AnimationComponent {
   /// The name of the animation.
   pub name: String,
   /// The raw keyframe data.
