@@ -33,7 +33,7 @@ use gltf::animation::util;
 use gltf::Gltf;
 use log::error;
 use mine_gltf::MineGLTF;
-pub use scene::animation::{AnimationClip, Keyframes};
+pub use scene::animation::AnimationData;
 use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
@@ -47,52 +47,52 @@ pub use scene::*;
 ///
 /// ! This is for testing.
 ///
-macro_rules! raw_cast_array4 {
-  ($x:expr) => {{
-    let mut returning_array: [f32; 4] = [0.0, 0.0, 0.0, 0.0];
-    for (i, v) in $x.iter().enumerate() {
-      returning_array[i] = *v as f32;
-    }
-    returning_array
-  }};
-}
+// macro_rules! raw_cast_array4 {
+//   ($x:expr) => {{
+//     let mut returning_array: [f32; 4] = [0.0, 0.0, 0.0, 0.0];
+//     for (i, v) in $x.iter().enumerate() {
+//       returning_array[i] = *v as f32;
+//     }
+//     returning_array
+//   }};
+// }
 
 ///
 /// This cleans up the implementation when parsing the GLTF rotation data.
 ///
 /// It converts &[[T; 4]] into a Vec<Quat> which is the Keyframes::Rotation enum.
 ///
-macro_rules! quaternionify {
-  ($x:expr) => {
-    Keyframes::Rotation(
-      $x.map(|rot| Quat::from_array(raw_cast_array4!(rot)))
-        .collect(),
-    )
-  };
-}
+// macro_rules! quaternionify {
+//   ($x:expr) => {
+//     Keyframes::Rotation(
+//       $x.map(|rot| Quat::from_array(raw_cast_array4!(rot)))
+//         .collect(),
+//     )
+//   };
+// }
 
 ///
 /// This cleans up the implementation when parsing the GLTF morph target weights.
 ///
 /// It converts &[T] into a Vec<f32> which is the Keyframes::Weights enum.
 ///
-macro_rules! weightify {
-  ($x:expr) => {{
-    let mut container: Vec<f32> = vec![];
+// macro_rules! weightify {
+//   ($x:expr) => {{
+//     let mut container: Vec<f32> = vec![];
 
-    // There can be a bug in the iterator given due to how GLTF works, we want to drop out when the end is hit.
-    // This prevents an infinite loop.
-    let limit = $x.len();
-    for (index, value) in $x.enumerate() {
-      container.push(value as f32);
-      // Bail out.
-      if index >= limit {
-        break;
-      }
-    }
-    Keyframes::Weights(container)
-  }};
-}
+//     // There can be a bug in the iterator given due to how GLTF works, we want to drop out when the end is hit.
+//     // This prevents an infinite loop.
+//     let limit = $x.len();
+//     for (index, value) in $x.enumerate() {
+//       container.push(value as f32);
+//       // Bail out.
+//       if index >= limit {
+//         break;
+//       }
+//     }
+//     Keyframes::Weights(container)
+//   }};
+// }
 
 /// Load scenes from path to a glTF 2.0.
 ///
