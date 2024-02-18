@@ -147,9 +147,9 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
   // You can thank: https://whoisryosuke.com/blog/2022/importing-gltf-with-wgpu-and-rust
   let mut animations = Vec::new();
 
-  for animation in gltf_data.animations() {
-    for (channel_index, channel) in animation.channels().enumerate() {
-      
+  // ? We are mimicking minetest C++ and only getting the first animation.
+  if let Some(first_animation) = gltf_data.animations().next() {
+    for (channel_index, channel) in first_animation.channels().enumerate() {
       let x = channel.target().node().index();
 
       println!("{}", x);
@@ -210,7 +210,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
       };
 
       animations.push(AnimationClip {
-        name: animation.name().unwrap_or("Default").to_string(),
+        name: first_animation.name().unwrap_or("Default").to_string(),
         keyframes,
         timestamps,
       })
