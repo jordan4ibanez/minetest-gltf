@@ -146,8 +146,14 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
   // We always want the animation data as well.
   // You can thank: https://whoisryosuke.com/blog/2022/importing-gltf-with-wgpu-and-rust
   let mut animations = Vec::new();
+
   for animation in gltf_data.animations() {
     for (channel_index, channel) in animation.channels().enumerate() {
+      
+      let x = channel.target().node().index();
+
+      println!("{}", x);
+
       let reader = channel.reader(|buffer| Some(&buffers[buffer.index()]));
       let timestamps = if let Some(inputs) = reader.read_inputs() {
         match inputs {
