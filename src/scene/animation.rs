@@ -10,7 +10,7 @@ pub enum Keyframes {
   /// Rotation raw data.
   Rotation(Vec<Quat>),
   /// Scale raw data.
-  Scale(Vec<Vec<f32>>),
+  Scale(Vec<Vec3>),
   /// Morph Target Weights raw data.
   Weights(Vec<f32>),
   /// Something blew up in your GLTF model. If you get this it's broken.
