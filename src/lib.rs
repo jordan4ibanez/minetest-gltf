@@ -489,7 +489,7 @@ mod tests {
       Err(e) => panic!("spider: failed to load. {}", e),
     };
 
-    let animation = match spider.animations.first() {
+    let _animation = match spider.animations.first() {
       Some(anim) => anim,
       None => panic!("spider: has no animation!"),
     };
