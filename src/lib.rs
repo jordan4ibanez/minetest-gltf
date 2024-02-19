@@ -34,7 +34,7 @@ use gltf::animation::util;
 use gltf::Gltf;
 use log::error;
 use mine_gltf::MineGLTF;
-use scene::animation::{BoneAnimation, Keyframes};
+use scene::animation::{BoneAnimationChannel, Keyframes};
 use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
@@ -143,15 +143,12 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
 
   // We always want the animation data as well.
   // You can thank: https://whoisryosuke.com/blog/2022/importing-gltf-with-wgpu-and-rust
-  let mut bone_animations: AHashMap<i32, BoneAnimation> = AHashMap::new();
+  let mut bone_animation_channels: AHashMap<i32, BoneAnimationChannel> = AHashMap::new();
 
   // ? We are mimicking minetest C++ and only getting the first animation.
   if let Some(first_animation) = gltf_data.animations().next() {
+    // ? Now we want to get all channels which contains node (bone) TRS data in random order.
     for (channel_index, channel) in first_animation.channels().enumerate() {
-      let x = channel.target().node().index();
-
-      println!("{}", x);
-
       let reader = channel.reader(|buffer| Some(&buffers[buffer.index()]));
 
       // * If the timestamp accessor is sparse, or something has gone horribly wrong, it's a static model.
@@ -204,16 +201,26 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
               "minetest-gltf: Unknown keyframe in model [{}]. This model is probably corrupted. Model will not be animated.",
               file_name
             );
-            bone_animations.clear();
+            bone_animation_channels.clear();
             break;
           };
 
+          let bone_id = channel.target().node().index() as i32;
+
           match keyframes {
-            Keyframes::Translation(_) => todo!(),
+            Keyframes::Translation(translations) => {
+              let gotten_animation_channel = bone_animation_channels.entry(bone_id).or_default();
+              if !gotten_animation_channel.translations.is_empty() {
+                error!("minetest-gltf: Overwriting node (bone) channel [{}]'s translation data! Model [{}] is broken! This is now a static model", bone_id, file_name);
+                bone_animation_channels.clear();
+                break;
+              }
+              gotten_animation_channel.translations = translations;
+            }
             Keyframes::Rotation(_) => todo!(),
             Keyframes::Scale(_) => todo!(),
             Keyframes::Weights(_) => todo!(),
-        }
+          }
 
           // bone_animations.push(BoneAnimation {
           //   name: first_animation.name().unwrap_or("default").to_string(),
@@ -225,7 +232,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
         // * Something blew up, it's now a static model.
         Err(e) => {
           error!("{}", e);
-          bone_animations.clear();
+          bone_animation_channels.clear();
           break;
         }
       }
@@ -241,9 +248,10 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
     scenes.push(Scene::load(scene, &mut data, load_materials));
   }
 
+  //MC9512H126V
   Ok(MineGLTF {
     scenes,
-    bone_animations,
+    bone_animations: bone_animation_channels,
   })
 }
 
@@ -497,10 +505,12 @@ mod tests {
       Err(e) => panic!("spider: failed to load. {}", e),
     };
 
-    let _animation = match spider.animations.first() {
-      Some(anim) => anim,
-      None => panic!("spider: has no animation!"),
-    };
+    assert!(!spider.bone_animations.is_empty());
+
+    // let _animation = match spider.bone_animations. {
+    //   Some(anim) => anim,
+    //   None => panic!("spider: has no animation!"),
+    // };
 
     // let keyframe = animation.keyframes
   }
