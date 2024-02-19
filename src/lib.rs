@@ -208,11 +208,18 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
             break;
           };
 
-          bone_animations.push(BoneAnimation {
-            name: first_animation.name().unwrap_or("default").to_string(),
-            keyframes,
-            timestamps,
-          })
+          match keyframes {
+            Keyframes::Translation(_) => todo!(),
+            Keyframes::Rotation(_) => todo!(),
+            Keyframes::Scale(_) => todo!(),
+            Keyframes::Weights(_) => todo!(),
+        }
+
+          // bone_animations.push(BoneAnimation {
+          //   name: first_animation.name().unwrap_or("default").to_string(),
+          //   keyframes,
+          //   timestamps,
+          // })
         }
 
         // * Something blew up, it's now a static model.
@@ -236,7 +243,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
 
   Ok(MineGLTF {
     scenes,
-    animations: bone_animations,
+    bone_animations,
   })
 }
 
