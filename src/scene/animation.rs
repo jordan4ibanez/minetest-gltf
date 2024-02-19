@@ -24,6 +24,8 @@ pub struct BoneAnimationChannel {
   pub rotations: Vec<Quat>,
   /// Scale data.
   pub scales: Vec<Vec3>,
+  /// Weight data.
+  pub weights: Vec<f32>,
   /// Keyframe timestamps.
   pub timestamps: Vec<f32>,
 }
@@ -38,6 +40,7 @@ impl BoneAnimationChannel {
       rotations: vec![],
       scales: vec![],
       timestamps: vec![],
+      weights: vec![],
     }
   }
 }
