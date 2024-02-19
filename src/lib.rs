@@ -207,26 +207,62 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
 
           let bone_id = channel.target().node().index() as i32;
 
+          println!(
+            "bone: [{}] | timestamps len: [{}]",
+            bone_id,
+            timestamps.len()
+          );
+
           match keyframes {
             Keyframes::Translation(translations) => {
               let gotten_animation_channel = bone_animation_channels.entry(bone_id).or_default();
+
+              // * If the animation already has translation for this node (bone), that means that something has gone horribly wrong.
               if !gotten_animation_channel.translations.is_empty() {
-                error!("minetest-gltf: Overwriting node (bone) channel [{}]'s translation data! Model [{}] is broken! This is now a static model", bone_id, file_name);
+                error!("minetest-gltf: Attempted to overwrite node (bone) channel [{}]'s translation animation data! Model [{}] is broken! This is now a static model", bone_id, file_name);
                 bone_animation_channels.clear();
                 break;
               }
+
               gotten_animation_channel.translations = translations;
             }
-            Keyframes::Rotation(_) => todo!(),
-            Keyframes::Scale(_) => todo!(),
-            Keyframes::Weights(_) => todo!(),
-          }
+            Keyframes::Rotation(rotations) => {
+              let gotten_animation_channel = bone_animation_channels.entry(bone_id).or_default();
 
-          // bone_animations.push(BoneAnimation {
-          //   name: first_animation.name().unwrap_or("default").to_string(),
-          //   keyframes,
-          //   timestamps,
-          // })
+              // * If the animation already has rotation for this node (bone), that means that something has gone horribly wrong.
+              if !gotten_animation_channel.rotations.is_empty() {
+                error!("minetest-gltf: Attempted to overwrite node (bone) channel [{}]'s rotation animation data! Model [{}] is broken! This is now a static model", bone_id, file_name);
+                bone_animation_channels.clear();
+                break;
+              }
+
+              gotten_animation_channel.rotations = rotations;
+            }
+            Keyframes::Scale(scales) => {
+              let gotten_animation_channel = bone_animation_channels.entry(bone_id).or_default();
+
+              // * If the animation already has scale for this node (bone), that means that something has gone horribly wrong.
+              if !gotten_animation_channel.scales.is_empty() {
+                error!("minetest-gltf: Attempted to overwrite node (bone) channel [{}]'s scale animation data! Model [{}] is broken! This is now a static model", bone_id, file_name);
+                bone_animation_channels.clear();
+                break;
+              }
+
+              gotten_animation_channel.scales = scales;
+            }
+            Keyframes::Weights(weights) => {
+              let gotten_animation_channel = bone_animation_channels.entry(bone_id).or_default();
+
+              // * If the animation already has weight for this node (bone), that means that something has gone horribly wrong.
+              if !gotten_animation_channel.weights.is_empty() {
+                error!("minetest-gltf: Attempted to overwrite node (bone) channel [{}]'s weight animation data! Model [{}] is broken! This is now a static model", bone_id, file_name);
+                bone_animation_channels.clear();
+                break;
+              }
+
+              gotten_animation_channel.weights = weights;
+            }
+          }
         }
 
         // * Something blew up, it's now a static model.
@@ -507,10 +543,9 @@ mod tests {
 
     assert!(!spider.bone_animations.is_empty());
 
-    // let _animation = match spider.bone_animations. {
-    //   Some(anim) => anim,
-    //   None => panic!("spider: has no animation!"),
-    // };
+    let animations = spider.bone_animations;
+
+    println!("LFASFKLDSAJFKLASJF {},", animations.len());
 
     // let keyframe = animation.keyframes
   }
