@@ -168,7 +168,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
       } else {
         Err(format!("minetest-gltf: No animation data detected in animation channel [{}]. [{}] is probably a broken model. Model will not be animated.", channel_index, file_name))
       };
-
+      
       // * If something blows up when parsing the model animations, it's now a static model.
       match result_timestamps {
         Ok(timestamps) => {
@@ -336,6 +336,8 @@ mod tests {
 
   #[test]
   fn load_snowman() {
+    drop(env_logger::try_init());
+
     let mine_gltf = match load("tests/snowman.gltf", false) {
       Ok(mine_gltf) => {
         println!("Snowman loaded!");
@@ -352,6 +354,8 @@ mod tests {
 
   #[test]
   fn check_cube_glb() {
+    drop(env_logger::try_init());
+
     let mine_gltf = match load("tests/cube.glb", true) {
       Ok(mine_gltf) => {
         println!("Cube loaded!");
@@ -369,6 +373,8 @@ mod tests {
 
   #[test]
   fn check_different_meshes() {
+    drop(env_logger::try_init());
+
     let mine_gltf = match load("tests/complete.glb", true) {
       Ok(mine_gltf) => {
         println!("Complete loaded!");
@@ -395,6 +401,8 @@ mod tests {
 
   #[test]
   fn check_cube_gltf() {
+    drop(env_logger::try_init());
+
     let _ = match load("tests/cube_classic.gltf", true) {
       Ok(mine_gltf) => {
         println!("cube_classic loaded!");
@@ -406,6 +414,8 @@ mod tests {
 
   #[test]
   fn check_default_texture() {
+    drop(env_logger::try_init());
+
     let _ = match load("tests/box_sparse.glb", true) {
       Ok(mine_gltf) => {
         println!("box_sparse loaded!");
@@ -417,6 +427,8 @@ mod tests {
 
   #[test]
   fn check_camera() {
+    drop(env_logger::try_init());
+
     let mine_gltf = match load("tests/cube.glb", true) {
       Ok(mine_gltf) => {
         println!("cube loaded!");
@@ -431,6 +443,8 @@ mod tests {
 
   #[test]
   fn check_lights() {
+    drop(env_logger::try_init());
+
     let mine_gltf = match load("tests/cube.glb", true) {
       Ok(mine_gltf) => {
         println!("cube loaded!");
@@ -479,6 +493,8 @@ mod tests {
 
   #[test]
   fn check_model() {
+    drop(env_logger::try_init());
+
     let mine_gltf = match load("tests/cube.glb", true) {
       Ok(mine_gltf) => {
         println!("cube loaded!");
@@ -510,6 +526,8 @@ mod tests {
 
   #[test]
   fn check_material() {
+    drop(env_logger::try_init());
+
     let mine_gltf = match load("tests/head.glb", true) {
       Ok(mine_gltf) => {
         println!("head loaded!");
@@ -528,11 +546,15 @@ mod tests {
 
   #[test]
   fn check_invalid_path() {
+    drop(env_logger::try_init());
+
     assert!(load("tests/invalid.glb", true).is_err());
   }
 
   #[test]
   fn test_the_spider_animations() {
+    drop(env_logger::try_init());
+
     let spider = match load("tests/spider_animated.gltf", true) {
       Ok(mine_gltf) => {
         println!("spider loaded!");
