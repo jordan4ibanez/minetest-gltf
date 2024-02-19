@@ -16,9 +16,8 @@ pub enum Keyframes {
 }
 
 /// Container containing raw TRS animation data for a node (bone).
-pub struct BoneAnimation {
-  /// The name of the animation.
-  pub name: String,
+#[derive(Default)]
+pub struct BoneAnimationChannel {
   /// Translation data.
   pub translations: Vec<Vec3>,
   /// Rotation data.
@@ -29,4 +28,16 @@ pub struct BoneAnimation {
   pub timestamps: Vec<f32>,
 }
 
-
+impl BoneAnimationChannel {
+  ///
+  /// Create new bone animation.
+  ///
+  pub fn new() -> Self {
+    BoneAnimationChannel {
+      translations: vec![],
+      rotations: vec![],
+      scales: vec![],
+      timestamps: vec![],
+    }
+  }
+}
