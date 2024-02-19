@@ -29,14 +29,4 @@ pub struct BoneAnimation {
   pub timestamps: Vec<f32>,
 }
 
-impl Default for BoneAnimation {
-  fn default() -> Self {
-    Self {
-      name: Default::default(),
-      translations: Default::default(),
-      rotations: Default::default(),
-      scales: Default::default(),
-      timestamps: Default::default(),
-    }
-  }
-}
+
