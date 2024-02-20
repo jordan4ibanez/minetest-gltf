@@ -168,7 +168,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
       } else {
         Err(format!("minetest-gltf: No animation data detected in animation channel [{}]. [{}] is probably a broken model. Model will not be animated.", channel_index, file_name))
       };
-      
+
       // * If something blows up when parsing the model animations, it's now a static model.
       match result_timestamps {
         Ok(timestamps) => {
@@ -187,13 +187,16 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
               util::ReadOutputs::Scales(scale) => {
                 Keyframes::Scale(scale.map(Vec3::from_array).collect())
               }
-              util::ReadOutputs::MorphTargetWeights(target_weight) => match target_weight {
-                util::MorphTargetWeights::I8(weights) => weightify!(weights),
-                util::MorphTargetWeights::U8(weights) => weightify!(weights),
-                util::MorphTargetWeights::I16(weights) => weightify!(weights),
-                util::MorphTargetWeights::U16(weights) => weightify!(weights),
-                util::MorphTargetWeights::F32(weights) => weightify!(weights),
-              },
+              util::ReadOutputs::MorphTargetWeights(target_weight) => {
+                error!("weights found");
+                match target_weight {
+                  util::MorphTargetWeights::I8(weights) => weightify!(weights),
+                  util::MorphTargetWeights::U8(weights) => weightify!(weights),
+                  util::MorphTargetWeights::I16(weights) => weightify!(weights),
+                  util::MorphTargetWeights::U16(weights) => weightify!(weights),
+                  util::MorphTargetWeights::F32(weights) => weightify!(weights),
+                }
+              }
             }
           } else {
             // * Something blew up, it's now a static model.
@@ -332,24 +335,6 @@ mod tests {
         panic!();
       }
     };
-  }
-
-  #[test]
-  fn load_snowman() {
-    drop(env_logger::try_init());
-
-    let mine_gltf = match load("tests/snowman.gltf", false) {
-      Ok(mine_gltf) => {
-        println!("Snowman loaded!");
-        mine_gltf
-      }
-      Err(e) => panic!("Snowman: failed to load. {}", e),
-    };
-
-    match mine_gltf.scenes.first() {
-      Some(scene) => assert_eq!(scene.models.len(), 5),
-      None => panic!("Snowman: has no scenes."),
-    }
   }
 
   #[test]
@@ -552,6 +537,24 @@ mod tests {
   }
 
   #[test]
+  fn load_snowman() {
+    drop(env_logger::try_init());
+
+    let mine_gltf = match load("tests/snowman.gltf", false) {
+      Ok(mine_gltf) => {
+        println!("Snowman loaded!");
+        mine_gltf
+      }
+      Err(e) => panic!("Snowman: failed to load. {}", e),
+    };
+
+    match mine_gltf.scenes.first() {
+      Some(scene) => assert_eq!(scene.models.len(), 5),
+      None => panic!("Snowman: has no scenes."),
+    }
+  }
+
+  #[test]
   fn test_the_spider_animations() {
     drop(env_logger::try_init());
 
@@ -567,8 +570,26 @@ mod tests {
 
     let animations = spider.bone_animations;
 
-    println!("LFASFKLDSAJFKLASJF {},", animations.len());
+    println!("spider animations: {},", animations.len());
 
     // let keyframe = animation.keyframes
+  }
+
+  #[test]
+  fn load_simple_skin() {
+    drop(env_logger::try_init());
+
+    let mine_gltf = match load("tests/simple_skin.gltf", false) {
+      Ok(mine_gltf) => {
+        println!("simple_skin loaded!");
+        mine_gltf
+      }
+      Err(e) => panic!("simple_skin: failed to load. {}", e),
+    };
+
+    match mine_gltf.scenes.first() {
+      Some(scene) => assert_eq!(scene.models.len(), 1),
+      None => panic!("simple_skin: has no scenes."),
+    }
   }
 }
