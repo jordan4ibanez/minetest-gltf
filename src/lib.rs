@@ -187,16 +187,13 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
               util::ReadOutputs::Scales(scale) => {
                 Keyframes::Scale(scale.map(Vec3::from_array).collect())
               }
-              util::ReadOutputs::MorphTargetWeights(target_weight) => {
-                error!("weights found");
-                match target_weight {
-                  util::MorphTargetWeights::I8(weights) => weightify!(weights),
-                  util::MorphTargetWeights::U8(weights) => weightify!(weights),
-                  util::MorphTargetWeights::I16(weights) => weightify!(weights),
-                  util::MorphTargetWeights::U16(weights) => weightify!(weights),
-                  util::MorphTargetWeights::F32(weights) => weightify!(weights),
-                }
-              }
+              util::ReadOutputs::MorphTargetWeights(target_weight) => match target_weight {
+                util::MorphTargetWeights::I8(weights) => weightify!(weights),
+                util::MorphTargetWeights::U8(weights) => weightify!(weights),
+                util::MorphTargetWeights::I16(weights) => weightify!(weights),
+                util::MorphTargetWeights::U16(weights) => weightify!(weights),
+                util::MorphTargetWeights::F32(weights) => weightify!(weights),
+              },
             }
           } else {
             // * Something blew up, it's now a static model.
@@ -210,11 +207,11 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
 
           let bone_id = channel.target().node().index() as i32;
 
-          println!(
-            "bone: [{}] | timestamps len: [{}]",
-            bone_id,
-            timestamps.len()
-          );
+          // println!(
+          //   "bone: [{}] | timestamps len: [{}]",
+          //   bone_id,
+          //   timestamps.len()
+          // );
 
           match keyframes {
             Keyframes::Translation(translations) => {
@@ -255,6 +252,10 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
             }
             Keyframes::Weights(weights) => {
               let gotten_animation_channel = bone_animation_channels.entry(bone_id).or_default();
+
+              error!("timestamp amount: {}", timestamps.len());
+
+              println!("{:?}", timestamps);
 
               // * If the animation already has weight for this node (bone), that means that something has gone horribly wrong.
               if !gotten_animation_channel.weights.is_empty() {
