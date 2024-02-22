@@ -20,14 +20,25 @@ pub enum Keyframes {
 pub struct BoneAnimationChannel {
   /// Translation data.
   pub translations: Vec<Vec3>,
+  /// Translation timestamp data.
+  pub translation_timestamps: Vec<f32>,
+
   /// Rotation data.
   pub rotations: Vec<Quat>,
+  /// Rotation timestamp data.
+  pub rotation_timestamps: Vec<f32>,
+
   /// Scale data.
   pub scales: Vec<Vec3>,
+  /// Scale timestamp data.
+  pub scale_timestamps: Vec<f32>,
+
   /// Weight data.
   pub weights: Vec<f32>,
-  /// Keyframe timestamps.
-  pub timestamps: Vec<f32>,
+  /// Not sure why you'll need this but it's here.
+  ///
+  /// Weight timestamp data.
+  pub weights_timestamps: Vec<f32>,
 }
 
 impl BoneAnimationChannel {
@@ -37,10 +48,13 @@ impl BoneAnimationChannel {
   pub fn new() -> Self {
     BoneAnimationChannel {
       translations: vec![],
+      translation_timestamps: vec![],
       rotations: vec![],
+      rotation_timestamps: vec![],
       scales: vec![],
-      timestamps: vec![],
+      scale_timestamps: vec![],
       weights: vec![],
+      weights_timestamps: vec![],
     }
   }
 }
