@@ -215,30 +215,57 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
 
           match keyframes {
             Keyframes::Translation(translations) => {
-              let gotten_animation_channel = bone_animation_channels.entry(bone_id).or_default();
+              let animation_channel = bone_animation_channels.entry(bone_id).or_default();
 
               // * If the animation already has translation for this node (bone), that means that something has gone horribly wrong.
-              if !gotten_animation_channel.translations.is_empty() {
-                error!("minetest-gltf: Attempted to overwrite node (bone) channel [{}]'s translation animation data! Model [{}] is broken! This is now a static model", bone_id, file_name);
+              if !animation_channel.translations.is_empty() {
+                error!("minetest-gltf: Attempted to overwrite node (bone) channel [{}]'s translation animation data! Model [{}] is broken! This is now a static model.", bone_id, file_name);
                 bone_animation_channels.clear();
                 break;
               }
 
-              gotten_animation_channel.translations = translations;
-              gotten_animation_channel.translation_timestamps = timestamps;
+              // * If the translation animation channel data does not match the length of timestamp data, it blew up.
+              if translations.len() != timestamps.len() {
+                error!(
+                  "minetest-gltf: Mismatched node (bone) translations length in channel [{}] of model [{}]. [{}] translation compared to [{}] timestamps. This is now a static model.", 
+                  bone_id,
+                  file_name,
+                  translations.len(),
+                  timestamps.len());
+
+                bone_animation_channels.clear();
+                break;
+              }
+
+              animation_channel.translations = translations;
+              animation_channel.translation_timestamps = timestamps;
             }
+
             Keyframes::Rotation(rotations) => {
-              let gotten_animation_channel = bone_animation_channels.entry(bone_id).or_default();
+              let animation_channel = bone_animation_channels.entry(bone_id).or_default();
 
               // * If the animation already has rotation for this node (bone), that means that something has gone horribly wrong.
-              if !gotten_animation_channel.rotations.is_empty() {
-                error!("minetest-gltf: Attempted to overwrite node (bone) channel [{}]'s rotation animation data! Model [{}] is broken! This is now a static model", bone_id, file_name);
+              if !animation_channel.rotations.is_empty() {
+                error!("minetest-gltf: Attempted to overwrite node (bone) channel [{}]'s rotation animation data! Model [{}] is broken! This is now a static model.", bone_id, file_name);
                 bone_animation_channels.clear();
                 break;
               }
 
-              gotten_animation_channel.rotations = rotations;
-              gotten_animation_channel.rotation_timestamps = timestamps;
+              // * If the rotations animation channel data does not match the length of timestamp data, it blew up.
+              if rotations.len() != timestamps.len() {
+                error!(
+                  "minetest-gltf: Mismatched node (bone) rotations length in channel [{}] of model [{}]. [{}] rotation compared to [{}] timestamps. This is now a static model.", 
+                  bone_id,
+                  file_name,
+                  rotations.len(),
+                  timestamps.len());
+
+                bone_animation_channels.clear();
+                break;
+              }
+
+              animation_channel.rotations = rotations;
+              animation_channel.rotation_timestamps = timestamps;
             }
             Keyframes::Scale(scales) => {
               let gotten_animation_channel = bone_animation_channels.entry(bone_id).or_default();
@@ -246,6 +273,19 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
               // * If the animation already has scale for this node (bone), that means that something has gone horribly wrong.
               if !gotten_animation_channel.scales.is_empty() {
                 error!("minetest-gltf: Attempted to overwrite node (bone) channel [{}]'s scale animation data! Model [{}] is broken! This is now a static model", bone_id, file_name);
+                bone_animation_channels.clear();
+                break;
+              }
+
+              // * If the scales animation channel data does not match the length of timestamp data, it blew up.
+              if scales.len() != timestamps.len() {
+                error!(
+                  "minetest-gltf: Mismatched node (bone) scales length in channel [{}] of model [{}]. [{}] scale compared to [{}] timestamps. This is now a static model.", 
+                  bone_id,
+                  file_name,
+                  scales.len(),
+                  timestamps.len());
+
                 bone_animation_channels.clear();
                 break;
               }
@@ -262,6 +302,8 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
                 bone_animation_channels.clear();
                 break;
               }
+
+              // ? We don't do a timestamp comparison here because weights probably shouldn't have timestamp data anyways??
 
               gotten_animation_channel.weights = weights;
               gotten_animation_channel.weights_timestamps = timestamps;
