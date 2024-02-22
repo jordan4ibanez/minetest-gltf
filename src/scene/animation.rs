@@ -38,7 +38,7 @@ pub struct BoneAnimationChannel {
   /// Not sure why you'll need this but it's here.
   ///
   /// Weight timestamp data.
-  pub weights_timestamps: Vec<f32>,
+  pub weight_timestamps: Vec<f32>,
 }
 
 impl BoneAnimationChannel {
@@ -54,7 +54,7 @@ impl BoneAnimationChannel {
       scales: vec![],
       scale_timestamps: vec![],
       weights: vec![],
-      weights_timestamps: vec![],
+      weight_timestamps: vec![],
     }
   }
 }

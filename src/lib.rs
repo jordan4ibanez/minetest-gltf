@@ -306,7 +306,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
               // ? We don't do a timestamp comparison here because weights probably shouldn't have timestamp data anyways??
 
               gotten_animation_channel.weights = weights;
-              gotten_animation_channel.weights_timestamps = timestamps;
+              gotten_animation_channel.weight_timestamps = timestamps;
             }
           }
         }
@@ -633,6 +633,25 @@ mod tests {
     match mine_gltf.scenes.first() {
       Some(scene) => assert_eq!(scene.models.len(), 1),
       None => panic!("simple_skin: has no scenes."),
+    }
+
+    // This one's a curve ball. This is an ultra simple model so let's see if tries to iterate more than one channel!
+    for (_, channel) in mine_gltf.bone_animations {
+      assert!(
+        channel.translation_timestamps.len() == channel.translations.len()
+          && channel.translations.is_empty()
+      );
+
+      assert!(
+        channel.rotation_timestamps.len() == channel.rotations.len()
+          && channel.rotations.len() == 12
+      );
+
+      assert!(channel.scale_timestamps.len() == channel.scales.len() && channel.scales.is_empty());
+
+      assert!(
+        channel.weight_timestamps.len() == channel.weights.len() && channel.weights.is_empty()
+      );
     }
   }
 }
