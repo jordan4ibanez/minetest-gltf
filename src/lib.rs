@@ -225,6 +225,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
               }
 
               gotten_animation_channel.translations = translations;
+              gotten_animation_channel.translation_timestamps = timestamps;
             }
             Keyframes::Rotation(rotations) => {
               let gotten_animation_channel = bone_animation_channels.entry(bone_id).or_default();
@@ -237,6 +238,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
               }
 
               gotten_animation_channel.rotations = rotations;
+              gotten_animation_channel.rotation_timestamps = timestamps;
             }
             Keyframes::Scale(scales) => {
               let gotten_animation_channel = bone_animation_channels.entry(bone_id).or_default();
@@ -249,13 +251,10 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
               }
 
               gotten_animation_channel.scales = scales;
+              gotten_animation_channel.scale_timestamps = timestamps;
             }
             Keyframes::Weights(weights) => {
               let gotten_animation_channel = bone_animation_channels.entry(bone_id).or_default();
-
-              error!("timestamp amount: {}", timestamps.len());
-
-              println!("{:?}", timestamps);
 
               // * If the animation already has weight for this node (bone), that means that something has gone horribly wrong.
               if !gotten_animation_channel.weights.is_empty() {
@@ -265,6 +264,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
               }
 
               gotten_animation_channel.weights = weights;
+              gotten_animation_channel.weights_timestamps = timestamps;
             }
           }
         }
