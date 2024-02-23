@@ -145,6 +145,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
   let mut data = GltfData::new(buffers.clone(), images, path);
 
   // Convert gltf -> minetest_gltf
+  // ! THIS SHOULD ONLY DO THE FIRST SCENE !
   let mut scenes = vec![];
   for scene in gltf_data.scenes() {
     scenes.push(Scene::load(scene, &mut data, load_materials));
