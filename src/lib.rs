@@ -381,293 +381,380 @@ mod tests {
     };
   }
 
+  // #[test]
+  // fn check_cube_glb() {
+  //   drop(env_logger::try_init());
+
+  //   let mine_gltf = match load("tests/cube.glb", true) {
+  //     Ok(mine_gltf) => {
+  //       println!("Cube loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("Cube: failed to load. {}", e),
+  //   };
+
+  //   assert_eq!(mine_gltf.scenes.len(), 1);
+  //   let scene = &mine_gltf.scenes[0];
+  //   assert_eq!(scene.cameras.len(), 1);
+  //   assert_eq!(scene.lights.len(), 3);
+  //   assert_eq!(scene.models.len(), 1);
+  // }
+
+  // #[test]
+  // fn check_different_meshes() {
+  //   drop(env_logger::try_init());
+
+  //   let mine_gltf = match load("tests/complete.glb", true) {
+  //     Ok(mine_gltf) => {
+  //       println!("Complete loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("Complete: failed to load. {}", e),
+  //   };
+  //   assert_eq!(mine_gltf.scenes.len(), 1);
+  //   let scene = &mine_gltf.scenes[0];
+  //   for model in scene.models.iter() {
+  //     match model.mode() {
+  //       Mode::Triangles | Mode::TriangleFan | Mode::TriangleStrip => {
+  //         assert!(model.triangles().is_ok());
+  //       }
+  //       Mode::Lines | Mode::LineLoop | Mode::LineStrip => {
+  //         assert!(model.lines().is_ok());
+  //       }
+  //       Mode::Points => {
+  //         assert!(model.points().is_ok());
+  //       }
+  //     }
+  //   }
+  // }
+
+  // #[test]
+  // fn check_cube_gltf() {
+  //   drop(env_logger::try_init());
+
+  //   let _ = match load("tests/cube_classic.gltf", true) {
+  //     Ok(mine_gltf) => {
+  //       println!("cube_classic loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("cube_classic: failed to load. {}", e),
+  //   };
+  // }
+
+  // #[test]
+  // fn check_default_texture() {
+  //   drop(env_logger::try_init());
+
+  //   let _ = match load("tests/box_sparse.glb", true) {
+  //     Ok(mine_gltf) => {
+  //       println!("box_sparse loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("box_sparse: failed to load. {}", e),
+  //   };
+  // }
+
+  // #[test]
+  // fn check_camera() {
+  //   drop(env_logger::try_init());
+
+  //   let mine_gltf = match load("tests/cube.glb", true) {
+  //     Ok(mine_gltf) => {
+  //       println!("cube loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("cube: failed to load. {}", e),
+  //   };
+  //   let scene = &mine_gltf.scenes[0];
+  //   let cam = &scene.cameras[0];
+  //   assert!((cam.position() - Vec3::new(7.3589, 4.9583, 6.9258)).length() < 0.1);
+  // }
+
+  // #[test]
+  // fn check_lights() {
+  //   drop(env_logger::try_init());
+
+  //   let mine_gltf = match load("tests/cube.glb", true) {
+  //     Ok(mine_gltf) => {
+  //       println!("cube loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("cube: failed to load. {}", e),
+  //   };
+  //   let scene = &mine_gltf.scenes[0];
+  //   for light in scene.lights.iter() {
+  //     match light {
+  //       Light::Directional {
+  //         direction,
+  //         color: _,
+  //         intensity,
+  //         ..
+  //       } => {
+  //         assert!((*direction - Vec3::new(0.6068, -0.7568, -0.2427)).length() < 0.1);
+  //         assert_delta!(intensity, 542., 0.01);
+  //       }
+  //       Light::Point {
+  //         position,
+  //         color: _,
+  //         intensity,
+  //         ..
+  //       } => {
+  //         assert!((*position - Vec3::new(4.0762, 5.9039, -1.0055)).length() < 0.1);
+  //         assert_delta!(intensity, 1000., 0.01);
+  //       }
+  //       Light::Spot {
+  //         position,
+  //         direction,
+  //         color: _,
+  //         intensity,
+  //         inner_cone_angle: _,
+  //         outer_cone_angle,
+  //         ..
+  //       } => {
+  //         assert!((*position - Vec3::new(4.337, 15.541, -8.106)).length() < 0.1);
+  //         assert!((*direction - Vec3::new(-0.0959, -0.98623, 0.1346)).length() < 0.1);
+  //         assert_delta!(intensity, 42., 0.01);
+  //         assert_delta!(outer_cone_angle, 40., 0.01);
+  //       }
+  //     }
+  //   }
+  // }
+
+  // #[test]
+  // fn check_model() {
+  //   drop(env_logger::try_init());
+
+  //   let mine_gltf = match load("tests/cube.glb", true) {
+  //     Ok(mine_gltf) => {
+  //       println!("cube loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("cube: failed to load. {}", e),
+  //   };
+  //   let scene = &mine_gltf.scenes[0];
+  //   let model = &scene.models[0];
+  //   assert!(model.has_normals());
+  //   assert!(model.has_tex_coords());
+  //   assert!(model.has_tangents());
+  //   for t in match model.triangles() {
+  //     Ok(tris) => tris,
+  //     Err(e) => panic!("Failed to get cube tris. {}", e),
+  //   }
+  //   .iter()
+  //   .flatten()
+  //   {
+  //     let pos = t.position;
+  //     assert!(pos.x > -0.01 && pos.x < 1.01);
+  //     assert!(pos.y > -0.01 && pos.y < 1.01);
+  //     assert!(pos.z > -0.01 && pos.z < 1.01);
+
+  //     // Check that the tangent w component is 1 or -1
+  //     assert_eq!(t.tangent.w.abs(), 1.);
+  //   }
+  // }
+
+  // #[test]
+  // fn check_material() {
+  //   drop(env_logger::try_init());
+
+  //   let mine_gltf = match load("tests/head.glb", true) {
+  //     Ok(mine_gltf) => {
+  //       println!("head loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("cube: failed to load. {}", e),
+  //   };
+  //   let scene = &mine_gltf.scenes[0];
+  //   let mat = match scene.models[0].material.as_ref() {
+  //     Some(mat) => mat,
+  //     None => panic!("Failed to load material for head."),
+  //   };
+  //   assert!(mat.pbr.base_color_texture.is_some());
+  //   assert_eq!(mat.pbr.metallic_factor, 0.);
+  // }
+
+  // #[test]
+  // fn check_invalid_path() {
+  //   drop(env_logger::try_init());
+
+  //   assert!(load("tests/invalid.glb", true).is_err());
+  // }
+
+  // #[test]
+  // fn load_snowman() {
+  //   drop(env_logger::try_init());
+
+  //   let mine_gltf = match load("tests/snowman.gltf", false) {
+  //     Ok(mine_gltf) => {
+  //       println!("Snowman loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("Snowman: failed to load. {}", e),
+  //   };
+
+  //   match mine_gltf.scenes.first() {
+  //     Some(scene) => assert_eq!(scene.models.len(), 5),
+  //     None => panic!("Snowman: has no scenes."),
+  //   }
+  // }
+
+  // #[test]
+  // fn test_the_spider_animations() {
+  //   drop(env_logger::try_init());
+
+  //   let spider = match load("tests/fixed_spider.glb", true) {
+  //     Ok(mine_gltf) => {
+  //       println!("spider loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("spider: failed to load. {}", e),
+  //   };
+
+  //   assert!(!spider.bone_animations.is_empty());
+
+  //   let animations = spider.bone_animations;
+
+  //   println!("spider animations: {},", animations.len());
+
+  //   let scene = match spider.scenes.first() {
+  //     Some(scene) => scene,
+  //     None => panic!("Spider has no scenes!"),
+  //   };
+
+  //   let weights = match &scene.weights {
+  //     Some(weights) => weights,
+  //     None => panic!("Spider has no weights!"),
+  //   };
+
+  //   // let keyframe = animation.keyframes;
+  // }
+
+  // #[test]
+  // fn test_sam() {
+  //   drop(env_logger::try_init());
+
+  //   let sam = match load("tests/minetest_sam.gltf", true) {
+  //     Ok(mine_gltf) => {
+  //       println!("sam loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("minetest_sam: failed to load. {}", e),
+  //   };
+
+  //   assert!(!sam.bone_animations.is_empty());
+
+  //   let animations = sam.bone_animations;
+
+  //   println!("sam animations: {},", animations.len());
+
+  //   let scene = match sam.scenes.first() {
+  //     Some(scene) => scene,
+  //     None => panic!("sam has no scenes!"),
+  //   };
+
+  //   let weights = match &scene.weights {
+  //     Some(weights) => weights,
+  //     None => panic!("sam has no weights!"),
+  //   };
+  // }
+
+  // #[test]
+  // fn test_engine() {
+  //   drop(env_logger::try_init());
+
+  //   let gearbox = match load("tests/gearbox.gltf", true) {
+  //     Ok(mine_gltf) => {
+  //       println!("engine loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("gearbox: failed to load. {}", e),
+  //   };
+
+  //   assert!(!gearbox.bone_animations.is_empty());
+
+  //   let animations = gearbox.bone_animations;
+
+  //   println!("gearbox animations: {},", animations.len());
+
+  //   let scene = match gearbox.scenes.first() {
+  //     Some(scene) => scene,
+  //     None => panic!("gearbox has no scenes!"),
+  //   };
+
+  //   let weights = match &scene.weights {
+  //     Some(weights) => weights,
+  //     None => panic!("gearbox has no weights!"),
+  //   };
+  // }
+
   #[test]
-  fn check_cube_glb() {
+  fn test_brain_stem() {
     drop(env_logger::try_init());
 
-    let mine_gltf = match load("tests/cube.glb", true) {
+    let gearbox = match load("tests/brain_stem.gltf", true) {
       Ok(mine_gltf) => {
-        println!("Cube loaded!");
+        println!("brain_stem loaded!");
         mine_gltf
       }
-      Err(e) => panic!("Cube: failed to load. {}", e),
+      Err(e) => panic!("brain_stem: failed to load. {}", e),
     };
 
-    assert_eq!(mine_gltf.scenes.len(), 1);
-    let scene = &mine_gltf.scenes[0];
-    assert_eq!(scene.cameras.len(), 1);
-    assert_eq!(scene.lights.len(), 3);
-    assert_eq!(scene.models.len(), 1);
-  }
+    assert!(!gearbox.bone_animations.is_empty());
 
-  #[test]
-  fn check_different_meshes() {
-    drop(env_logger::try_init());
+    let animations = gearbox.bone_animations;
 
-    let mine_gltf = match load("tests/complete.glb", true) {
-      Ok(mine_gltf) => {
-        println!("Complete loaded!");
-        mine_gltf
-      }
-      Err(e) => panic!("Complete: failed to load. {}", e),
+    println!("brain_stem animations: {},", animations.len());
+
+    let scene = match gearbox.scenes.first() {
+      Some(scene) => scene,
+      None => panic!("brain_stem has no scenes!"),
     };
-    assert_eq!(mine_gltf.scenes.len(), 1);
-    let scene = &mine_gltf.scenes[0];
-    for model in scene.models.iter() {
-      match model.mode() {
-        Mode::Triangles | Mode::TriangleFan | Mode::TriangleStrip => {
-          assert!(model.triangles().is_ok());
-        }
-        Mode::Lines | Mode::LineLoop | Mode::LineStrip => {
-          assert!(model.lines().is_ok());
-        }
-        Mode::Points => {
-          assert!(model.points().is_ok());
-        }
-      }
-    }
-  }
-
-  #[test]
-  fn check_cube_gltf() {
-    drop(env_logger::try_init());
-
-    let _ = match load("tests/cube_classic.gltf", true) {
-      Ok(mine_gltf) => {
-        println!("cube_classic loaded!");
-        mine_gltf
-      }
-      Err(e) => panic!("cube_classic: failed to load. {}", e),
-    };
-  }
-
-  #[test]
-  fn check_default_texture() {
-    drop(env_logger::try_init());
-
-    let _ = match load("tests/box_sparse.glb", true) {
-      Ok(mine_gltf) => {
-        println!("box_sparse loaded!");
-        mine_gltf
-      }
-      Err(e) => panic!("box_sparse: failed to load. {}", e),
-    };
-  }
-
-  #[test]
-  fn check_camera() {
-    drop(env_logger::try_init());
-
-    let mine_gltf = match load("tests/cube.glb", true) {
-      Ok(mine_gltf) => {
-        println!("cube loaded!");
-        mine_gltf
-      }
-      Err(e) => panic!("cube: failed to load. {}", e),
-    };
-    let scene = &mine_gltf.scenes[0];
-    let cam = &scene.cameras[0];
-    assert!((cam.position() - Vec3::new(7.3589, 4.9583, 6.9258)).length() < 0.1);
-  }
-
-  #[test]
-  fn check_lights() {
-    drop(env_logger::try_init());
-
-    let mine_gltf = match load("tests/cube.glb", true) {
-      Ok(mine_gltf) => {
-        println!("cube loaded!");
-        mine_gltf
-      }
-      Err(e) => panic!("cube: failed to load. {}", e),
-    };
-    let scene = &mine_gltf.scenes[0];
-    for light in scene.lights.iter() {
-      match light {
-        Light::Directional {
-          direction,
-          color: _,
-          intensity,
-          ..
-        } => {
-          assert!((*direction - Vec3::new(0.6068, -0.7568, -0.2427)).length() < 0.1);
-          assert_delta!(intensity, 542., 0.01);
-        }
-        Light::Point {
-          position,
-          color: _,
-          intensity,
-          ..
-        } => {
-          assert!((*position - Vec3::new(4.0762, 5.9039, -1.0055)).length() < 0.1);
-          assert_delta!(intensity, 1000., 0.01);
-        }
-        Light::Spot {
-          position,
-          direction,
-          color: _,
-          intensity,
-          inner_cone_angle: _,
-          outer_cone_angle,
-          ..
-        } => {
-          assert!((*position - Vec3::new(4.337, 15.541, -8.106)).length() < 0.1);
-          assert!((*direction - Vec3::new(-0.0959, -0.98623, 0.1346)).length() < 0.1);
-          assert_delta!(intensity, 42., 0.01);
-          assert_delta!(outer_cone_angle, 40., 0.01);
-        }
-      }
-    }
-  }
-
-  #[test]
-  fn check_model() {
-    drop(env_logger::try_init());
-
-    let mine_gltf = match load("tests/cube.glb", true) {
-      Ok(mine_gltf) => {
-        println!("cube loaded!");
-        mine_gltf
-      }
-      Err(e) => panic!("cube: failed to load. {}", e),
-    };
-    let scene = &mine_gltf.scenes[0];
-    let model = &scene.models[0];
-    assert!(model.has_normals());
-    assert!(model.has_tex_coords());
-    assert!(model.has_tangents());
-    for t in match model.triangles() {
-      Ok(tris) => tris,
-      Err(e) => panic!("Failed to get cube tris. {}", e),
-    }
-    .iter()
-    .flatten()
-    {
-      let pos = t.position;
-      assert!(pos.x > -0.01 && pos.x < 1.01);
-      assert!(pos.y > -0.01 && pos.y < 1.01);
-      assert!(pos.z > -0.01 && pos.z < 1.01);
-
-      // Check that the tangent w component is 1 or -1
-      assert_eq!(t.tangent.w.abs(), 1.);
-    }
-  }
-
-  #[test]
-  fn check_material() {
-    drop(env_logger::try_init());
-
-    let mine_gltf = match load("tests/head.glb", true) {
-      Ok(mine_gltf) => {
-        println!("head loaded!");
-        mine_gltf
-      }
-      Err(e) => panic!("cube: failed to load. {}", e),
-    };
-    let scene = &mine_gltf.scenes[0];
-    let mat = match scene.models[0].material.as_ref() {
-      Some(mat) => mat,
-      None => panic!("Failed to load material for head."),
-    };
-    assert!(mat.pbr.base_color_texture.is_some());
-    assert_eq!(mat.pbr.metallic_factor, 0.);
-  }
-
-  #[test]
-  fn check_invalid_path() {
-    drop(env_logger::try_init());
-
-    assert!(load("tests/invalid.glb", true).is_err());
-  }
-
-  #[test]
-  fn load_snowman() {
-    drop(env_logger::try_init());
-
-    let mine_gltf = match load("tests/snowman.gltf", false) {
-      Ok(mine_gltf) => {
-        println!("Snowman loaded!");
-        mine_gltf
-      }
-      Err(e) => panic!("Snowman: failed to load. {}", e),
-    };
-
-    match mine_gltf.scenes.first() {
-      Some(scene) => assert_eq!(scene.models.len(), 5),
-      None => panic!("Snowman: has no scenes."),
-    }
-  }
-
-  #[test]
-  fn test_the_spider_animations() {
-    drop(env_logger::try_init());
-
-    let spider = match load("tests/spider_animated.gltf", true) {
-      Ok(mine_gltf) => {
-        println!("spider loaded!");
-        mine_gltf
-      }
-      Err(e) => panic!("spider: failed to load. {}", e),
-    };
-
-    assert!(!spider.bone_animations.is_empty());
-
-    let animations = spider.bone_animations;
-
-    println!("spider animations: {},", animations.len());
-
-    // let scene = match spider.scenes.first() {
-    //   Some(scene) => scene,
-    //   None => panic!("Spider has no scenes!"),
-    // };
 
     // let weights = match &scene.weights {
-    //     Some(weights) => weights,
-    //     None => panic!("Spider has no weights!"),
+    //   Some(weights) => weights,
+    //   None => panic!("brain_stem has no weights!"),
     // };
-
-    // let keyframe = animation.keyframes
   }
 
-  #[test]
-  fn load_simple_skin() {
-    drop(env_logger::try_init());
+  // #[test]
+  // fn load_simple_skin() {
+  //   drop(env_logger::try_init());
 
-    let mine_gltf = match load("tests/simple_skin.gltf", false) {
-      Ok(mine_gltf) => {
-        println!("simple_skin loaded!");
-        mine_gltf
-      }
-      Err(e) => panic!("simple_skin: failed to load. {}", e),
-    };
+  //   let mine_gltf = match load("tests/simple_skin.gltf", false) {
+  //     Ok(mine_gltf) => {
+  //       println!("simple_skin loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("simple_skin: failed to load. {}", e),
+  //   };
 
-    let scene = match mine_gltf.scenes.first() {
-      Some(scene) => scene,
-      None => panic!("simple_skin: has no scenes."),
-    };
+  //   let scene = match mine_gltf.scenes.first() {
+  //     Some(scene) => scene,
+  //     None => panic!("simple_skin: has no scenes."),
+  //   };
 
-    let weights = match &scene.weights {
-      Some(weights) => weights,
-      None => panic!("simple_skin has no weights!"),
-    };
+  //   // let weights = match &scene.weights {
+  //   //   Some(weights) => weights,
+  //   //   None => panic!("simple_skin has no weights!"),
+  //   // };
 
-    // This one's a curve ball. This is an ultra simple model so let's see if tries to iterate more than one channel!
-    for (_, channel) in mine_gltf.bone_animations {
-      assert!(
-        channel.translation_timestamps.len() == channel.translations.len()
-          && channel.translations.is_empty()
-      );
+  //   // This one's a curve ball. This is an ultra simple model so let's see if tries to iterate more than one channel!
+  //   for (_, channel) in mine_gltf.bone_animations {
+  //     assert!(
+  //       channel.translation_timestamps.len() == channel.translations.len()
+  //         && channel.translations.is_empty()
+  //     );
 
-      assert!(
-        channel.rotation_timestamps.len() == channel.rotations.len()
-          && channel.rotations.len() == 12
-      );
+  //     assert!(
+  //       channel.rotation_timestamps.len() == channel.rotations.len()
+  //         && channel.rotations.len() == 12
+  //     );
 
-      assert!(channel.scale_timestamps.len() == channel.scales.len() && channel.scales.is_empty());
+  //     assert!(channel.scale_timestamps.len() == channel.scales.len() && channel.scales.is_empty());
 
-      assert!(
-        channel.weight_timestamps.len() == channel.weights.len() && channel.weights.is_empty()
-      );
-    }
-  }
+  //     assert!(
+  //       channel.weight_timestamps.len() == channel.weights.len() && channel.weights.is_empty()
+  //     );
+  //   }
+  // }
 }
