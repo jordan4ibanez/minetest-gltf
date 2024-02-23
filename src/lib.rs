@@ -142,7 +142,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
   };
 
   // Init data and collection useful for conversion
-  let mut data = GltfData::new(buffers, images, path);
+  let mut data = GltfData::new(buffers.clone(), images, path);
 
   // Convert gltf -> minetest_gltf
   let mut scenes = vec![];
