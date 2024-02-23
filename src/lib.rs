@@ -615,6 +615,16 @@ mod tests {
 
     println!("spider animations: {},", animations.len());
 
+    // let scene = match spider.scenes.first() {
+    //   Some(scene) => scene,
+    //   None => panic!("Spider has no scenes!"),
+    // };
+
+    // let weights = match &scene.weights {
+    //     Some(weights) => weights,
+    //     None => panic!("Spider has no weights!"),
+    // };
+
     // let keyframe = animation.keyframes
   }
 
@@ -630,10 +640,15 @@ mod tests {
       Err(e) => panic!("simple_skin: failed to load. {}", e),
     };
 
-    match mine_gltf.scenes.first() {
-      Some(scene) => assert_eq!(scene.models.len(), 1),
+    let scene = match mine_gltf.scenes.first() {
+      Some(scene) => scene,
       None => panic!("simple_skin: has no scenes."),
-    }
+    };
+
+    let weights = match &scene.weights {
+      Some(weights) => weights,
+      None => panic!("simple_skin has no weights!"),
+    };
 
     // This one's a curve ball. This is an ultra simple model so let's see if tries to iterate more than one channel!
     for (_, channel) in mine_gltf.bone_animations {

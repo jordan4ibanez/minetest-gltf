@@ -12,6 +12,7 @@ use crate::GltfData;
 pub use camera::{Camera, Projection};
 use glam::Mat4;
 pub use light::Light;
+use log::error;
 pub use model::{Material, Model};
 
 use gltf::scene::Node;
@@ -80,6 +81,9 @@ impl Scene {
     }
 
     // Try to load weights.
+    if node.weights().is_none() {
+      error!("oh no");
+    }
     self.weights = node.weights().map(|weights| weights.to_vec());
 
     // Load model
