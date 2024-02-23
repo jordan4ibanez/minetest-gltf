@@ -126,6 +126,26 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
   // Now we need to get the "Document" from the GLTF lib.
   let gltf_data = Gltf::from_reader(model_reader)?;
 
+  // println!(
+  //   "skibbidy: {:?}",
+  //   // gltf_data.meshes().next().unwrap().weights()
+
+  // );
+
+  for (semantic, acc) in gltf_data
+    .meshes()
+    .next()
+    .unwrap()
+    .primitives()
+    .next()
+    .unwrap()
+    .attributes()
+  {
+    println!("semantic: {:?}", semantic)
+  }
+
+  // self.weights = node.weights().map(|weights| weights.to_vec());
+
   // We're going to do some manual integration here.
 
   // We always want the buffer data. We have to clone this, it's basically ripping out ownership from our hands.
@@ -598,36 +618,36 @@ mod tests {
   //   }
   // }
 
-  // #[test]
-  // fn test_the_spider_animations() {
-  //   drop(env_logger::try_init());
+  #[test]
+  fn test_the_spider_animations() {
+    drop(env_logger::try_init());
 
-  //   let spider = match load("tests/fixed_spider.glb", true) {
-  //     Ok(mine_gltf) => {
-  //       println!("spider loaded!");
-  //       mine_gltf
-  //     }
-  //     Err(e) => panic!("spider: failed to load. {}", e),
-  //   };
+    let spider = match load("tests/fixed_spider.glb", true) {
+      Ok(mine_gltf) => {
+        println!("spider loaded!");
+        mine_gltf
+      }
+      Err(e) => panic!("spider: failed to load. {}", e),
+    };
 
-  //   assert!(!spider.bone_animations.is_empty());
+    assert!(!spider.bone_animations.is_empty());
 
-  //   let animations = spider.bone_animations;
+    let animations = spider.bone_animations;
 
-  //   println!("spider animations: {},", animations.len());
+    println!("spider animations: {},", animations.len());
 
-  //   let scene = match spider.scenes.first() {
-  //     Some(scene) => scene,
-  //     None => panic!("Spider has no scenes!"),
-  //   };
+    let scene = match spider.scenes.first() {
+      Some(scene) => scene,
+      None => panic!("Spider has no scenes!"),
+    };
 
-  //   let weights = match &scene.weights {
-  //     Some(weights) => weights,
-  //     None => panic!("Spider has no weights!"),
-  //   };
+    // let weights = match &scene.weights {
+    //   Some(weights) => weights,
+    //   None => panic!("Spider has no weights!"),
+    // };
 
-  //   // let keyframe = animation.keyframes;
-  // }
+    // let keyframe = animation.keyframes;
+  }
 
   // #[test]
   // fn test_sam() {
@@ -687,34 +707,34 @@ mod tests {
   //   };
   // }
 
-  #[test]
-  fn test_brain_stem() {
-    drop(env_logger::try_init());
+  // #[test]
+  // fn test_brain_stem() {
+  //   drop(env_logger::try_init());
 
-    let gearbox = match load("tests/brain_stem.gltf", true) {
-      Ok(mine_gltf) => {
-        println!("brain_stem loaded!");
-        mine_gltf
-      }
-      Err(e) => panic!("brain_stem: failed to load. {}", e),
-    };
+  //   let gearbox = match load("tests/brain_stem.gltf", true) {
+  //     Ok(mine_gltf) => {
+  //       println!("brain_stem loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("brain_stem: failed to load. {}", e),
+  //   };
 
-    assert!(!gearbox.bone_animations.is_empty());
+  //   assert!(!gearbox.bone_animations.is_empty());
 
-    let animations = gearbox.bone_animations;
+  //   let animations = gearbox.bone_animations;
 
-    println!("brain_stem animations: {},", animations.len());
+  //   println!("brain_stem animations: {},", animations.len());
 
-    let scene = match gearbox.scenes.first() {
-      Some(scene) => scene,
-      None => panic!("brain_stem has no scenes!"),
-    };
+  //   let scene = match gearbox.scenes.first() {
+  //     Some(scene) => scene,
+  //     None => panic!("brain_stem has no scenes!"),
+  //   };
 
-    // let weights = match &scene.weights {
-    //   Some(weights) => weights,
-    //   None => panic!("brain_stem has no weights!"),
-    // };
-  }
+  //   // let weights = match &scene.weights {
+  //   //   Some(weights) => weights,
+  //   //   None => panic!("brain_stem has no weights!"),
+  //   // };
+  // }
 
   // #[test]
   // fn load_simple_skin() {

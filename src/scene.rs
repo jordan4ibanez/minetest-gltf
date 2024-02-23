@@ -32,8 +32,6 @@ pub struct Scene {
   pub cameras: Vec<Camera>,
   /// List of lights in the scene.
   pub lights: Vec<Light>,
-  /// List of weights in the scene.
-  pub weights: Option<Vec<f32>>,
 }
 
 impl Scene {
@@ -49,51 +47,8 @@ impl Scene {
       scene.extras = gltf_scene.extras().clone();
     }
 
-    println!("this has {} nodes", gltf_scene.nodes().len());
-
-    if let Some(root_node) = gltf_scene.nodes().next() {
-
-      // if let Some(mesh) = root_node.mesh() {
-      //   for primitive in mesh.primitives() {
-      //     let all_attributes = primitive.attributes();
-
-      //     for (semantic, attribute) in all_attributes {
-      //       println!("{:?}", semantic);
-      //     }
-      //   }
-      // } else {
-      //   error!("no mesh");
-      // }
-    } else {
-      error!("no root node");
-    }
-
     for (index, node) in gltf_scene.nodes().enumerate() {
       scene.read_node(&node, &Mat4::IDENTITY, data, load_materials);
-
-      println!("index: {}", index);
-
-      if let Some(skin) = node.skin() {
-      } else {
-        error!("no skin index {}", index);
-      }
-
-      if let Some(mesh) = node.mesh() {
-      } else {
-        error!("no mesh index {}", index);
-      }
-
-      // Try to load weights and joints.
-      // if let Some(skin) = node.skin() {
-      //   for joint in skin.joints() {
-      //     println!("joint: {}", joint.index());
-      //     for child in joint.children() {
-      //       println!("child: {}", child.index())
-      //     }
-      //   }
-      // } else {
-      //   error!("this doesn't have a skin!");
-      // }
     }
     scene
   }
@@ -122,12 +77,6 @@ impl Scene {
     if let Some(light) = node.light() {
       self.lights.push(Light::load(light, &transform));
     }
-
-    // Try to load weights.
-    if node.weights().is_none() {
-      error!("oh no");
-    }
-    self.weights = node.weights().map(|weights| weights.to_vec());
 
     // Load model
     if let Some(mesh) = node.mesh() {
