@@ -25,12 +25,14 @@ pub struct Scene {
   #[cfg(feature = "extras")]
   /// Scene extra data. Requires the `extras` feature.
   pub extras: gltf::json::extras::Extras,
-  /// List of models in the scene
+  /// List of models in the scene.
   pub models: Vec<Model>,
-  /// List of cameras in the scene
+  /// List of cameras in the scene.
   pub cameras: Vec<Camera>,
-  /// List of lights in the scene
+  /// List of lights in the scene.
   pub lights: Vec<Light>,
+  /// List of weights in the scene.
+  pub weights: Option<Vec<f32>>,
 }
 
 impl Scene {
@@ -59,23 +61,26 @@ impl Scene {
     data: &mut GltfData,
     load_materials: bool,
   ) {
-    // Compute transform of the current node
+    // Compute transform of the current node.
     let transform = *parent_transform * transform_to_matrix(node.transform());
 
-    // Recurse on children
+    // Recurse on children.
     for child in node.children() {
       self.read_node(&child, &transform, data, load_materials);
     }
 
-    // Load camera
+    // Load camera.
     if let Some(camera) = node.camera() {
       self.cameras.push(Camera::load(camera, &transform));
     }
 
-    // Load light
+    // Load light.
     if let Some(light) = node.light() {
       self.lights.push(Light::load(light, &transform));
     }
+
+    // Try to load weights.
+    self.weights = node.weights().map(|weights| weights.to_vec());
 
     // Load model
     if let Some(mesh) = node.mesh() {
