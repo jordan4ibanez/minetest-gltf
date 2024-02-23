@@ -141,6 +141,15 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
     false => None,
   };
 
+  // Init data and collection useful for conversion
+  let mut data = GltfData::new(buffers, images, path);
+
+  // Convert gltf -> minetest_gltf
+  let mut scenes = vec![];
+  for scene in gltf_data.scenes() {
+    scenes.push(Scene::load(scene, &mut data, load_materials));
+  }
+
   // We always want the animation data as well.
   // You can thank: https://whoisryosuke.com/blog/2022/importing-gltf-with-wgpu-and-rust
   let mut bone_animation_channels: AHashMap<i32, BoneAnimationChannel> = AHashMap::new();
@@ -319,15 +328,6 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
         }
       }
     }
-  }
-
-  // Init data and collection useful for conversion
-  let mut data = GltfData::new(buffers, images, path);
-
-  // Convert gltf -> minetest_gltf
-  let mut scenes = vec![];
-  for scene in gltf_data.scenes() {
-    scenes.push(Scene::load(scene, &mut data, load_materials));
   }
 
   //MC9512H126V
