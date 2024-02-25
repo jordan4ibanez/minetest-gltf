@@ -64,16 +64,6 @@ impl Scene {
       self.read_node(&child, &transform, data, load_materials);
     }
 
-    // Load camera.
-    if let Some(camera) = node.camera() {
-      self.cameras.push(Camera::load(camera, &transform));
-    }
-
-    // Load light.
-    if let Some(light) = node.light() {
-      self.lights.push(Light::load(light, &transform));
-    }
-
     // Load model
     if let Some(mesh) = node.mesh() {
       for (i, primitive) in mesh.primitives().enumerate() {
