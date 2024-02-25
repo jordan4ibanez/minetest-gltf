@@ -139,9 +139,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
       primitive.attributes().for_each(|(semantic, attribute)| {
         println!("{:?}", attribute);
       });
-      for (semantic, attribute) in primitive.attributes() {
-        
-      }
+      for (semantic, attribute) in primitive.attributes() {}
     } else {
       is_animated = false;
     }
@@ -162,18 +160,8 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
   // We always want the buffer data. We have to clone this, it's basically ripping out ownership from our hands.
   let buffers = gltf::import_buffers(&gltf_data.clone(), Some(base), gltf_data.blob.clone())?;
 
-  // But we only want the image data if the programmer wants it.
-  let images = match load_materials {
-    true => Some(gltf::import_images(
-      &gltf_data.clone(),
-      Some(base),
-      &buffers,
-    )?),
-    false => None,
-  };
-
   // Init data and collection useful for conversion
-  let mut data = GltfData::new(buffers.clone(), images, path);
+  let mut data = GltfData::new(buffers.clone(), path);
 
   // Convert gltf -> minetest_gltf
   // ! THIS SHOULD ONLY DO THE FIRST SCENE !
@@ -464,85 +452,6 @@ mod tests {
   //     }
   //     Err(e) => panic!("cube_classic: failed to load. {}", e),
   //   };
-  // }
-
-  // #[test]
-  // fn check_default_texture() {
-  //   drop(env_logger::try_init());
-
-  //   let _ = match load("tests/box_sparse.glb", true) {
-  //     Ok(mine_gltf) => {
-  //       println!("box_sparse loaded!");
-  //       mine_gltf
-  //     }
-  //     Err(e) => panic!("box_sparse: failed to load. {}", e),
-  //   };
-  // }
-
-  // #[test]
-  // fn check_camera() {
-  //   drop(env_logger::try_init());
-
-  //   let mine_gltf = match load("tests/cube.glb", true) {
-  //     Ok(mine_gltf) => {
-  //       println!("cube loaded!");
-  //       mine_gltf
-  //     }
-  //     Err(e) => panic!("cube: failed to load. {}", e),
-  //   };
-  //   let scene = &mine_gltf.scenes[0];
-  //   let cam = &scene.cameras[0];
-  //   assert!((cam.position() - Vec3::new(7.3589, 4.9583, 6.9258)).length() < 0.1);
-  // }
-
-  // #[test]
-  // fn check_lights() {
-  //   drop(env_logger::try_init());
-
-  //   let mine_gltf = match load("tests/cube.glb", true) {
-  //     Ok(mine_gltf) => {
-  //       println!("cube loaded!");
-  //       mine_gltf
-  //     }
-  //     Err(e) => panic!("cube: failed to load. {}", e),
-  //   };
-  //   let scene = &mine_gltf.scenes[0];
-  //   for light in scene.lights.iter() {
-  //     match light {
-  //       Light::Directional {
-  //         direction,
-  //         color: _,
-  //         intensity,
-  //         ..
-  //       } => {
-  //         assert!((*direction - Vec3::new(0.6068, -0.7568, -0.2427)).length() < 0.1);
-  //         assert_delta!(intensity, 542., 0.01);
-  //       }
-  //       Light::Point {
-  //         position,
-  //         color: _,
-  //         intensity,
-  //         ..
-  //       } => {
-  //         assert!((*position - Vec3::new(4.0762, 5.9039, -1.0055)).length() < 0.1);
-  //         assert_delta!(intensity, 1000., 0.01);
-  //       }
-  //       Light::Spot {
-  //         position,
-  //         direction,
-  //         color: _,
-  //         intensity,
-  //         inner_cone_angle: _,
-  //         outer_cone_angle,
-  //         ..
-  //       } => {
-  //         assert!((*position - Vec3::new(4.337, 15.541, -8.106)).length() < 0.1);
-  //         assert!((*direction - Vec3::new(-0.0959, -0.98623, 0.1346)).length() < 0.1);
-  //         assert_delta!(intensity, 42., 0.01);
-  //         assert_delta!(outer_cone_angle, 40., 0.01);
-  //       }
-  //     }
-  //   }
   // }
 
   // #[test]
