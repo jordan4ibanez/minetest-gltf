@@ -1,7 +1,5 @@
 /// Contains animation data for the models.
 pub mod animation;
-mod camera;
-mod light;
 /// Contains model and material
 /// # Usage
 /// Check [Model](struct.Model.html) for more information about how to use this module.
@@ -9,9 +7,7 @@ pub mod model;
 
 use crate::utils::transform_to_matrix;
 use crate::GltfData;
-pub use camera::{Camera, Projection};
 use glam::Mat4;
-pub use light::Light;
 use log::error;
 pub use model::{Material, Model};
 
