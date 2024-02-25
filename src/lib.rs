@@ -112,7 +112,7 @@ macro_rules! weightify {
 /// println!("Lights: #{}", scene.lights.len());
 /// println!("Models: #{}", scene.models.len());
 /// ```
-pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error + Send + Sync>> {
+pub fn load(path: &str) -> Result<MineGLTF, Box<dyn Error + Send + Sync>> {
   // Run gltf
 
   // Try to get the file name. If this fails, the path probably doesn't exist.
@@ -167,7 +167,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
   // ! THIS SHOULD ONLY DO THE FIRST SCENE !
   let mut scenes = vec![];
   for scene in gltf_data.scenes() {
-    scenes.push(Scene::load(scene, &mut data, load_materials));
+    scenes.push(Scene::load(scene, &mut data));
   }
 
   // We always want the animation data as well.
@@ -536,7 +536,7 @@ mod tests {
   fn test_the_spider_animations() {
     drop(env_logger::try_init());
 
-    let spider = match load("tests/fixed_spider.glb", true) {
+    let spider = match load("tests/fixed_spider.glb") {
       Ok(mine_gltf) => {
         println!("spider loaded!");
         mine_gltf
