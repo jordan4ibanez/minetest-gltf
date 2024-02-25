@@ -6,6 +6,8 @@ use gltf::scene::Transform;
 
 use crate::{animation::BoneAnimationChannel, Scene};
 
+// todo: consolidate these two structs into one
+
 ///
 /// Raw data container to hold GLTF Scene and Animation data.
 ///
