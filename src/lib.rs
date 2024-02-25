@@ -24,7 +24,6 @@
 
 mod minetest_gltf;
 mod scene;
-mod utils;
 
 use ahash::AHashMap;
 use glam::{Quat, Vec3};
