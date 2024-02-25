@@ -28,10 +28,6 @@ pub struct Scene {
   pub extras: gltf::json::extras::Extras,
   /// List of models in the scene.
   pub models: Vec<Model>,
-  /// List of cameras in the scene.
-  pub cameras: Vec<Camera>,
-  /// List of lights in the scene.
-  pub lights: Vec<Light>,
 }
 
 impl Scene {
