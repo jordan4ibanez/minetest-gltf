@@ -1,5 +1,3 @@
-/// Material module. Handles normal, pbr, occlusions, and emmisive data.
-mod material;
 /// Primitive type module. Tells how to draw. Points, lines, lineloop, linestrip, triangles, trianglestrip, and trianglefan.
 mod mode;
 /// Raw gpu vertex definition module.
@@ -7,9 +5,6 @@ mod vertex;
 
 use crate::utils::*;
 use glam::{Mat4, Vec2, Vec3, Vec4};
-use std::sync::Arc;
-
-pub use material::*;
 pub use mode::*;
 pub use vertex::*;
 
@@ -77,7 +72,6 @@ pub struct Model {
   pub(crate) vertices: Vec<Vertex>,
   pub(crate) indices: Option<Vec<u32>>,
   pub(crate) mode: Mode,
-  pub(crate) material: Option<Arc<Material>>,
   pub(crate) has_normals: bool,
   pub(crate) has_tangents: bool,
   pub(crate) has_tex_coords: bool,
@@ -109,14 +103,6 @@ impl Model {
   /// Primitive extra data. Requires the `extras` feature.
   pub fn primitive_extras(&self) -> &gltf::json::extras::Extras {
     &self.primitive_extras
-  }
-
-  /// Material to apply to the whole model.
-  pub fn material(&self) -> Arc<Material> {
-    match &self.material {
-      Some(material) => material.clone(),
-      None => panic!("minetest-gltf: Attempted to unwrap None material."),
-    }
   }
 
   /// List of raw `vertices` of the model. You might have to use the `indices`
@@ -337,11 +323,6 @@ impl Model {
       false
     };
 
-    let material = match load_materials {
-      true => Some(Material::load(primitive.material(), data)),
-      false => None,
-    };
-
     Model {
       #[cfg(feature = "names")]
       mesh_name: mesh.name().map(String::from),
@@ -352,7 +333,6 @@ impl Model {
       primitive_index,
       vertices,
       indices,
-      material,
       mode: primitive.mode().into(),
       has_normals,
       has_tangents,
