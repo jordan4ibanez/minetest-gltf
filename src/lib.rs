@@ -32,13 +32,12 @@ use gltf::animation::util;
 use gltf::Gltf;
 use itertools::Itertools;
 use log::error;
-use mine_gltf::MineGLTF;
+use mine_gltf::{GltfData, MineGLTF};
 use scene::animation::{BoneAnimationChannel, Keyframes};
 use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
 use std::path::Path;
-use utils::GltfData;
 
 pub use scene::*;
 

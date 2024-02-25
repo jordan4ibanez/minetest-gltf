@@ -3,7 +3,7 @@ mod mode;
 /// Raw gpu vertex definition module.
 mod vertex;
 
-use crate::utils::*;
+use crate::{mine_gltf::GltfData, utils::*};
 use glam::{Mat4, Vec2, Vec3, Vec4};
 pub use mode::*;
 pub use vertex::*;
