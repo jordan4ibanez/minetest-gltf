@@ -27,7 +27,7 @@ pub struct Scene {
 }
 
 impl Scene {
-  pub(crate) fn load(gltf_scene: gltf::Scene, data: &mut GltfData, load_materials: bool) -> Self {
+  pub(crate) fn load(gltf_scene: gltf::Scene, data: &mut GltfData) -> Self {
     let mut scene = Self::default();
 
     #[cfg(feature = "names")]
@@ -40,37 +40,26 @@ impl Scene {
     }
 
     for (index, node) in gltf_scene.nodes().enumerate() {
-      scene.read_node(&node, &Mat4::IDENTITY, data, load_materials);
+      scene.read_node(&node, &Mat4::IDENTITY, data);
     }
     scene
   }
 
-  fn read_node(
-    &mut self,
-    node: &Node,
-    parent_transform: &Mat4,
-    data: &mut GltfData,
-    load_materials: bool,
-  ) {
+  fn read_node(&mut self, node: &Node, parent_transform: &Mat4, data: &mut GltfData) {
     // Compute transform of the current node.
     let transform = *parent_transform * transform_to_matrix(node.transform());
 
     // Recurse on children.
     for child in node.children() {
-      self.read_node(&child, &transform, data, load_materials);
+      self.read_node(&child, &transform, data);
     }
 
     // Load model
     if let Some(mesh) = node.mesh() {
       for (i, primitive) in mesh.primitives().enumerate() {
-        self.models.push(Model::load(
-          &mesh,
-          i,
-          primitive,
-          &transform,
-          data,
-          load_materials,
-        ));
+        self
+          .models
+          .push(Model::load(&mesh, i, primitive, &transform, data));
       }
     }
   }
