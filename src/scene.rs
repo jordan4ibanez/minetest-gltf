@@ -5,7 +5,7 @@ pub mod animation;
 /// Check [Model](struct.Model.html) for more information about how to use this module.
 pub mod model;
 
-use crate::{mine_gltf::transform_to_matrix, GltfData};
+use crate::{minetest_gltf::transform_to_matrix, GltfData};
 use glam::Mat4;
 use log::error;
 pub use model::Model;

@@ -22,7 +22,7 @@
 //! }
 //! ```
 
-mod mine_gltf;
+mod minetest_gltf;
 mod scene;
 mod utils;
 
@@ -32,7 +32,7 @@ use gltf::animation::util;
 use gltf::Gltf;
 use itertools::Itertools;
 use log::error;
-use mine_gltf::{GltfData, MineGLTF};
+use minetest_gltf::{GltfData, MineGLTF};
 use scene::animation::{BoneAnimationChannel, Keyframes};
 use std::error::Error;
 use std::fs::File;
