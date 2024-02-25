@@ -16,9 +16,7 @@
 //! let mine_gltf = minetest_gltf::load("tests/cube.glb", true).expect("Failed to load glTF");
 //! for scene in mine_gltf.scenes {
 //!     println!(
-//!         "Cameras: #{}  Lights: #{}  Models: #{}",
-//!         scene.cameras.len(),
-//!         scene.lights.len(),
+//!         "Models: #{}",
 //!         scene.models.len()
 //!     )
 //! }
