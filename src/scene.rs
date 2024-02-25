@@ -9,7 +9,7 @@ use crate::utils::transform_to_matrix;
 use crate::GltfData;
 use glam::Mat4;
 use log::error;
-pub use model::{Material, Model};
+pub use model::Model;
 
 use gltf::scene::Node;
 
