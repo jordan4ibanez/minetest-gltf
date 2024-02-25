@@ -32,6 +32,7 @@ use ahash::AHashMap;
 use glam::{Quat, Vec3};
 use gltf::animation::util;
 use gltf::Gltf;
+use itertools::Itertools;
 use log::error;
 use mine_gltf::MineGLTF;
 use scene::animation::{BoneAnimationChannel, Keyframes};
@@ -126,25 +127,35 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
   // Now we need to get the "Document" from the GLTF lib.
   let gltf_data = Gltf::from_reader(model_reader)?;
 
-  // println!(
-  //   "skibbidy: {:?}",
-  //   // gltf_data.meshes().next().unwrap().weights()
+  // todo: placeholder currently.
+  let animation_todo: Option<i32> = None;
+  let mut is_animated = true;
 
-  // );
-
-  for (semantic, acc) in gltf_data
-    .meshes()
-    .next()
-    .unwrap()
-    .primitives()
-    .next()
-    .unwrap()
-    .attributes()
-  {
-    println!("semantic: {:?}", semantic)
+  // Only want the first mesh.
+  // ? This can probably be updated to allow complex scenes in the future.
+  // ! fixme: Turn this into a match please.
+  if let Some(mesh) = gltf_data.meshes().next() {
+    if let Some(primitive) = mesh.primitives().next() {
+      primitive.attributes().for_each(|(semantic, attribute)| {
+        println!("{:?}", attribute);
+      });
+      for (semantic, attribute) in primitive.attributes() {
+        
+      }
+    } else {
+      is_animated = false;
+    }
+  } else {
+    // This one, is actually a fatal error.
+    error!("Model contains no mesh data. Broken.");
+    is_animated = false;
   }
 
-  // self.weights = node.weights().map(|weights| weights.to_vec());
+  // todo: placeholder.
+  if animation_todo.is_none() {
+    println!("{}", is_animated);
+    println!("Model is not animated.");
+  }
 
   // We're going to do some manual integration here.
 
@@ -236,12 +247,6 @@ pub fn load(path: &str, load_materials: bool) -> Result<MineGLTF, Box<dyn Error 
           };
 
           let bone_id = channel.target().node().index() as i32;
-
-          // println!(
-          //   "bone: [{}] | timestamps len: [{}]",
-          //   bone_id,
-          //   timestamps.len()
-          // );
 
           match keyframes {
             Keyframes::Translation(translations) => {
