@@ -31,7 +31,7 @@ use gltf::animation::util;
 use gltf::Gltf;
 use itertools::Itertools;
 use log::error;
-use minetest_gltf::{GltfData, MineGLTF};
+use minetest_gltf::{GltfData, MinetestGLTF};
 use scene::animation::{BoneAnimationChannel, Keyframes};
 use std::error::Error;
 use std::fs::File;
@@ -108,7 +108,7 @@ macro_rules! weightify {
 /// println!("Lights: #{}", scene.lights.len());
 /// println!("Models: #{}", scene.models.len());
 /// ```
-pub fn load(path: &str) -> Result<MineGLTF, Box<dyn Error + Send + Sync>> {
+pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
   // Run gltf
 
   // Try to get the file name. If this fails, the path probably doesn't exist.
@@ -341,7 +341,7 @@ pub fn load(path: &str) -> Result<MineGLTF, Box<dyn Error + Send + Sync>> {
   }
 
   //MC9512H126V
-  Ok(MineGLTF {
+  Ok(MinetestGLTF {
     scenes,
     bone_animations: bone_animation_channels,
   })
