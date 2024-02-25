@@ -269,7 +269,6 @@ impl Model {
     primitive: gltf::Primitive,
     transform: &Mat4,
     data: &mut GltfData,
-    load_materials: bool,
   ) -> Self {
     #[cfg(not(feature = "names"))]
     {
