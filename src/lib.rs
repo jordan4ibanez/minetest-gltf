@@ -340,6 +340,10 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
     }
   }
 
+  // Now apply the data.
+  minetest_gltf.bone_animations = bone_animation_channels;
+  minetest_gltf.scenes = scenes;
+
   Ok(minetest_gltf)
 }
 
