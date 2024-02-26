@@ -6,8 +6,7 @@ use gltf::scene::Transform;
 
 use crate::{animation::BoneAnimationChannel, Scene};
 
-// todo: consolidate these two structs into one
-
+// Helps to simplify the signature of import related functions.
 ///
 /// Raw data container to hold GLTF Scene and Animation data.
 ///
@@ -19,28 +18,28 @@ pub struct MinetestGLTF {
   /// Access the animation by the node (bone) id.
   ///
   pub bone_animations: AHashMap<i32, BoneAnimationChannel>,
+
+  buffers: Vec<gltf::buffer::Data>,
+  base_dir: PathBuf,
 }
 
 impl MinetestGLTF {
-  pub fn is_animated(&self) -> bool {
-    !self.bone_animations.is_empty()
-  }
-}
-
-/// Helps to simplify the signature of import related functions.
-pub struct GltfData {
-  pub buffers: Vec<gltf::buffer::Data>,
-  pub base_dir: PathBuf,
-}
-
-impl GltfData {
   pub fn new<P>(buffers: Vec<gltf::buffer::Data>, path: P) -> Self
   where
     P: AsRef<Path>,
   {
     let mut base_dir = PathBuf::from(path.as_ref());
     base_dir.pop();
-    GltfData { buffers, base_dir }
+    MinetestGLTF {
+      scenes: vec![],
+      bone_animations: AHashMap::new(),
+      buffers,
+      base_dir,
+    }
+  }
+
+  pub fn is_animated(&self) -> bool {
+    !self.bone_animations.is_empty()
   }
 }
 
