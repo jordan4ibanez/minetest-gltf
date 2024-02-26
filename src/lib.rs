@@ -31,7 +31,7 @@ use gltf::animation::util;
 use gltf::Gltf;
 use itertools::Itertools;
 use log::error;
-use minetest_gltf::{GltfData, MinetestGLTF};
+use minetest_gltf::MinetestGLTF;
 use scene::animation::{BoneAnimationChannel, Keyframes};
 use std::error::Error;
 use std::fs::File;
@@ -157,13 +157,13 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
   let buffers = gltf::import_buffers(&gltf_data.clone(), Some(base), gltf_data.blob.clone())?;
 
   // Init data and collection useful for conversion
-  let mut data = GltfData::new(buffers.clone(), path);
+  let mut minetest_gltf = MinetestGLTF::new(buffers.clone(), path);
 
   // Convert gltf -> minetest_gltf
   // ! THIS SHOULD ONLY DO THE FIRST SCENE !
   let mut scenes = vec![];
   for scene in gltf_data.scenes() {
-    scenes.push(Scene::load(scene, &mut data));
+    scenes.push(Scene::load(scene, &mut minetest_gltf));
   }
 
   // We always want the animation data as well.
@@ -340,11 +340,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
     }
   }
 
-  //MC9512H126V
-  Ok(MinetestGLTF {
-    scenes,
-    bone_animations: bone_animation_channels,
-  })
+  Ok(minetest_gltf)
 }
 
 ///
