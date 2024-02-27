@@ -22,6 +22,9 @@
 // ! }
 // ! ```
 
+//!
+//! I am a crate, wow.
+//!
 mod minetest_gltf;
 mod scene;
 
@@ -344,7 +347,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
   // Now apply the data.
   minetest_gltf.bone_animations = bone_animation_channels;
-  minetest_gltf.scenes = scenes;
+  minetest_gltf.scenes = Some(scene);
 
   Ok(minetest_gltf)
 }
@@ -548,7 +551,7 @@ mod tests {
 
     println!("spider animations: {},", animations.len());
 
-    let scene = match spider.scenes.first() {
+    let scene = match spider.scenes {
       Some(scene) => scene,
       None => panic!("Spider has no scenes!"),
     };

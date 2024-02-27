@@ -3,10 +3,11 @@ mod mode;
 /// Raw gpu vertex definition module.
 mod vertex;
 
-use crate::minetest_gltf::GltfData;
 use glam::{Mat4, Vec2, Vec3, Vec4};
 pub use mode::*;
 pub use vertex::*;
+
+use crate::minetest_gltf::MinetestGLTF;
 
 /// Geometry to be rendered with the given material.
 ///
@@ -268,7 +269,7 @@ impl Model {
     primitive_index: usize,
     primitive: gltf::Primitive,
     transform: &Mat4,
-    data: &mut GltfData,
+    data: &mut MinetestGLTF,
   ) -> Self {
     #[cfg(not(feature = "names"))]
     {

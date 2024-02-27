@@ -5,7 +5,7 @@ pub mod animation;
 /// Check [Model](struct.Model.html) for more information about how to use this module.
 pub mod model;
 
-use crate::{minetest_gltf::transform_to_matrix, GltfData};
+use crate::minetest_gltf::{transform_to_matrix, MinetestGLTF};
 use glam::Mat4;
 use log::error;
 pub use model::Model;
@@ -26,7 +26,7 @@ pub struct Scene {
 }
 
 impl Scene {
-  pub(crate) fn load(gltf_scene: gltf::Scene, data: &mut GltfData) -> Self {
+  pub(crate) fn load(gltf_scene: gltf::Scene, data: &mut MinetestGLTF) -> Self {
     let mut scene = Self::default();
 
     #[cfg(feature = "names")]
@@ -44,7 +44,7 @@ impl Scene {
     scene
   }
 
-  fn read_node(&mut self, node: &Node, parent_transform: &Mat4, data: &mut GltfData) {
+  fn read_node(&mut self, node: &Node, parent_transform: &Mat4, data: &mut MinetestGLTF) {
     // Compute transform of the current node.
     let transform = *parent_transform * transform_to_matrix(node.transform());
 

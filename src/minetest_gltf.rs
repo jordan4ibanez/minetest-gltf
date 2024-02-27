@@ -11,7 +11,7 @@ use crate::{animation::BoneAnimationChannel, Scene};
 /// Raw data container to hold GLTF Scene and Animation data.
 ///
 pub struct MinetestGLTF {
-  pub scenes: Vec<Scene>,
+  pub scenes: Option<Scene>,
   // In the future: this will be an AHasMap<String, AHashMap<i32, BoneAnimation>> to support
   // multiple animations by name.
   ///
@@ -19,7 +19,7 @@ pub struct MinetestGLTF {
   ///
   pub bone_animations: AHashMap<i32, BoneAnimationChannel>,
 
-  buffers: Vec<gltf::buffer::Data>,
+  pub(crate) buffers: Vec<gltf::buffer::Data>,
   base_dir: PathBuf,
 }
 
@@ -31,7 +31,7 @@ impl MinetestGLTF {
     let mut base_dir = PathBuf::from(path.as_ref());
     base_dir.pop();
     MinetestGLTF {
-      scenes: vec![],
+      scenes: None,
       bone_animations: AHashMap::new(),
       buffers,
       base_dir,
