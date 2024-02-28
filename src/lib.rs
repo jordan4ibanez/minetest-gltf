@@ -350,7 +350,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
   // Now apply the data.
   minetest_gltf.bone_animations = bone_animation_channels;
-  minetest_gltf.scene = Some(scene);
+  minetest_gltf.model = Some(scene);
 
   Ok(minetest_gltf)
 }
@@ -554,7 +554,7 @@ mod tests {
 
     println!("spider animations: {},", animations.len());
 
-    let scene = match spider.scene {
+    let scene = match spider.model {
       Some(scene) => scene,
       None => panic!("Spider has no scenes!"),
     };
