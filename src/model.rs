@@ -5,12 +5,12 @@ pub mod animation;
 /// Check [Model](struct.Model.html) for more information about how to use this module.
 pub mod primitive;
 
-use crate::minetest_gltf::{transform_to_matrix, MinetestGLTF};
+use crate::minetest_gltf::MinetestGLTF;
 use glam::Mat4;
-use log::error;
+
 pub use primitive::Primitive;
 
-use gltf::scene::Node;
+use gltf::scene::{Node, Transform};
 
 /// Contains primitives of a model.
 #[derive(Default, Clone, Debug)]
@@ -62,4 +62,12 @@ impl Model {
       }
     }
   }
+}
+
+fn transform_to_matrix(transform: Transform) -> Mat4 {
+  let tr = transform.matrix();
+  Mat4::from_cols_array(&[
+    tr[0][0], tr[0][1], tr[0][2], tr[0][3], tr[1][0], tr[1][1], tr[1][2], tr[1][3], tr[2][0],
+    tr[2][1], tr[2][2], tr[2][3], tr[3][0], tr[3][1], tr[3][2], tr[3][3],
+  ])
 }
