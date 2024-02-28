@@ -26,7 +26,7 @@
 //! I am a crate, wow.
 //!
 mod minetest_gltf;
-mod scene;
+mod model;
 
 use ahash::AHashMap;
 use glam::{Quat, Vec3};
@@ -35,13 +35,13 @@ use gltf::Gltf;
 use itertools::Itertools;
 use log::error;
 use minetest_gltf::MinetestGLTF;
-use scene::animation::{BoneAnimationChannel, Keyframes};
+use model::animation::{BoneAnimationChannel, Keyframes};
 use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
 use std::path::Path;
 
-pub use scene::*;
+pub use model::*;
 
 ///
 /// This is an extremely specific macro to raw cast an Array4 into an f32 Array4.
