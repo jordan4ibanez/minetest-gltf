@@ -171,6 +171,8 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
   }
   let scene = scene_attempt.unwrap();
 
+  let model = Model::load(scene, &mut minetest_gltf);
+
   // We always want the animation data as well.
   // You can thank: https://whoisryosuke.com/blog/2022/importing-gltf-with-wgpu-and-rust
   let mut bone_animation_channels: AHashMap<i32, BoneAnimationChannel> = AHashMap::new();
@@ -347,7 +349,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
   // Now apply the data.
   minetest_gltf.bone_animations = bone_animation_channels;
-  minetest_gltf.model = Some(scene);
+  minetest_gltf.model = Some(model);
 
   Ok(minetest_gltf)
 }
