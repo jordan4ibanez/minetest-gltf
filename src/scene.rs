@@ -57,7 +57,7 @@ impl Scene {
     if let Some(mesh) = node.mesh() {
       for (i, primitive) in mesh.primitives().enumerate() {
         self
-          .models
+          .primitives
           .push(Primitive::load(&mesh, i, primitive, &transform, data));
       }
     }
