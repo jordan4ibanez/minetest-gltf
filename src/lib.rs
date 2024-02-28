@@ -104,11 +104,8 @@ macro_rules! weightify {
 /// # Example
 ///
 /// ```
-/// let mine_gltf = minetest_gltf::load("tests/cube.glb", true).expect("Failed to load glTF");
-/// println!("Scenes: #{}", mine_gltf.scenes.len()); // Output "Scenes: #1"
-/// let scene = &mine_gltf.scenes[0]; // Retrieve the first and only scene
-/// println!("Cameras: #{}", scene.cameras.len());
-/// println!("Lights: #{}", scene.lights.len());
+/// let mine_gltf = minetest_gltf::load("tests/cube.glb").expect("Failed to load glTF");
+/// let scene = &mine_gltf.scene.unwrap(); // Retrieve the first and only scene
 /// println!("Models: #{}", scene.models.len());
 /// ```
 pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
@@ -347,7 +344,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
   // Now apply the data.
   minetest_gltf.bone_animations = bone_animation_channels;
-  minetest_gltf.scenes = Some(scene);
+  minetest_gltf.scene = Some(scene);
 
   Ok(minetest_gltf)
 }
@@ -551,7 +548,7 @@ mod tests {
 
     println!("spider animations: {},", animations.len());
 
-    let scene = match spider.scenes {
+    let scene = match spider.scene {
       Some(scene) => scene,
       None => panic!("Spider has no scenes!"),
     };
