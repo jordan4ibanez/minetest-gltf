@@ -12,7 +12,7 @@ pub use primitive::Primitive;
 
 use gltf::scene::Node;
 
-/// Contains cameras, models and lights of a scene.
+/// Contains primitives of a model.
 #[derive(Default, Clone, Debug)]
 pub struct Scene {
   #[cfg(feature = "names")]
