@@ -32,7 +32,6 @@ use ahash::AHashMap;
 use glam::{Quat, Vec3};
 use gltf::animation::util;
 use gltf::Gltf;
-use itertools::Itertools;
 use log::error;
 use minetest_gltf::MinetestGLTF;
 use model::animation::{BoneAnimationChannel, Keyframes};
@@ -125,7 +124,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
   // todo: placeholder currently.
   let animation_todo: Option<i32> = None;
-  let mut is_animated = true;
+  let is_animated = true;
 
   // Only want the first mesh.
   // ? This can probably be updated to allow complex scenes in the future.
@@ -386,17 +385,17 @@ fn file_name_from_path(path: &str) -> Result<&str, &str> {
 
 #[cfg(test)]
 mod tests {
-  use crate::primitive::Mode;
+  // use crate::primitive::Mode;
   use crate::*;
-  use glam::Vec3;
+  // use glam::Vec3;
 
-  macro_rules! assert_delta {
-    ($x:expr, $y:expr, $d:expr) => {
-      if !($x - $y < $d || $y - $x < $d) {
-        panic!();
-      }
-    };
-  }
+  // macro_rules! assert_delta {
+  //   ($x:expr, $y:expr, $d:expr) => {
+  //     if !($x - $y < $d || $y - $x < $d) {
+  //       panic!();
+  //     }
+  //   };
+  // }
 
   // #[test]
   // fn check_cube_glb() {
@@ -554,7 +553,7 @@ mod tests {
 
     println!("spider animations: {},", animations.len());
 
-    let scene = match spider.model {
+    let _scene = match spider.model {
       Some(scene) => scene,
       None => panic!("Spider has no scenes!"),
     };
