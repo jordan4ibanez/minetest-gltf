@@ -14,7 +14,7 @@ use gltf::scene::Node;
 
 /// Contains primitives of a model.
 #[derive(Default, Clone, Debug)]
-pub struct Scene {
+pub struct Model {
   #[cfg(feature = "names")]
   /// Scene name. Requires the `names` feature.
   pub name: Option<String>,
@@ -25,7 +25,7 @@ pub struct Scene {
   pub primitives: Vec<Primitive>,
 }
 
-impl Scene {
+impl Model {
   pub(crate) fn load(gltf_scene: gltf::Scene, data: &mut MinetestGLTF) -> Self {
     let mut scene = Self::default();
 

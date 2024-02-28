@@ -167,7 +167,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
   // Convert gltf -> minetest_gltf
   let scene = match gltf_data.scenes().next() {
-    Some(gltf_scene) => Scene::load(gltf_scene, &mut minetest_gltf),
+    Some(gltf_scene) => Model::load(gltf_scene, &mut minetest_gltf),
     None => panic!(
       "This should not crash but we need some way to handle no scenes. Model [{}] has no scenes.",
       file_name

@@ -4,14 +4,14 @@ use ahash::AHashMap;
 use glam::Mat4;
 use gltf::scene::Transform;
 
-use crate::{animation::BoneAnimationChannel, Scene};
+use crate::{animation::BoneAnimationChannel, Model};
 
 // Helps to simplify the signature of import related functions.
 ///
 /// Raw data container to hold GLTF Scene and Animation data.
 ///
 pub struct MinetestGLTF {
-  pub(crate) scene: Option<Scene>,
+  pub(crate) scene: Option<Model>,
   // In the future: this will be an AHasMap<String, AHashMap<i32, BoneAnimation>> to support
   // multiple animations by name.
   ///
