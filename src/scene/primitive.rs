@@ -44,11 +44,11 @@ use crate::minetest_gltf::MinetestGLTF;
 ///
 /// ```
 /// # use minetest_gltf::*;
-/// # use minetest_gltf::model::Mode;
-/// # let model = Model::default();
-/// let vertices = model. vertices();
-/// let indices = model.indices();
-/// match model.mode() {
+/// # use minetest_gltf::primitive::Mode;
+/// # let primitive = Primitive::default();
+/// let vertices = primitive. vertices();
+/// let indices = primitive.indices();
+/// match primitive.mode() {
 ///   Mode::Triangles => {
 ///     if let Some(indices) = indices.as_ref() {
 ///       // glDrawElements(GL_TRIANGLES, indices.len(), GL_UNSIGNED_INT, 0);
