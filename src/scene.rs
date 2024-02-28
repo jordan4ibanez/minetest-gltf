@@ -3,12 +3,12 @@ pub mod animation;
 /// Contains model and material
 /// # Usage
 /// Check [Model](struct.Model.html) for more information about how to use this module.
-pub mod model;
+pub mod primitive;
 
 use crate::minetest_gltf::{transform_to_matrix, MinetestGLTF};
 use glam::Mat4;
 use log::error;
-pub use model::Model;
+pub use primitive::Primitive;
 
 use gltf::scene::Node;
 
@@ -22,7 +22,7 @@ pub struct Scene {
   /// Scene extra data. Requires the `extras` feature.
   pub extras: gltf::json::extras::Extras,
   /// List of models in the scene.
-  pub primitives: Vec<Model>,
+  pub primitives: Vec<Primitive>,
 }
 
 impl Scene {
@@ -58,7 +58,7 @@ impl Scene {
       for (i, primitive) in mesh.primitives().enumerate() {
         self
           .models
-          .push(Model::load(&mesh, i, primitive, &transform, data));
+          .push(Primitive::load(&mesh, i, primitive, &transform, data));
       }
     }
   }

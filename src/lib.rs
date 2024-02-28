@@ -386,7 +386,7 @@ fn file_name_from_path(path: &str) -> Result<&str, &str> {
 
 #[cfg(test)]
 mod tests {
-  use crate::model::Mode;
+  use crate::primitive::Mode;
   use crate::*;
   use glam::Vec3;
 

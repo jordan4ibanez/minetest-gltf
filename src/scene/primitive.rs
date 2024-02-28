@@ -61,7 +61,7 @@ use crate::minetest_gltf::MinetestGLTF;
 /// }
 /// ```
 #[derive(Clone, Debug, Default)]
-pub struct Model {
+pub struct Primitive {
   #[cfg(feature = "names")]
   pub(crate) mesh_name: Option<String>,
   #[cfg(feature = "extras")]
@@ -78,7 +78,7 @@ pub struct Model {
   pub(crate) has_tex_coords: bool,
 }
 
-impl Model {
+impl Primitive {
   #[cfg(feature = "names")]
   /// Mesh name. Requires the `names` feature.
   ///
@@ -323,7 +323,7 @@ impl Model {
       false
     };
 
-    Model {
+    Primitive {
       #[cfg(feature = "names")]
       mesh_name: mesh.name().map(String::from),
       #[cfg(feature = "extras")]
