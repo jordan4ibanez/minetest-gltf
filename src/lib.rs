@@ -165,13 +165,11 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
   let mut minetest_gltf = MinetestGLTF::new(buffers.clone(), path);
 
   // Convert gltf -> minetest_gltf
-  let scene = match gltf_data.scenes().next() {
-    Some(gltf_scene) => Model::load(gltf_scene, &mut minetest_gltf),
-    None => panic!(
-      "This should not crash but we need some way to handle no scenes. Model [{}] has no scenes.",
-      file_name
-    ),
-  };
+  let scene_attempt = gltf_data.scenes().next();
+  if scene_attempt.is_none() {
+    return Err(format!("Model contains no scenes. {}", file_name).into());
+  }
+  let scene = scene_attempt.unwrap();
 
   // We always want the animation data as well.
   // You can thank: https://whoisryosuke.com/blog/2022/importing-gltf-with-wgpu-and-rust
