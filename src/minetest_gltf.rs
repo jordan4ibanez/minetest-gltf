@@ -38,6 +38,16 @@ impl MinetestGLTF {
     }
   }
 
+  ///
+  /// Get if the model is broken.
+  ///
+  pub fn is_broken(&self) -> bool {
+    self.model.is_none()
+  }
+
+  ///
+  /// Get if the model is animated.
+  ///
   pub fn is_animated(&self) -> bool {
     !self.bone_animations.is_empty()
   }
