@@ -130,20 +130,26 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
   // Only want the first mesh.
   // ? This can probably be updated to allow complex scenes in the future.
   // ! fixme: Turn this into a match please.
-  if let Some(mesh) = gltf_data.meshes().next() {
-    if let Some(primitive) = mesh.primitives().next() {
-      primitive.attributes().for_each(|(semantic, attribute)| {
-        println!("{:?}", attribute);
-      });
-      for (semantic, attribute) in primitive.attributes() {}
-    } else {
-      is_animated = false;
-    }
-  } else {
-    // This one, is actually a fatal error.
-    error!("Model contains no mesh data. Broken.");
-    is_animated = false;
-  }
+//   if let Some(primitive) = mesh.primitives().next() {
+//     primitive.attributes().for_each(|(semantic, attribute)| {
+//       println!("{:?}", attribute);
+//     });
+//     for (semantic, attribute) in primitive.attributes() {}
+//   } else {
+//     is_animated = false;
+//   }
+// } else {
+//   // This one, is actually a fatal error.
+//   error!("Model contains no mesh data. Broken.");
+//   is_animated = false;
+  // match gltf_data.meshes().next() {
+  //   Some(mesh) => {
+  //     for primitive in mesh.primitives() {
+  //       primitive.
+  //     }
+  //   },
+  //   None => todo!(),
+  // }
 
   // todo: placeholder.
   if animation_todo.is_none() {

@@ -22,7 +22,7 @@ pub struct Scene {
   /// Scene extra data. Requires the `extras` feature.
   pub extras: gltf::json::extras::Extras,
   /// List of models in the scene.
-  pub models: Vec<Model>,
+  pub primitives: Vec<Model>,
 }
 
 impl Scene {
@@ -38,7 +38,7 @@ impl Scene {
       scene.extras = gltf_scene.extras().clone();
     }
 
-    for (index, node) in gltf_scene.nodes().enumerate() {
+    for node in gltf_scene.nodes() {
       scene.read_node(&node, &Mat4::IDENTITY, data);
     }
     scene
