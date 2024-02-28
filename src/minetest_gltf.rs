@@ -1,8 +1,6 @@
 use std::path::{Path, PathBuf};
 
 use ahash::AHashMap;
-use glam::Mat4;
-use gltf::scene::Transform;
 
 use crate::{animation::BoneAnimationChannel, Model};
 
@@ -52,4 +50,3 @@ impl MinetestGLTF {
     !self.bone_animations.is_empty()
   }
 }
-
