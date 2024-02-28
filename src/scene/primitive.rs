@@ -20,19 +20,19 @@ use crate::minetest_gltf::MinetestGLTF;
 ///
 /// ```
 /// # use minetest_gltf::*;
-/// # use minetest_gltf::model::Mode;
-/// # let model = Model::default();
-/// match model.mode() {
+/// # use minetest_gltf::primitive::Mode;
+/// # let primitive = Primitive::default();
+/// match primitive.mode() {
 ///   Mode::Triangles | Mode::TriangleFan | Mode::TriangleStrip => {
-///     let triangles = model.triangles().unwrap();
+///     let triangles = primitive.triangles().unwrap();
 ///     // Render triangles...
 ///   },
 ///   Mode::Lines | Mode::LineLoop | Mode::LineStrip => {
-///     let lines = model.lines().unwrap();
+///     let lines = primitive.lines().unwrap();
 ///     // Render lines...
 ///   }
 ///   Mode::Points => {
-///     let points = model.points().unwrap();
+///     let points = primitive.points().unwrap();
 ///     // Render points...
 ///   }
 /// }
