@@ -16,7 +16,7 @@ use crate::minetest_gltf::MinetestGLTF;
 /// ### Classic rendering
 ///
 /// In most cases you want to use `triangles()`, `lines()` and `points()`
-/// to get the geometry of the model.
+/// to get the geometry of the primitive.
 ///
 /// ```
 /// # use minetest_gltf::*;
