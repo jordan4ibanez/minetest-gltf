@@ -103,9 +103,9 @@ macro_rules! weightify {
 /// # Example
 ///
 /// ```
-/// let mine_gltf = minetest_gltf::load("tests/cube.glb").expect("Failed to load glTF");
-/// let scene = &mine_gltf.scene.unwrap(); // Retrieve the first and only scene
-/// println!("Models: #{}", scene.models.len());
+/// let minetest_gltf = minetest_gltf::load("tests/cube.glb").expect("Failed to load glTF");
+/// let model = &minetest_gltf.model.unwrap(); // Retrieve the first and only model.
+/// println!("Primitives: #{}", model.primitives.len());
 /// ```
 pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
   // Run gltf
@@ -553,9 +553,9 @@ mod tests {
 
     println!("spider animations: {},", animations.len());
 
-    let _scene = match spider.model {
-      Some(scene) => scene,
-      None => panic!("Spider has no scenes!"),
+    let _model = match spider.model {
+      Some(model) => model,
+      None => panic!("Spider has no model!"),
     };
 
     // let weights = match &scene.weights {
