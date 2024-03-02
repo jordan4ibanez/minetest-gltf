@@ -517,23 +517,23 @@ mod tests {
   //   assert!(load("tests/invalid.glb", true).is_err());
   // }
 
-  // #[test]
-  // fn load_snowman() {
-  //   drop(env_logger::try_init());
+  #[test]
+  fn load_snowman() {
+    drop(env_logger::try_init());
 
-  //   let mine_gltf = match load("tests/snowman.gltf", false) {
-  //     Ok(mine_gltf) => {
-  //       println!("Snowman loaded!");
-  //       mine_gltf
-  //     }
-  //     Err(e) => panic!("Snowman: failed to load. {}", e),
-  //   };
+    let mine_gltf = match load("tests/snowman.gltf") {
+      Ok(mine_gltf) => {
+        println!("Snowman loaded!");
+        mine_gltf
+      }
+      Err(e) => panic!("Snowman: failed to load. {}", e),
+    };
 
-  //   match mine_gltf.scenes.first() {
-  //     Some(scene) => assert_eq!(scene.models.len(), 5),
-  //     None => panic!("Snowman: has no scenes."),
-  //   }
-  // }
+    match mine_gltf.model {
+      Some(model) => assert_eq!(model.primitives.len(), 5),
+      None => panic!("Snowman: has no model."),
+    }
+  }
 
   #[test]
   fn test_the_spider_animations() {
