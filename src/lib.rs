@@ -355,6 +355,9 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
   minetest_gltf.bone_animations = bone_animation_channels;
   minetest_gltf.model = Some(model);
 
+  // Now remove temp data.
+  minetest_gltf.buffers.clear();
+
   Ok(minetest_gltf)
 }
 
@@ -387,11 +390,9 @@ fn file_name_from_path(path: &str) -> Result<&str, &str> {
   }
 }
 
-
 // ? ////////////////////////////////////////////////////////////////////////////////////////////// ? //
 // ?                            CODE ENDS HERE, BEGIN UNIT TESTS.                                   ? //
 // ? ////////////////////////////////////////////////////////////////////////////////////////////// ? //
-
 
 #[cfg(test)]
 mod tests {
