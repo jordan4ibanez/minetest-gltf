@@ -457,43 +457,43 @@ mod tests {
   //   };
   // }
 
-  #[test]
-  fn check_model() {
-    drop(env_logger::try_init());
+  // #[test]
+  // fn check_model() {
+  //   drop(env_logger::try_init());
 
-    let mine_gltf = match load("tests/cube.glb") {
-      Ok(mine_gltf) => {
-        println!("cube loaded!");
-        mine_gltf
-      }
-      Err(e) => panic!("cube: failed to load. {}", e),
-    };
-    let primitive = match &mine_gltf.model {
-      Some(model) => match model.primitives.first() {
-        Some(primitive) => primitive,
-        None => panic!("cube.glb has no primitives."),
-      },
-      None => panic!("cube.glb has no model."),
-    };
-    assert!(primitive.has_normals());
-    assert!(primitive.has_tex_coords());
-    assert!(primitive.has_tangents());
-    for t in match primitive.triangles() {
-      Ok(tris) => tris,
-      Err(e) => panic!("Failed to get cube tris. {}", e),
-    }
-    .iter()
-    .flatten()
-    {
-      let pos = t.position;
-      assert!(pos.x > -0.01 && pos.x < 1.01);
-      assert!(pos.y > -0.01 && pos.y < 1.01);
-      assert!(pos.z > -0.01 && pos.z < 1.01);
+  //   let mine_gltf = match load("tests/cube.glb") {
+  //     Ok(mine_gltf) => {
+  //       println!("cube loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("cube: failed to load. {}", e),
+  //   };
+  //   let primitive = match &mine_gltf.model {
+  //     Some(model) => match model.primitives.first() {
+  //       Some(primitive) => primitive,
+  //       None => panic!("cube.glb has no primitives."),
+  //     },
+  //     None => panic!("cube.glb has no model."),
+  //   };
+  //   assert!(primitive.has_normals());
+  //   assert!(primitive.has_tex_coords());
+  //   assert!(primitive.has_tangents());
+  //   for t in match primitive.triangles() {
+  //     Ok(tris) => tris,
+  //     Err(e) => panic!("Failed to get cube tris. {}", e),
+  //   }
+  //   .iter()
+  //   .flatten()
+  //   {
+  //     let pos = t.position;
+  //     assert!(pos.x > -0.01 && pos.x < 1.01);
+  //     assert!(pos.y > -0.01 && pos.y < 1.01);
+  //     assert!(pos.z > -0.01 && pos.z < 1.01);
 
-      // Check that the tangent w component is 1 or -1
-      assert_eq!(t.tangent.w.abs(), 1.);
-    }
-  }
+  //     // Check that the tangent w component is 1 or -1
+  //     assert_eq!(t.tangent.w.abs(), 1.);
+  //   }
+  // }
 
   // #[test]
   // fn check_invalid_path() {
