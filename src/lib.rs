@@ -169,7 +169,11 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
   if scene_attempt.is_none() {
     return Err(format!("Model contains no scenes. {}", file_name).into());
   }
-  let scene = scene_attempt.unwrap();
+  let scene = if let Some(scene) = scene_attempt {
+    scene
+  } else {
+    panic!("blew up after check somehow.")
+  };
 
   let model = Model::load(scene, &mut minetest_gltf);
 
