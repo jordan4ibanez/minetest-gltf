@@ -514,7 +514,7 @@ mod tests {
   // fn check_invalid_path() {
   //   drop(env_logger::try_init());
 
-  //   assert!(load("tests/invalid.glb", true).is_err());
+  //   assert!(load("tests/invalid.glb").is_err());
   // }
 
   // #[test]
