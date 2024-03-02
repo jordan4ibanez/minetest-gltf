@@ -491,26 +491,6 @@ mod tests {
   // }
 
   // #[test]
-  // fn check_material() {
-  //   drop(env_logger::try_init());
-
-  //   let mine_gltf = match load("tests/head.glb", true) {
-  //     Ok(mine_gltf) => {
-  //       println!("head loaded!");
-  //       mine_gltf
-  //     }
-  //     Err(e) => panic!("cube: failed to load. {}", e),
-  //   };
-  //   let scene = &mine_gltf.scenes[0];
-  //   let mat = match scene.models[0].material.as_ref() {
-  //     Some(mat) => mat,
-  //     None => panic!("Failed to load material for head."),
-  //   };
-  //   assert!(mat.pbr.base_color_texture.is_some());
-  //   assert_eq!(mat.pbr.metallic_factor, 0.);
-  // }
-
-  // #[test]
   // fn check_invalid_path() {
   //   drop(env_logger::try_init());
 
