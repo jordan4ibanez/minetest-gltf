@@ -420,7 +420,7 @@ mod tests {
   // fn check_different_meshes() {
   //   drop(env_logger::try_init());
 
-  //   let mine_gltf = match load("tests/complete.glb", true) {
+  //   let mine_gltf = match load("tests/complete.glb") {
   //     Ok(mine_gltf) => {
   //       println!("Complete loaded!");
   //       mine_gltf
@@ -448,7 +448,7 @@ mod tests {
   // fn check_cube_gltf() {
   //   drop(env_logger::try_init());
 
-  //   let _ = match load("tests/cube_classic.gltf", true) {
+  //   let _ = match load("tests/cube_classic.gltf") {
   //     Ok(mine_gltf) => {
   //       println!("cube_classic loaded!");
   //       mine_gltf
