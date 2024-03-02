@@ -69,13 +69,13 @@ pub struct Primitive {
   #[cfg(feature = "extras")]
   pub(crate) primitive_extras: gltf::json::extras::Extras,
 
-  pub(crate) primitive_index: usize,
-  pub(crate) vertices: Vec<Vertex>,
-  pub(crate) indices: Option<Vec<u32>>,
-  pub(crate) mode: Mode,
-  pub(crate) has_normals: bool,
-  pub(crate) has_tangents: bool,
-  pub(crate) has_tex_coords: bool,
+  pub primitive_index: usize,
+  pub vertices: Vec<Vertex>,
+  pub indices: Option<Vec<u32>>,
+  pub mode: Mode,
+  pub has_normals: bool,
+  pub has_tangents: bool,
+  pub has_tex_coords: bool,
 }
 
 impl Primitive {
