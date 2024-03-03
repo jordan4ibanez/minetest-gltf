@@ -559,7 +559,18 @@ mod tests {
     //   None => panic!("Spider has no weights!"),
     // };
 
-    // let keyframe = animation.keyframes;
+    let keyframe_id = match animations.keys().next() {
+      Some(keyframe_id) => keyframe_id,
+      None => panic!("spider has no animations."),
+    };
+
+    let keyframe = match animations.get(keyframe_id) {
+      Some(keyframe) => keyframe,
+      None => panic!("spider has had a strange bug happen."),
+    };
+
+    println!("{:?}", keyframe.translations);
+    println!("{:?}", keyframe.translation_timestamps);
   }
 
   // #[test]
