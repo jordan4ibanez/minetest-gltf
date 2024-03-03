@@ -74,30 +74,6 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
   let animation_todo: Option<i32> = None;
   let is_animated = true;
 
-  // Only want the first mesh.
-  // ? This can probably be updated to allow complex scenes in the future.
-  // ! fixme: Turn this into a match please.
-  //   if let Some(primitive) = mesh.primitives().next() {
-  //     primitive.attributes().for_each(|(semantic, attribute)| {
-  //       println!("{:?}", attribute);
-  //     });
-  //     for (semantic, attribute) in primitive.attributes() {}
-  //   } else {
-  //     is_animated = false;
-  //   }
-  // } else {
-  //   // This one, is actually a fatal error.
-  //   error!("Model contains no mesh data. Broken.");
-  //   is_animated = false;
-  // match gltf_data.meshes().next() {
-  //   Some(mesh) => {
-  //     for primitive in mesh.primitives() {
-  //       primitive.
-  //     }
-  //   },
-  //   None => todo!(),
-  // }
-
   // todo: placeholder.
   if animation_todo.is_none() {
     println!("{}", is_animated);
@@ -124,6 +100,40 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
   };
 
   let model = Model::load(scene, &mut minetest_gltf);
+
+  // Only want the first mesh.
+  // ? This can probably be updated to allow complex scenes in the future.
+  // ! fixme: Turn this into a match please.
+  // println!("{:?}", gltf_data.meshes().next().unwrap().weights());
+
+  for mesh in gltf_data.meshes() {
+    println!("mesh!!");
+    println!("mesh weights: {:?}", mesh.weights());
+  }
+  // let mut is_animated = true;
+  // if let Some(primitive) = gltf_data.meshes().next().unwrap().primitives().next() {
+  //   primitive.attributes().for_each(|(semantic, attribute)| {
+  //     println!("{:?}", attribute);
+  //   });
+  //   for (semantic, attribute) in primitive.attributes() {
+  //     println!("{:?}", attribute);
+
+  //   }
+  // } else {
+  //   is_animated = false;
+  // }
+  // } else {
+  //   // This one, is actually a fatal error.
+  //   error!("Model contains no mesh data. Broken.");
+  //   is_animated = false;
+  // match gltf_data.meshes().next() {
+  //   Some(mesh) => {
+  //     for primitive in mesh.primitives() {
+  //       primitive.
+  //     }
+  //   },
+  //   None => todo!(),
+  // }
 
   // Now apply the data.
   minetest_gltf.bone_animations = grab_animations(gltf_data, buffers, file_name);
@@ -305,53 +315,53 @@ mod tests {
   //   }
   // }
 
-  #[test]
-  fn test_the_spider_animations() {
-    drop(env_logger::try_init());
+  // #[test]
+  // fn test_the_spider_animations() {
+  //   drop(env_logger::try_init());
 
-    let spider = match load("tests/fixed_spider.glb") {
-      Ok(mine_gltf) => {
-        println!("spider loaded!");
-        mine_gltf
-      }
-      Err(e) => panic!("spider: failed to load. {}", e),
-    };
+  //   let spider = match load("tests/fixed_spider.glb") {
+  //     Ok(mine_gltf) => {
+  //       println!("spider loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("spider: failed to load. {}", e),
+  //   };
 
-    assert!(!spider.bone_animations.is_empty());
+  //   assert!(!spider.bone_animations.is_empty());
 
-    let animations = spider.bone_animations;
+  //   let animations = spider.bone_animations;
 
-    println!("spider animations: {},", animations.len());
+  //   println!("spider animations: {},", animations.len());
 
-    let _model = match spider.model {
-      Some(model) => model,
-      None => panic!("Spider has no model!"),
-    };
+  //   let _model = match spider.model {
+  //     Some(model) => model,
+  //     None => panic!("Spider has no model!"),
+  //   };
 
-    // let weights = match &scene.weights {
-    //   Some(weights) => weights,
-    //   None => panic!("Spider has no weights!"),
-    // };
+  //   // let weights = match &scene.weights {
+  //   //   Some(weights) => weights,
+  //   //   None => panic!("Spider has no weights!"),
+  //   // };
 
-    let keyframe_id = match animations.keys().next() {
-      Some(keyframe_id) => keyframe_id,
-      None => panic!("spider has no animations."),
-    };
+  //   let keyframe_id = match animations.keys().next() {
+  //     Some(keyframe_id) => keyframe_id,
+  //     None => panic!("spider has no animations."),
+  //   };
 
-    let keyframe = match animations.get(keyframe_id) {
-      Some(keyframe) => keyframe,
-      None => panic!("spider has had a strange bug happen."),
-    };
+  //   let keyframe = match animations.get(keyframe_id) {
+  //     Some(keyframe) => keyframe,
+  //     None => panic!("spider has had a strange bug happen."),
+  //   };
 
-    println!("{:?}", keyframe.translations);
-    println!("{:?}", keyframe.translation_timestamps);
-  }
+  //   println!("{:?}", keyframe.translations);
+  //   println!("{:?}", keyframe.translation_timestamps);
+  // }
 
   // #[test]
   // fn test_sam() {
   //   drop(env_logger::try_init());
 
-  //   let sam = match load("tests/minetest_sam.gltf", true) {
+  //   let sam = match load("tests/minetest_sam.gltf") {
   //     Ok(mine_gltf) => {
   //       println!("sam loaded!");
   //       mine_gltf
@@ -365,15 +375,10 @@ mod tests {
 
   //   println!("sam animations: {},", animations.len());
 
-  //   let scene = match sam.scenes.first() {
-  //     Some(scene) => scene,
-  //     None => panic!("sam has no scenes!"),
-  //   };
-
-  //   let weights = match &scene.weights {
-  //     Some(weights) => weights,
-  //     None => panic!("sam has no weights!"),
-  //   };
+  //   // let weights = match &scene.weights {
+  //   //   Some(weights) => weights,
+  //   //   None => panic!("sam has no weights!"),
+  //   // };
   // }
 
   // #[test]
@@ -434,45 +439,40 @@ mod tests {
   //   // };
   // }
 
-  // #[test]
-  // fn load_simple_skin() {
-  //   drop(env_logger::try_init());
+  #[test]
+  fn load_simple_skin() {
+    drop(env_logger::try_init());
 
-  //   let mine_gltf = match load("tests/simple_skin.gltf", false) {
-  //     Ok(mine_gltf) => {
-  //       println!("simple_skin loaded!");
-  //       mine_gltf
-  //     }
-  //     Err(e) => panic!("simple_skin: failed to load. {}", e),
-  //   };
+    let mine_gltf = match load("tests/simple_skin.gltf") {
+      Ok(mine_gltf) => {
+        println!("simple_skin loaded!");
+        mine_gltf
+      }
+      Err(e) => panic!("simple_skin: failed to load. {}", e),
+    };
 
-  //   let scene = match mine_gltf.scenes.first() {
-  //     Some(scene) => scene,
-  //     None => panic!("simple_skin: has no scenes."),
-  //   };
+    // let weights = match &scene.weights {
+    //   Some(weights) => weights,
+    //   None => panic!("simple_skin has no weights!"),
+    // };
 
-  //   // let weights = match &scene.weights {
-  //   //   Some(weights) => weights,
-  //   //   None => panic!("simple_skin has no weights!"),
-  //   // };
+    // This one's a curve ball. This is an ultra simple model so let's see if tries to iterate more than one channel!
+    for (_, channel) in mine_gltf.bone_animations {
+      assert!(
+        channel.translation_timestamps.len() == channel.translations.len()
+          && channel.translations.is_empty()
+      );
 
-  //   // This one's a curve ball. This is an ultra simple model so let's see if tries to iterate more than one channel!
-  //   for (_, channel) in mine_gltf.bone_animations {
-  //     assert!(
-  //       channel.translation_timestamps.len() == channel.translations.len()
-  //         && channel.translations.is_empty()
-  //     );
+      assert!(
+        channel.rotation_timestamps.len() == channel.rotations.len()
+          && channel.rotations.len() == 12
+      );
 
-  //     assert!(
-  //       channel.rotation_timestamps.len() == channel.rotations.len()
-  //         && channel.rotations.len() == 12
-  //     );
+      assert!(channel.scale_timestamps.len() == channel.scales.len() && channel.scales.is_empty());
 
-  //     assert!(channel.scale_timestamps.len() == channel.scales.len() && channel.scales.is_empty());
-
-  //     assert!(
-  //       channel.weight_timestamps.len() == channel.weights.len() && channel.weights.is_empty()
-  //     );
-  //   }
-  // }
+      assert!(
+        channel.weight_timestamps.len() == channel.weights.len() && channel.weights.is_empty()
+      );
+    }
+  }
 }
