@@ -323,6 +323,15 @@ impl Primitive {
       false
     };
 
+    let has_weights = if let Some(weights) = reader.read_weights(0) {
+      for (i, weights) in weights.into_f32().enumerate() {
+        println!("{} is weight {:?}", i, weights);
+      }
+      true
+    } else {
+      false
+    };
+
     Primitive {
       #[cfg(feature = "names")]
       mesh_name: mesh.name().map(String::from),
