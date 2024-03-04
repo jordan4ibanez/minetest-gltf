@@ -72,10 +72,12 @@ pub struct Primitive {
   pub primitive_index: usize,
   pub vertices: Vec<Vertex>,
   pub indices: Option<Vec<u32>>,
+  pub weights: Vec<[f32; 4]>,
   pub mode: Mode,
   pub has_normals: bool,
   pub has_tangents: bool,
   pub has_tex_coords: bool,
+  pub has_weights: bool,
 }
 
 impl Primitive {
@@ -302,7 +304,7 @@ impl Primitive {
       false
     };
 
-    // Fill tangents
+    // Fill tangents.
     let has_tangents = if let Some(tangents) = reader.read_tangents() {
       for (i, tangent) in tangents.enumerate() {
         let tangent = Self::apply_transform_tangent(tangent, transform);
@@ -313,7 +315,7 @@ impl Primitive {
       false
     };
 
-    // Texture coordinates
+    // Texture coordinates.
     let has_tex_coords = if let Some(tex_coords) = reader.read_tex_coords(0) {
       for (i, tex_coords) in tex_coords.into_f32().enumerate() {
         vertices[i].tex_coords = Vec2::from(tex_coords);
@@ -323,9 +325,12 @@ impl Primitive {
       false
     };
 
-    let has_weights = if let Some(weights) = reader.read_weights(0) {
-      for (i, weights) in weights.into_f32().enumerate() {
-        println!("{} is weight {:?}", i, weights);
+    // Weights.
+    let mut weights = vec![];
+    let has_weights = if let Some(raw_weights) = reader.read_weights(0) {
+      for (i, gotten_values) in raw_weights.into_f32().enumerate() {
+        println!("{} is weight {:?}", i, gotten_values);
+        weights.push(gotten_values);
       }
       true
     } else {
@@ -343,9 +348,11 @@ impl Primitive {
       vertices,
       indices,
       mode: primitive.mode().into(),
+      weights,
       has_normals,
       has_tangents,
       has_tex_coords,
+      has_weights,
     }
   }
 }
