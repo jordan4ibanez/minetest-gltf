@@ -76,8 +76,8 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
   // todo: placeholder.
   if animation_todo.is_none() {
-    println!("{}", is_animated);
-    println!("Model is not animated.");
+    // println!("is animated {}", is_animated);
+    // println!("Model is not animated.");
   }
 
   // We're going to do some manual integration here.
@@ -100,40 +100,6 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
   };
 
   let model = Model::load(scene, &mut minetest_gltf);
-
-  // Only want the first mesh.
-  // ? This can probably be updated to allow complex scenes in the future.
-  // ! fixme: Turn this into a match please.
-  // println!("{:?}", gltf_data.meshes().next().unwrap().weights());
-
-  for mesh in gltf_data.meshes() {
-    println!("mesh!!");
-    println!("mesh weights: {:?}", mesh.weights());
-  }
-  // let mut is_animated = true;
-  // if let Some(primitive) = gltf_data.meshes().next().unwrap().primitives().next() {
-  //   primitive.attributes().for_each(|(semantic, attribute)| {
-  //     println!("{:?}", attribute);
-  //   });
-  //   for (semantic, attribute) in primitive.attributes() {
-  //     println!("{:?}", attribute);
-
-  //   }
-  // } else {
-  //   is_animated = false;
-  // }
-  // } else {
-  //   // This one, is actually a fatal error.
-  //   error!("Model contains no mesh data. Broken.");
-  //   is_animated = false;
-  // match gltf_data.meshes().next() {
-  //   Some(mesh) => {
-  //     for primitive in mesh.primitives() {
-  //       primitive.
-  //     }
-  //   },
-  //   None => todo!(),
-  // }
 
   // Now apply the data.
   minetest_gltf.bone_animations = grab_animations(gltf_data, buffers, file_name);
