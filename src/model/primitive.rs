@@ -73,11 +73,13 @@ pub struct Primitive {
   pub vertices: Vec<Vertex>,
   pub indices: Option<Vec<u32>>,
   pub weights: Vec<[f32; 4]>,
+  pub joints: Vec<[u16; 4]>,
   pub mode: Mode,
   pub has_normals: bool,
   pub has_tangents: bool,
   pub has_tex_coords: bool,
   pub has_weights: bool,
+  pub has_joints: bool,
 }
 
 impl Primitive {
@@ -337,6 +339,17 @@ impl Primitive {
       false
     };
 
+    let mut joints = vec![];
+    let has_joints = if let Some(raw_joints) = reader.read_joints(0) {
+      for (i, gotten_values) in raw_joints.into_u16().enumerate() {
+        println!("{}, is joint {:?}", i, gotten_values);
+        joints.push(gotten_values);
+      }
+      true
+    } else {
+      false
+    };
+
     Primitive {
       #[cfg(feature = "names")]
       mesh_name: mesh.name().map(String::from),
@@ -349,10 +362,12 @@ impl Primitive {
       indices,
       mode: primitive.mode().into(),
       weights,
+      joints,
       has_normals,
       has_tangents,
       has_tex_coords,
       has_weights,
+      has_joints,
     }
   }
 }
