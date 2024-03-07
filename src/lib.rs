@@ -93,8 +93,29 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
   if model.primitives.first().is_none() {
     return Err("Model has no primitives!".into());
   }
+
+  // Check if the model is able to be animated.
+  let mut is_skinned = false;
+  for primitive in &model.primitives {
+    if primitive.has_joints && primitive.has_weights {
+      is_skinned = true;
+      break;
+    }
+  }
+  if !is_skinned {
+    error!("Animation failure on model {}", file_name);
+  } else {
+    error!("Model {} is animated. :)", file_name);
+  }
+
   // Now apply the data.
-  minetest_gltf.bone_animations = grab_animations(gltf_data, buffers, file_name);
+  if is_skinned {
+    minetest_gltf.bone_animations = grab_animations(gltf_data, buffers, file_name);
+    minetest_gltf.is_animated = true;
+  } else {
+    minetest_gltf.is_animated = false;
+  }
+
   minetest_gltf.model = Some(model);
 
   // Now remove temp data.
