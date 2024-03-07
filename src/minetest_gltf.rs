@@ -46,6 +46,6 @@ impl MinetestGLTF {
   /// Get if the model is animated.
   ///
   pub fn is_animated(&self) -> bool {
-    !self.bone_animations.is_none()
+    self.bone_animations.is_some()
   }
 }
