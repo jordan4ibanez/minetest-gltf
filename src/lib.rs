@@ -89,6 +89,10 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
   let model = Model::load(scene, &mut minetest_gltf);
 
+  // Double check that this model actually exists.
+  if model.primitives.first().is_none() {
+    return Err("Model has no primitives!".into());
+  }
   // Now apply the data.
   minetest_gltf.bone_animations = grab_animations(gltf_data, buffers, file_name);
   minetest_gltf.model = Some(model);
