@@ -99,6 +99,8 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
   for primitive in &model.primitives {
     if primitive.has_joints && primitive.has_weights {
       is_skinned = true;
+    } else {
+      is_skinned = false;
       break;
     }
   }
