@@ -15,7 +15,7 @@ pub struct MinetestGLTF {
   ///
   /// Access the animation by the node (bone) id.
   ///
-  pub bone_animations: AHashMap<i32, BoneAnimationChannel>,
+  pub bone_animations: Option<AHashMap<i32, BoneAnimationChannel>>,
   pub is_animated: bool,
 
   pub(crate) buffers: Vec<gltf::buffer::Data>,
@@ -28,7 +28,7 @@ impl MinetestGLTF {
     base_dir.pop();
     MinetestGLTF {
       model: None,
-      bone_animations: AHashMap::new(),
+      bone_animations: None,
       is_animated: false,
       buffers,
       base_dir,
@@ -46,6 +46,6 @@ impl MinetestGLTF {
   /// Get if the model is animated.
   ///
   pub fn is_animated(&self) -> bool {
-    !self.bone_animations.is_empty()
+    !self.bone_animations.is_none()
   }
 }
