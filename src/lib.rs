@@ -70,18 +70,6 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
   // Now we need to get the "Document" from the GLTF lib.
   let gltf_data = Gltf::from_reader(model_reader)?;
 
-  // todo: placeholder currently.
-  let animation_todo: Option<i32> = None;
-  let is_animated = true;
-
-  // todo: placeholder.
-  if animation_todo.is_none() {
-    // println!("is animated {}", is_animated);
-    // println!("Model is not animated.");
-  }
-
-  // We're going to do some manual integration here.
-
   // We always want the buffer data. We have to clone this, it's basically ripping out ownership from our hands.
   let buffers = gltf::import_buffers(&gltf_data.clone(), Some(base), gltf_data.blob.clone())?;
 
