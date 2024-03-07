@@ -16,6 +16,7 @@ pub struct MinetestGLTF {
   /// Access the animation by the node (bone) id.
   ///
   pub bone_animations: AHashMap<i32, BoneAnimationChannel>,
+  pub is_animated: bool,
 
   pub(crate) buffers: Vec<gltf::buffer::Data>,
   pub base_dir: PathBuf,
@@ -28,6 +29,7 @@ impl MinetestGLTF {
     MinetestGLTF {
       model: None,
       bone_animations: AHashMap::new(),
+      is_animated: false,
       buffers,
       base_dir,
     }
