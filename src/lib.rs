@@ -105,7 +105,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
     }
   }
   if !is_skinned {
-    error!("Animation failure on model {}", file_name);
+    error!("Animation failure on model {}. >:(", file_name);
   } else {
     error!("Model {} is animated. :)", file_name);
   }
