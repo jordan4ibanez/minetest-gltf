@@ -112,7 +112,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
   // Now apply the data.
   if is_skinned {
-    minetest_gltf.bone_animations = grab_animations(gltf_data, buffers, file_name);
+    minetest_gltf.bone_animations = Some(grab_animations(gltf_data, buffers, file_name));
     minetest_gltf.is_animated = true;
   } else {
     minetest_gltf.is_animated = false;
@@ -438,22 +438,29 @@ mod tests {
     // };
 
     // This one's a curve ball. This is an ultra simple model so let's see if tries to iterate more than one channel!
-    for (_, channel) in mine_gltf.bone_animations {
-      assert!(
-        channel.translation_timestamps.len() == channel.translations.len()
-          && channel.translations.is_empty()
-      );
+    match mine_gltf.bone_animations {
+      Some(bone_animations) => {
+        for (_, channel) in bone_animations {
+          assert!(
+            channel.translation_timestamps.len() == channel.translations.len()
+              && channel.translations.is_empty()
+          );
 
-      assert!(
-        channel.rotation_timestamps.len() == channel.rotations.len()
-          && channel.rotations.len() == 12
-      );
+          assert!(
+            channel.rotation_timestamps.len() == channel.rotations.len()
+              && channel.rotations.len() == 12
+          );
 
-      assert!(channel.scale_timestamps.len() == channel.scales.len() && channel.scales.is_empty());
+          assert!(
+            channel.scale_timestamps.len() == channel.scales.len() && channel.scales.is_empty()
+          );
 
-      assert!(
-        channel.weight_timestamps.len() == channel.weights.len() && channel.weights.is_empty()
-      );
+          assert!(
+            channel.weight_timestamps.len() == channel.weights.len() && channel.weights.is_empty()
+          );
+        }
+      }
+      None => todo!(),
     }
   }
 }
