@@ -64,16 +64,6 @@ impl BoneAnimationChannel {
   }
 }
 
-///
-/// This is an extremely specific macro to raw cast an Array4 into an f32 Array4.
-///
-/// ! This is for testing.
-///
-// macro_rules! raw_cast_array4 {
-//   ($x:expr) => {{
-
-//   }};
-// }
 
 ///
 /// This cleans up the implementation when parsing the GLTF morph target weights.
