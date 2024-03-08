@@ -69,15 +69,11 @@ impl BoneAnimationChannel {
 ///
 /// ! This is for testing.
 ///
-macro_rules! raw_cast_array4 {
-  ($x:expr) => {{
-    let mut returning_array: [f32; 4] = [0.0, 0.0, 0.0, 0.0];
-    for (i, v) in $x.iter().enumerate() {
-      returning_array[i] = *v as f32;
-    }
-    returning_array
-  }};
-}
+// macro_rules! raw_cast_array4 {
+//   ($x:expr) => {{
+
+//   }};
+// }
 
 ///
 /// This cleans up the implementation when parsing the GLTF morph target weights.
@@ -164,7 +160,15 @@ pub fn grab_animations(
                 util::Rotations::U16(_rotation) => generic_failure("u16", "rotation"),
                 util::Rotations::F32(rotation) => Keyframes::Rotation(
                   rotation
-                    .map(|rot| Quat::from_array(raw_cast_array4!(rot)))
+                    .map(|rot| {
+                      Quat::from_array({
+                        let mut returning_array: [f32; 4] = [0.0, 0.0, 0.0, 0.0];
+                        for (i, v) in rot.iter().enumerate() {
+                          returning_array[i] = *v;
+                        }
+                        returning_array
+                      })
+                    })
                     .collect(),
                 ),
               },
