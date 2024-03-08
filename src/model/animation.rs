@@ -182,10 +182,18 @@ pub fn grab_animations(
                 Keyframes::Scale(scale.map(Vec3::from_array).collect())
               }
               util::ReadOutputs::MorphTargetWeights(target_weight) => match target_weight {
-                util::MorphTargetWeights::I8(weights) => weightify!(weights),
-                util::MorphTargetWeights::U8(weights) => weightify!(weights),
-                util::MorphTargetWeights::I16(weights) => weightify!(weights),
-                util::MorphTargetWeights::U16(weights) => weightify!(weights),
+                util::MorphTargetWeights::I8(_weights) => {
+                  generic_failure("i8", "morph weight targets")
+                }
+                util::MorphTargetWeights::U8(_weights) => {
+                  generic_failure("u8", "morph weight targets")
+                }
+                util::MorphTargetWeights::I16(_weights) => {
+                  generic_failure("i16", "morph weight targets")
+                }
+                util::MorphTargetWeights::U16(_weights) => {
+                  generic_failure("u16", "morph weight targets")
+                }
                 util::MorphTargetWeights::F32(weights) => weightify!(weights),
               },
             };
