@@ -64,30 +64,16 @@ impl BoneAnimationChannel {
   }
 }
 
-// nah just kidding
-
 ///
 /// This cleans up the implementation when parsing the GLTF morph target weights.
 ///
 /// It converts &[T] into a Vec<f32> which is the Keyframes::Weights enum.
 ///
-macro_rules! weightify {
-  ($x:expr) => {{
-    let mut container: Vec<f32> = vec![];
+// macro_rules! weightify {
+//   ($x:expr) => {{
 
-    // There can be a bug in the iterator given due to how GLTF works, we want to drop out when the end is hit.
-    // This prevents an infinite loop.
-    let limit = $x.len();
-    for (index, value) in $x.enumerate() {
-      container.push(value as f32);
-      // Bail out.
-      if index >= limit {
-        break;
-      }
-    }
-    Keyframes::Weights(container)
-  }};
-}
+//   }};
+// }
 
 pub fn grab_animations(
   gltf_data: Gltf,
@@ -179,7 +165,21 @@ pub fn grab_animations(
                 util::MorphTargetWeights::U16(_weights) => {
                   generic_failure("u16", "morph weight targets")
                 }
-                util::MorphTargetWeights::F32(weights) => weightify!(weights),
+                util::MorphTargetWeights::F32(weights) => {
+                  let mut container: Vec<f32> = vec![];
+
+                  // There can be a bug in the iterator given due to how rust GLTF works, we want to drop out when the end is hit.
+                  // This prevents an infinite loop.
+                  let limit = weights.len();
+                  for (index, value) in weights.enumerate() {
+                    container.push(value);
+                    // Bail out.
+                    if index >= limit {
+                      break;
+                    }
+                  }
+                  Keyframes::Weights(container)
+                }
               },
             };
 
