@@ -113,55 +113,43 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
   // Now apply the data.
   if is_skinned {
     // We're going to take the raw data.
-    let animations = grab_animations(gltf_data, buffers, file_name);
+    let bone_animations = grab_animations(gltf_data, buffers, file_name);
 
     // Then finalize it.
     // (finalization is interpolating the frames so they're all equal distance from eachother in the scale of time.)
     // todo: turn this into a function so it's not a mess here.
-    match minetest_gltf.bone_animations {
-      Some(bone_animations) => {
-        let mut min_time = 0.0;
-        let mut max_time = 0.0;
-        let mut min_distance = f64::MAX;
-        for (id, animation) in bone_animations {
-          // A closure so I don't have to type this out 4 times.
-          let mut divolve_timestamp_data = |raw_timestamps: &Vec<f32>| {
-            for timestamp in raw_timestamps {
-              if timestamp < &min_time {
-                min_time = *timestamp;
-              }
-              if timestamp > &max_time {
-                max_time = *timestamp;
-              }
-            }
-          };
 
-          // Translation timestamps.
-          divolve_timestamp_data(&animation.translation_timestamps);
-
-          // Rotation timestamps.
-          divolve_timestamp_data(&animation.rotation_timestamps);
-
-          // Scale timestamps.
-          divolve_timestamp_data(&animation.rotation_timestamps);
-
-          // Weight timestamps.
-          divolve_timestamp_data(&animation.weight_timestamps);
+    let mut min_time = 0.0;
+    let mut max_time = 0.0;
+    let mut min_distance = f64::MAX;
+    for (id, animation) in &bone_animations {
+      // A closure so I don't have to type this out 4 times.
+      let mut divolve_timestamp_data = |raw_timestamps: &Vec<f32>| {
+        for timestamp in raw_timestamps {
+          if timestamp < &min_time {
+            min_time = *timestamp;
+          }
+          if timestamp > &max_time {
+            max_time = *timestamp;
+          }
         }
-      }
-      None => {
-        return Err(
-          format!(
-            "Check went wrong and the bone animation is none but we still tried to finalize it. {}",
-            file_name
-          )
-          .into(),
-        )
-      }
+      };
+
+      // Translation timestamps.
+      divolve_timestamp_data(&animation.translation_timestamps);
+
+      // Rotation timestamps.
+      divolve_timestamp_data(&animation.rotation_timestamps);
+
+      // Scale timestamps.
+      divolve_timestamp_data(&animation.rotation_timestamps);
+
+      // Weight timestamps.
+      divolve_timestamp_data(&animation.weight_timestamps);
     }
 
     // Then insert the finalized data here.
-    minetest_gltf.bone_animations = Some(animations);
+    minetest_gltf.bone_animations = Some(bone_animations);
     minetest_gltf.is_animated = true;
   } else {
     minetest_gltf.is_animated = false;
