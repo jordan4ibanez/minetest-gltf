@@ -153,6 +153,19 @@ pub fn grab_animations(
       match result_timestamps {
         Ok(timestamps) => {
           let keyframes = if let Some(outputs) = reader.read_outputs() {
+            // More advanced control flow and boilerplate reduction for when something
+            // that's not implemented blows up.
+            let mut blew_up = false;
+            let mut generic_failure = |data_type: &str, implementation_type: &str| {
+              error!(
+                "Minetest_gltf: {} is not implemented for animation {}.",
+                data_type, implementation_type
+              );
+              bone_animation_channels.clear();
+              blew_up = true;
+              Keyframes::Explosion
+            };
+
             match outputs {
               util::ReadOutputs::Translations(translation) => {
                 Keyframes::Translation(translation.map(Vec3::from_array).collect())
