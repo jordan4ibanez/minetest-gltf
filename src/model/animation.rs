@@ -84,14 +84,11 @@ macro_rules! raw_cast_array4 {
 ///
 /// It converts &[[T; 4]] into a Vec<Quat> which is the Keyframes::Rotation enum.
 ///
-macro_rules! quaternionify {
-  ($x:expr) => {
-    Keyframes::Rotation(
-      $x.map(|rot| Quat::from_array(raw_cast_array4!(rot)))
-        .collect(),
-    )
-  };
-}
+// macro_rules! quaternionify {
+//   ($x:expr) => {
+
+//   };
+// }
 
 ///
 /// This cleans up the implementation when parsing the GLTF morph target weights.
@@ -176,7 +173,11 @@ pub fn grab_animations(
                 util::Rotations::U8(_rotation) => generic_failure("u8", "rotation"),
                 util::Rotations::I16(_rotation) => generic_failure("i16", "rotation"),
                 util::Rotations::U16(_rotation) => generic_failure("u16", "rotation"),
-                util::Rotations::F32(rotation) => quaternionify!(rotation),
+                util::Rotations::F32(rotation) => Keyframes::Rotation(
+                  rotation
+                    .map(|rot| Quat::from_array(raw_cast_array4!(rot)))
+                    .collect(),
+                ),
               },
               util::ReadOutputs::Scales(scale) => {
                 Keyframes::Scale(scale.map(Vec3::from_array).collect())
