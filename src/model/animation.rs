@@ -16,6 +16,8 @@ pub enum Keyframes {
   Scale(Vec<Vec3>),
   /// Morph Target Weights raw data.
   Weights(Vec<f32>),
+  /// An absolute failure that shows something blew up.
+  Explosion,
 }
 
 /// Container containing raw TRS animation data for a node (bone).
