@@ -80,17 +80,6 @@ macro_rules! raw_cast_array4 {
 }
 
 ///
-/// This cleans up the implementation when parsing the GLTF rotation data.
-///
-/// It converts &[[T; 4]] into a Vec<Quat> which is the Keyframes::Rotation enum.
-///
-// macro_rules! quaternionify {
-//   ($x:expr) => {
-
-//   };
-// }
-
-///
 /// This cleans up the implementation when parsing the GLTF morph target weights.
 ///
 /// It converts &[T] into a Vec<f32> which is the Keyframes::Weights enum.
