@@ -151,8 +151,11 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
       }
       None => {
         return Err(
-          "Check went wrong and the bone animation is none but we still tried to finalize it."
-            .into(),
+          format!(
+            "Check went wrong and the bone animation is none but we still tried to finalize it. {}",
+            file_name
+          )
+          .into(),
         )
       }
     }
