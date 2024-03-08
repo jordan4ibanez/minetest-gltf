@@ -166,12 +166,13 @@ pub fn grab_animations(
               Keyframes::Explosion
             };
 
-            match outputs {
+            let keyframe_result = match outputs {
               util::ReadOutputs::Translations(translation) => {
                 Keyframes::Translation(translation.map(Vec3::from_array).collect())
               }
+
               util::ReadOutputs::Rotations(rotation) => match rotation {
-                util::Rotations::I8(rotation) => quaternionify!(rotation),
+                util::Rotations::I8(_rotation) => generic_failure("I8", "rotation"),
                 util::Rotations::U8(rotation) => quaternionify!(rotation),
                 util::Rotations::I16(rotation) => quaternionify!(rotation),
                 util::Rotations::U16(rotation) => quaternionify!(rotation),
@@ -187,7 +188,14 @@ pub fn grab_animations(
                 util::MorphTargetWeights::U16(weights) => weightify!(weights),
                 util::MorphTargetWeights::F32(weights) => weightify!(weights),
               },
+            };
+
+            // And now we capture if this thing failed and stop it if it did.
+            if blew_up {
+              break;
             }
+
+            keyframe_result
           } else {
             // * Something blew up, it's now a static model.
             error!(
@@ -294,6 +302,10 @@ pub fn grab_animations(
 
               gotten_animation_channel.weights = weights;
               gotten_animation_channel.weight_timestamps = timestamps;
+            }
+
+            Keyframes::Explosion => {
+              panic!("minetest-gltf: Explosion was somehow reached in animation!");
             }
           }
         }
