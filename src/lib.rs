@@ -119,7 +119,12 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
     // (finalization is interpolating the frames so they're all equal distance from eachother in the scale of time.)
     // todo: turn this into a function so it's not a mess here.
     match minetest_gltf.bone_animations {
-      Some(bone_animations) => for animation in bone_animations {},
+      Some(bone_animations) => {
+        let mut min_time = 0.0;
+        let mut max_time = 0.0;
+        let mut min_distance = f64::MAX;
+        for animation in bone_animations {}
+      }
       None => {
         return Err(
           "Check went wrong and the bone animation is none but we still tried to finalize it."
