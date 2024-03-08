@@ -112,7 +112,15 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
   // Now apply the data.
   if is_skinned {
-    minetest_gltf.bone_animations = Some(grab_animations(gltf_data, buffers, file_name));
+    // We're going to take the raw data.
+    let animations = grab_animations(gltf_data, buffers, file_name);
+
+    // Then finalize it.
+    // (finalization is interpolating the frames so they're all equal distance from eachother in the scale of time.)
+    // todo: finalize here
+
+    // Then insert the finalized data here.
+    minetest_gltf.bone_animations = Some(animations);
     minetest_gltf.is_animated = true;
   } else {
     minetest_gltf.is_animated = false;
