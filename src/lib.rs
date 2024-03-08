@@ -123,7 +123,31 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         let mut min_time = 0.0;
         let mut max_time = 0.0;
         let mut min_distance = f64::MAX;
-        for animation in bone_animations {}
+        for (id, animation) in bone_animations {
+          // A closure so I don't have to type this out 4 times.
+          let mut divolve_timestamp_data = |raw_timestamps: &Vec<f32>| {
+            for timestamp in raw_timestamps {
+              if timestamp < &min_time {
+                min_time = *timestamp;
+              }
+              if timestamp > &max_time {
+                max_time = *timestamp;
+              }
+            }
+          };
+
+          // Translation timestamps.
+          divolve_timestamp_data(&animation.translation_timestamps);
+
+          // Rotation timestamps.
+          divolve_timestamp_data(&animation.rotation_timestamps);
+
+          // Scale timestamps.
+          divolve_timestamp_data(&animation.rotation_timestamps);
+
+          // Weight timestamps.
+          divolve_timestamp_data(&animation.weight_timestamps);
+        }
       }
       None => {
         return Err(
