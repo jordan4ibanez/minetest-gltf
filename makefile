@@ -11,5 +11,8 @@ default:
 e:
 	RUST_BACKTRACE=1 cargo test -- --nocapture
 
+uhoh:
+	RUST_BACKTRACE=full cargo test -- --nocapture
+
 
 #############################
