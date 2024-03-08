@@ -121,17 +121,27 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
     let mut min_time = 0.0;
     let mut max_time = 0.0;
-    let mut min_distance = f64::MAX;
-    for (id, animation) in &bone_animations {
+    let mut min_distance = f32::MAX;
+    for (_id, animation) in &bone_animations {
       // A closure so I don't have to type this out 4 times.
       let mut divolve_timestamp_data = |raw_timestamps: &Vec<f32>| {
+        let mut old_timestamp = f32::MIN;
         for timestamp in raw_timestamps {
+          // Time distance data.
+          if *timestamp - old_timestamp < min_distance {
+            min_distance = *timestamp - old_timestamp;
+          }
+
+          // Min time data.
           if timestamp < &min_time {
             min_time = *timestamp;
           }
+          // Max time data.
           if timestamp > &max_time {
             max_time = *timestamp;
           }
+
+          old_timestamp = *timestamp;
         }
       };
 
@@ -147,6 +157,11 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
       // Weight timestamps.
       divolve_timestamp_data(&animation.weight_timestamps);
     }
+
+    println!(
+      "min_time: {}\nmax_time: {}\nmin_distance: {}",
+      min_time, max_time, min_distance
+    );
 
     // Then insert the finalized data here.
     minetest_gltf.bone_animations = Some(bone_animations);
