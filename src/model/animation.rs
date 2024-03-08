@@ -64,6 +64,7 @@ impl BoneAnimationChannel {
   }
 }
 
+// nah just kidding
 
 ///
 /// This cleans up the implementation when parsing the GLTF morph target weights.
