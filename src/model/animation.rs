@@ -172,10 +172,10 @@ pub fn grab_animations(
               }
 
               util::ReadOutputs::Rotations(rotation) => match rotation {
-                util::Rotations::I8(_rotation) => generic_failure("I8", "rotation"),
-                util::Rotations::U8(rotation) => quaternionify!(rotation),
-                util::Rotations::I16(rotation) => quaternionify!(rotation),
-                util::Rotations::U16(rotation) => quaternionify!(rotation),
+                util::Rotations::I8(_rotation) => generic_failure("i8", "rotation"),
+                util::Rotations::U8(_rotation) => generic_failure("u8", "rotation"),
+                util::Rotations::I16(_rotation) => generic_failure("i16", "rotation"),
+                util::Rotations::U16(_rotation) => generic_failure("u16", "rotation"),
                 util::Rotations::F32(rotation) => quaternionify!(rotation),
               },
               util::ReadOutputs::Scales(scale) => {
