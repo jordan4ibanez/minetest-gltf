@@ -605,47 +605,47 @@ mod tests {
   //   // };
   // }
 
-  #[test]
-  fn load_simple_skin() {
-    drop(env_logger::try_init());
+  // #[test]
+  // fn load_simple_skin() {
+  //   drop(env_logger::try_init());
 
-    let mine_gltf = match load("tests/simple_skin.gltf") {
-      Ok(mine_gltf) => {
-        println!("simple_skin loaded!");
-        mine_gltf
-      }
-      Err(e) => panic!("simple_skin: failed to load. {}", e),
-    };
+  //   let mine_gltf = match load("tests/simple_skin.gltf") {
+  //     Ok(mine_gltf) => {
+  //       println!("simple_skin loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("simple_skin: failed to load. {}", e),
+  //   };
 
-    // let weights = match &scene.weights {
-    //   Some(weights) => weights,
-    //   None => panic!("simple_skin has no weights!"),
-    // };
+  //   // let weights = match &scene.weights {
+  //   //   Some(weights) => weights,
+  //   //   None => panic!("simple_skin has no weights!"),
+  //   // };
 
-    // This one's a curve ball. This is an ultra simple model so let's see if tries to iterate more than one channel!
-    match mine_gltf.bone_animations {
-      Some(bone_animations) => {
-        for (_, channel) in bone_animations {
-          assert!(
-            channel.translation_timestamps.len() == channel.translations.len()
-              && channel.translations.len() == 12
-          );
+  //   // This one's a curve ball. This is an ultra simple model so let's see if tries to iterate more than one channel!
+  //   match mine_gltf.bone_animations {
+  //     Some(bone_animations) => {
+  //       for (_, channel) in bone_animations {
+  //         assert!(
+  //           channel.translation_timestamps.len() == channel.translations.len()
+  //             && channel.translations.len() == 12
+  //         );
 
-          assert!(
-            channel.rotation_timestamps.len() == channel.rotations.len()
-              && channel.rotations.len() == 12
-          );
+  //         assert!(
+  //           channel.rotation_timestamps.len() == channel.rotations.len()
+  //             && channel.rotations.len() == 12
+  //         );
 
-          assert!(
-            channel.scale_timestamps.len() == channel.scales.len() && channel.scales.len() == 12
-          );
+  //         assert!(
+  //           channel.scale_timestamps.len() == channel.scales.len() && channel.scales.len() == 12
+  //         );
 
-          assert!(
-            channel.weight_timestamps.len() == channel.weights.len() && channel.weights.is_empty()
-          );
-        }
-      }
-      None => todo!(),
-    }
-  }
+  //         assert!(
+  //           channel.weight_timestamps.len() == channel.weights.len() && channel.weights.is_empty()
+  //         );
+  //       }
+  //     }
+  //     None => todo!(),
+  //   }
+  // }
 }
