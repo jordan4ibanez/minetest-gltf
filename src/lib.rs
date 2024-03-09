@@ -119,44 +119,50 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
     // (finalization is interpolating the frames so they're all equal distance from eachother in the scale of time.)
     // todo: turn this into a function so it's not a mess here.
 
-    let mut min_time = 0.0;
-    let mut max_time = 0.0;
-    let mut min_distance = f32::MAX;
-    for (_id, animation) in &bone_animations {
-      // A closure so I don't have to type this out 4 times.
-      let mut devolve_timestamp_data = |raw_timestamps: &Vec<f32>| {
-        let mut old_timestamp = f32::MIN;
-        for timestamp in raw_timestamps {
-          // Time distance data.
-          if *timestamp - old_timestamp < min_distance {
-            min_distance = *timestamp - old_timestamp;
+    // Chuck this into a scope so we can have immutable values.
+    let (min_time, max_time, min_distance) = {
+      let mut min_time_worker = 0.0;
+      let mut max_time_worker = 0.0;
+      let mut min_distance_worker = f32::MAX;
+
+      for (_id, animation) in &bone_animations {
+        // A closure so I don't have to type this out 4 times.
+        let mut devolve_timestamp_data = |raw_timestamps: &Vec<f32>| {
+          let mut old_timestamp = f32::MIN;
+          for timestamp in raw_timestamps {
+            // Time distance data.
+            if *timestamp - old_timestamp < min_distance_worker {
+              min_distance_worker = *timestamp - old_timestamp;
+            }
+
+            // Min time data.
+            if timestamp < &min_time_worker {
+              min_time_worker = *timestamp;
+            }
+            // Max time data.
+            if timestamp > &max_time_worker {
+              max_time_worker = *timestamp;
+            }
+
+            old_timestamp = *timestamp;
           }
+        };
 
-          // Min time data.
-          if timestamp < &min_time {
-            min_time = *timestamp;
-          }
-          // Max time data.
-          if timestamp > &max_time {
-            max_time = *timestamp;
-          }
+        // Translation timestamps.
+        devolve_timestamp_data(&animation.translation_timestamps);
 
-          old_timestamp = *timestamp;
-        }
-      };
+        // Rotation timestamps.
+        devolve_timestamp_data(&animation.rotation_timestamps);
 
-      // Translation timestamps.
-      devolve_timestamp_data(&animation.translation_timestamps);
+        // Scale timestamps.
+        devolve_timestamp_data(&animation.rotation_timestamps);
 
-      // Rotation timestamps.
-      devolve_timestamp_data(&animation.rotation_timestamps);
+        // Weight timestamps.
+        devolve_timestamp_data(&animation.weight_timestamps);
+      }
 
-      // Scale timestamps.
-      devolve_timestamp_data(&animation.rotation_timestamps);
-
-      // Weight timestamps.
-      devolve_timestamp_data(&animation.weight_timestamps);
-    }
+      (min_time_worker, max_time_worker, min_distance_worker)
+    };
 
     println!(
       "min_time: {}\nmax_time: {}\nmin_distance: {}",
