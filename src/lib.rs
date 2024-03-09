@@ -179,18 +179,31 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
       println!("test: {}", i as f32 * min_distance);
     }
 
-    let finalized_bone_animations: AHashMap<i32, BoneAnimationChannel> = AHashMap::new();
+    // Now we finalize all animation channels.
+    let mut finalized_bone_animations: AHashMap<i32, BoneAnimationChannel> = AHashMap::new();
 
     for (id, animation) in &bone_animations {
       // ! This is going to get a bit complicated.
       // ! Like, extremely complicated.
 
-      // Final check for equality.
+      // Add a channel to the current id in the finalized animations container.
+      let mut new_channel = match finalized_bone_animations.insert(*id, BoneAnimationChannel::new())
+      {
+        Some(new_channel) => new_channel,
+        None => panic!(
+          "minetest-gltf: failed to add in finalized animation channel {}.",
+          id
+        ),
+      };
+
+      // Final check for translation equality.
       if animation.translation_timestamps.len() != animation.translations.len() {
         return Err(format!("Unequal animation translation lengths in channel {}.", id).into());
       }
 
       if animation.translation_timestamps.is_empty() {
+        // If it's blank, we want to polyfill in default data.
+        for i in 0..required_frames {}
       } else {
         for a in animation
           .translation_timestamps
