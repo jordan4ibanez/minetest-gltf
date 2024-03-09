@@ -181,16 +181,37 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
     let finalized_bone_animations: AHashMap<i32, BoneAnimationChannel> = AHashMap::new();
 
-    for (_id, animation) in &bone_animations {
+    for (id, animation) in &bone_animations {
+      // ! This is going to get a bit complicated.
+      // ! Like, extremely complicated.
+
+      // Final check for equality.
+      if animation.translation_timestamps.len() != animation.translations.len() {
+        return Err(format!("Unequal animation translation lengths in channel {}.", id).into());
+      }
+
+      if animation.translation_timestamps.is_empty() {
+      } else {
+        for a in animation
+          .translation_timestamps
+          .iter()
+          .zip(&animation.translations)
+        {}
+      }
       println!("t: {:?}", animation.translations);
       println!("t: {:?}", animation.translation_timestamps);
+
       println!("-=-=-=-=-");
+
       println!("r: {:?}", animation.rotations);
       println!("r: {:?}", animation.rotation_timestamps);
       println!("r: {}", animation.rotation_timestamps.len());
+
       println!("-=-=-=-=-");
+
       println!("s: {:?}", animation.scales);
       println!("s: {:?}", animation.scale_timestamps);
+
       println!("-=-=-=-=-");
     }
 
