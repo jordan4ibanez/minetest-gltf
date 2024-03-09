@@ -187,14 +187,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
       // ! Like, extremely complicated.
 
       // Add a channel to the current id in the finalized animations container.
-      let mut new_channel = match finalized_bone_animations.insert(*id, BoneAnimationChannel::new())
-      {
-        Some(new_channel) => new_channel,
-        None => panic!(
-          "minetest-gltf: failed to add in finalized animation channel {}.",
-          id
-        ),
-      };
+      let mut new_finalized_channel = BoneAnimationChannel::new();
 
       // Final check for translation equality.
       if animation.translation_timestamps.len() != animation.translations.len() {
@@ -203,33 +196,108 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
       if animation.translation_timestamps.is_empty() {
         // If it's blank, we want to polyfill in default data.
-        for i in 0..required_frames {}
+        for i in 0..required_frames {
+          new_finalized_channel
+            .translation_timestamps
+            .push(i as f32 * min_distance);
+          new_finalized_channel
+            .translations
+            .push(Vec3::new(0.0, 0.0, 0.0))
+        }
       } else {
-        for a in animation
+        let mut old_time = 0.0;
+
+        for (timestamp, value) in animation
           .translation_timestamps
           .iter()
           .zip(&animation.translations)
-        {}
+        {
+          if timestamp - old_time > min_distance {
+            error!("we need a polyfill in translations.");
+          } else {
+            new_finalized_channel
+              .translation_timestamps
+              .push(*timestamp);
+            new_finalized_channel.translations.push(*value);
+          }
+
+          old_time = *timestamp;
+        }
       }
-      println!("t: {:?}", animation.translations);
-      println!("t: {:?}", animation.translation_timestamps);
+
+      println!("t: {:?}", new_finalized_channel.translations);
+      println!("t: {:?}", new_finalized_channel.translation_timestamps);
 
       println!("-=-=-=-=-");
 
-      println!("r: {:?}", animation.rotations);
-      println!("r: {:?}", animation.rotation_timestamps);
-      println!("r: {}", animation.rotation_timestamps.len());
+      if animation.rotation_timestamps.is_empty() {
+        // If it's blank, we want to polyfill in default data.
+        for i in 0..required_frames {
+          new_finalized_channel
+            .rotation_timestamps
+            .push(i as f32 * min_distance);
+          new_finalized_channel.rotations.push(Quat::IDENTITY);
+        }
+      } else {
+        let mut old_time = 0.0;
+
+        for (timestamp, value) in animation
+          .rotation_timestamps
+          .iter()
+          .zip(&animation.rotations)
+        {
+          if timestamp - old_time > min_distance {
+            error!("we need a polyfill in rotations.");
+          } else {
+            new_finalized_channel.rotation_timestamps.push(*timestamp);
+            new_finalized_channel.rotations.push(*value);
+          }
+
+          old_time = *timestamp;
+        }
+      }
+
+      println!("r: {:?}", new_finalized_channel.rotations);
+      println!("r: {:?}", new_finalized_channel.rotation_timestamps);
+      println!("r: {}", new_finalized_channel.rotation_timestamps.len());
 
       println!("-=-=-=-=-");
+
+      if animation.scale_timestamps.is_empty() {
+        // If it's blank, we want to polyfill in default data.
+        for i in 0..required_frames {
+          new_finalized_channel
+            .scale_timestamps
+            .push(i as f32 * min_distance);
+          new_finalized_channel.scales.push(Vec3::new(1.0, 1.0, 1.0));
+        }
+      } else {
+        let mut old_time = 0.0;
+
+        for (timestamp, value) in animation.scale_timestamps.iter().zip(&animation.scales) {
+          if timestamp - old_time > min_distance {
+            error!("we need a polyfill in scales.");
+          } else {
+            new_finalized_channel.scale_timestamps.push(*timestamp);
+            new_finalized_channel.scales.push(*value);
+          }
+
+          old_time = *timestamp;
+        }
+      }
 
       println!("s: {:?}", animation.scales);
       println!("s: {:?}", animation.scale_timestamps);
 
       println!("-=-=-=-=-");
+
+      // Finally add it in.
+      println!("Adding in channel: {}", id);
+      finalized_bone_animations.insert(*id, new_finalized_channel);
     }
 
     // Then insert the finalized data here.
-    minetest_gltf.bone_animations = Some(bone_animations);
+    minetest_gltf.bone_animations = Some(finalized_bone_animations);
     minetest_gltf.is_animated = true;
   } else {
     minetest_gltf.is_animated = false;
