@@ -164,10 +164,18 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
       (min_time_worker, max_time_worker, min_distance_worker)
     };
 
+    // Now we need a triple checker variable.
+    // We need to make sure that all the channels have this many frames.
+    let required_frames = (max_time / min_distance).round() as usize + 1;
+
     println!(
-      "min_time: {}\nmax_time: {}\nmin_distance: {}",
-      min_time, max_time, min_distance
+      "min_time: {}\nmax_time: {}\nmin_distance: {}\nrequired_frames: {}",
+      min_time, max_time, min_distance, required_frames
     );
+
+    for i in 0..required_frames {
+      println!("test: {}", i as f32 * min_distance);
+    }
 
     let finalized_bone_animations: AHashMap<i32, BoneAnimationChannel> = AHashMap::new();
 
