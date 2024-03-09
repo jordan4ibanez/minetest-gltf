@@ -327,11 +327,15 @@ impl Primitive {
       false
     };
 
+    let debugging_enabled = false;
+
     // Weights.
     let mut weights = vec![];
     let has_weights = if let Some(raw_weights) = reader.read_weights(0) {
       for (i, gotten_values) in raw_weights.into_f32().enumerate() {
-        println!("{} is weight {:?}", i, gotten_values);
+        if debugging_enabled {
+          println!("{} is weight {:?}", i, gotten_values);
+        }
         weights.push(gotten_values);
       }
       true
@@ -342,7 +346,9 @@ impl Primitive {
     let mut joints = vec![];
     let has_joints = if let Some(raw_joints) = reader.read_joints(0) {
       for (i, gotten_values) in raw_joints.into_u16().enumerate() {
-        println!("{}, is joint {:?}", i, gotten_values);
+        if debugging_enabled {
+          println!("{}, is joint {:?}", i, gotten_values);
+        }
         joints.push(gotten_values);
       }
       true
