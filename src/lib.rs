@@ -225,6 +225,19 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         }
       }
 
+      if new_finalized_channel.translation_timestamps.len()
+        != new_finalized_channel.translations.len()
+      {
+        panic!("BLEW UP! Mismatched translation lengths.");
+      }
+      if new_finalized_channel.translation_timestamps.len() != required_frames {
+        panic!(
+          "BLEW UP! Expected: {} got: {}",
+          required_frames,
+          new_finalized_channel.translation_timestamps.len()
+        );
+      }
+
       println!("t: {:?}", new_finalized_channel.translations);
       println!("t: {:?}", new_finalized_channel.translation_timestamps);
 
