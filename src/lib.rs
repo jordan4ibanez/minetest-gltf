@@ -286,8 +286,8 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         }
       }
 
-      println!("s: {:?}", animation.scales);
-      println!("s: {:?}", animation.scale_timestamps);
+      println!("s: {:?}", new_finalized_channel.scales);
+      println!("s: {:?}", new_finalized_channel.scale_timestamps);
 
       println!("-=-=-=-=-");
 
