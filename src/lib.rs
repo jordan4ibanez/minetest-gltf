@@ -548,64 +548,6 @@ mod tests {
   // }
 
   // #[test]
-  // fn test_engine() {
-  //   drop(env_logger::try_init());
-
-  //   let gearbox = match load("tests/gearbox.gltf", true) {
-  //     Ok(mine_gltf) => {
-  //       println!("engine loaded!");
-  //       mine_gltf
-  //     }
-  //     Err(e) => panic!("gearbox: failed to load. {}", e),
-  //   };
-
-  //   assert!(!gearbox.bone_animations.is_empty());
-
-  //   let animations = gearbox.bone_animations;
-
-  //   println!("gearbox animations: {},", animations.len());
-
-  //   let scene = match gearbox.scenes.first() {
-  //     Some(scene) => scene,
-  //     None => panic!("gearbox has no scenes!"),
-  //   };
-
-  //   let weights = match &scene.weights {
-  //     Some(weights) => weights,
-  //     None => panic!("gearbox has no weights!"),
-  //   };
-  // }
-
-  // #[test]
-  // fn test_brain_stem() {
-  //   drop(env_logger::try_init());
-
-  //   let gearbox = match load("tests/brain_stem.gltf", true) {
-  //     Ok(mine_gltf) => {
-  //       println!("brain_stem loaded!");
-  //       mine_gltf
-  //     }
-  //     Err(e) => panic!("brain_stem: failed to load. {}", e),
-  //   };
-
-  //   assert!(!gearbox.bone_animations.is_empty());
-
-  //   let animations = gearbox.bone_animations;
-
-  //   println!("brain_stem animations: {},", animations.len());
-
-  //   let scene = match gearbox.scenes.first() {
-  //     Some(scene) => scene,
-  //     None => panic!("brain_stem has no scenes!"),
-  //   };
-
-  //   // let weights = match &scene.weights {
-  //   //   Some(weights) => weights,
-  //   //   None => panic!("brain_stem has no weights!"),
-  //   // };
-  // }
-
-  // #[test]
   // fn load_simple_skin() {
   //   drop(env_logger::try_init());
 
