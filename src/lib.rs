@@ -166,6 +166,8 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
     // Now we need a triple checker variable.
     // We need to make sure that all the channels have this many frames.
+    // This will also work as an iterator.
+    // Timestamps start at 0.0. That's why it's + 1. It's a zero counted container.
     let required_frames = (max_time / min_distance).round() as usize + 1;
 
     println!(
@@ -185,6 +187,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
       println!("-=-=-=-=-");
       println!("r: {:?}", animation.rotations);
       println!("r: {:?}", animation.rotation_timestamps);
+      println!("r: {}", animation.rotation_timestamps.len());
       println!("-=-=-=-=-");
       println!("s: {:?}", animation.scales);
       println!("s: {:?}", animation.scale_timestamps);
