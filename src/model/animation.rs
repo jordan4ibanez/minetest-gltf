@@ -190,6 +190,8 @@ pub fn grab_animations(
 
           let bone_id = channel.target().node().index() as i32;
 
+          println!("found target bone: {}", bone_id);
+
           match keyframes {
             Keyframes::Translation(translations) => {
               let animation_channel = bone_animation_channels.entry(bone_id).or_default();
