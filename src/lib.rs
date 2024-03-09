@@ -169,6 +169,10 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
       min_time, max_time, min_distance
     );
 
+    let finalized_bone_animations: AHashMap<i32, BoneAnimationChannel> = AHashMap::new();
+
+    
+
     // Then insert the finalized data here.
     minetest_gltf.bone_animations = Some(bone_animations);
     minetest_gltf.is_animated = true;
