@@ -523,29 +523,32 @@ mod tests {
   //   println!("{:?}", keyframe.translation_timestamps);
   // }
 
-  // #[test]
-  // fn test_sam() {
-  //   drop(env_logger::try_init());
+  #[test]
+  fn test_sam() {
+    drop(env_logger::try_init());
 
-  //   let sam = match load("tests/minetest_sam.gltf") {
-  //     Ok(mine_gltf) => {
-  //       println!("sam loaded!");
-  //       mine_gltf
-  //     }
-  //     Err(e) => panic!("minetest_sam: failed to load. {}", e),
-  //   };
+    let sam = match load("tests/minetest_sam.gltf") {
+      Ok(mine_gltf) => {
+        println!("sam loaded!");
+        mine_gltf
+      }
+      Err(e) => panic!("minetest_sam: failed to load. {}", e),
+    };
 
-  //   assert!(!sam.bone_animations.is_empty());
+    assert!(!sam.bone_animations.is_none());
 
-  //   let animations = sam.bone_animations;
+    let animations = match sam.bone_animations {
+      Some(animations) => animations,
+      None => panic!("sam has no bone animations!"),
+    };
 
-  //   println!("sam animations: {},", animations.len());
+    println!("sam animations: {},", animations.len());
 
-  //   // let weights = match &scene.weights {
-  //   //   Some(weights) => weights,
-  //   //   None => panic!("sam has no weights!"),
-  //   // };
-  // }
+    // let weights = match &scene.weights {
+    //   Some(weights) => weights,
+    //   None => panic!("sam has no weights!"),
+    // };
+  }
 
   // #[test]
   // fn load_simple_skin() {
