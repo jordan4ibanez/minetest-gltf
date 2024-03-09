@@ -535,7 +535,7 @@ mod tests {
       Err(e) => panic!("minetest_sam: failed to load. {}", e),
     };
 
-    assert!(!sam.bone_animations.is_none());
+    assert!(sam.bone_animations.is_some());
 
     let animations = match sam.bone_animations {
       Some(animations) => animations,
