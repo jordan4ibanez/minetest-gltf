@@ -64,17 +64,6 @@ impl BoneAnimationChannel {
   }
 }
 
-///
-/// This cleans up the implementation when parsing the GLTF morph target weights.
-///
-/// It converts &[T] into a Vec<f32> which is the Keyframes::Weights enum.
-///
-// macro_rules! weightify {
-//   ($x:expr) => {{
-
-//   }};
-// }
-
 pub fn grab_animations(
   gltf_data: Gltf,
   buffers: Vec<Data>,
