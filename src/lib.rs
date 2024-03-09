@@ -626,14 +626,19 @@ mod tests {
     match mine_gltf.bone_animations {
       Some(bone_animations) => {
         for (_, channel) in bone_animations {
-          assert!(channel.translation_timestamps.len() == channel.translations.len());
+          assert!(
+            channel.translation_timestamps.len() == channel.translations.len()
+              && channel.translations.len() == 12
+          );
 
           assert!(
             channel.rotation_timestamps.len() == channel.rotations.len()
               && channel.rotations.len() == 12
           );
 
-          assert!(channel.scale_timestamps.len() == channel.scales.len());
+          assert!(
+            channel.scale_timestamps.len() == channel.scales.len() && channel.scales.len() == 12
+          );
 
           assert!(
             channel.weight_timestamps.len() == channel.weights.len() && channel.weights.is_empty()
