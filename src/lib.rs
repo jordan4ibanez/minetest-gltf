@@ -247,7 +247,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
           .zip(&animation.rotations)
         {
           if timestamp - old_time > min_distance {
-            error!("we need a polyfill in rotations.");
+            // error!("we need a polyfill in rotations.");
           } else {
             new_finalized_channel.rotation_timestamps.push(*timestamp);
             new_finalized_channel.rotations.push(*value);
@@ -257,11 +257,11 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         }
       }
 
-      println!("r: {:?}", new_finalized_channel.rotations);
-      println!("r: {:?}", new_finalized_channel.rotation_timestamps);
-      println!("r: {}", new_finalized_channel.rotation_timestamps.len());
+      // println!("r: {:?}", new_finalized_channel.rotations);
+      // println!("r: {:?}", new_finalized_channel.rotation_timestamps);
+      // println!("r: {}", new_finalized_channel.rotation_timestamps.len());
 
-      println!("-=-=-=-=-");
+      // println!("-=-=-=-=-");
 
       if animation.scale_timestamps.is_empty() {
         // If it's blank, we want to polyfill in default data.
@@ -276,7 +276,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
         for (timestamp, value) in animation.scale_timestamps.iter().zip(&animation.scales) {
           if timestamp - old_time > min_distance {
-            error!("we need a polyfill in scales.");
+            // error!("we need a polyfill in scales.");
           } else {
             new_finalized_channel.scale_timestamps.push(*timestamp);
             new_finalized_channel.scales.push(*value);
@@ -286,13 +286,13 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         }
       }
 
-      println!("s: {:?}", new_finalized_channel.scales);
-      println!("s: {:?}", new_finalized_channel.scale_timestamps);
+      // println!("s: {:?}", new_finalized_channel.scales);
+      // println!("s: {:?}", new_finalized_channel.scale_timestamps);
 
-      println!("-=-=-=-=-");
+      // println!("-=-=-=-=-");
 
       // Finally add it in.
-      println!("Adding in channel: {}", id);
+      // println!("Adding in channel: {}", id);
       finalized_bone_animations.insert(*id, new_finalized_channel);
     }
 
