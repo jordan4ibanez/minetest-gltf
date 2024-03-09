@@ -124,7 +124,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
     let mut min_distance = f32::MAX;
     for (_id, animation) in &bone_animations {
       // A closure so I don't have to type this out 4 times.
-      let mut divolve_timestamp_data = |raw_timestamps: &Vec<f32>| {
+      let mut devolve_timestamp_data = |raw_timestamps: &Vec<f32>| {
         let mut old_timestamp = f32::MIN;
         for timestamp in raw_timestamps {
           // Time distance data.
@@ -146,16 +146,16 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
       };
 
       // Translation timestamps.
-      divolve_timestamp_data(&animation.translation_timestamps);
+      devolve_timestamp_data(&animation.translation_timestamps);
 
       // Rotation timestamps.
-      divolve_timestamp_data(&animation.rotation_timestamps);
+      devolve_timestamp_data(&animation.rotation_timestamps);
 
       // Scale timestamps.
-      divolve_timestamp_data(&animation.rotation_timestamps);
+      devolve_timestamp_data(&animation.rotation_timestamps);
 
       // Weight timestamps.
-      divolve_timestamp_data(&animation.weight_timestamps);
+      devolve_timestamp_data(&animation.weight_timestamps);
     }
 
     println!(
