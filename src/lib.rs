@@ -171,7 +171,17 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
     let finalized_bone_animations: AHashMap<i32, BoneAnimationChannel> = AHashMap::new();
 
-    
+    for (_id, animation) in &bone_animations {
+      println!("t: {:?}", animation.translations);
+      println!("t: {:?}", animation.translation_timestamps);
+      println!("-=-=-=-=-");
+      println!("r: {:?}", animation.rotations);
+      println!("r: {:?}", animation.rotation_timestamps);
+      println!("-=-=-=-=-");
+      println!("s: {:?}", animation.scales);
+      println!("s: {:?}", animation.scale_timestamps);
+      println!("-=-=-=-=-");
+    }
 
     // Then insert the finalized data here.
     minetest_gltf.bone_animations = Some(bone_animations);
