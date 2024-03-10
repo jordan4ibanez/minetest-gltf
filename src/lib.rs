@@ -103,10 +103,13 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
       break;
     }
   }
-  if !is_skinned {
-    error!("Animation failure on model {}. >:(", file_name);
-  } else {
-    error!("Model {} is animated. :)", file_name);
+
+  if false {
+    if !is_skinned {
+      error!("Animation failure on model {}. >:(", file_name);
+    } else {
+      error!("Model {} is animated. :)", file_name);
+    }
   }
 
   // Now apply the data.
@@ -119,7 +122,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
     // todo: turn this into a function so it's not a mess here.
 
     // Chuck this into a scope so we can have immutable values.
-    let (min_time, max_time, min_distance) = {
+    let (_min_time, max_time, min_distance) = {
       let mut min_time_worker = 0.0;
       let mut max_time_worker = 0.0;
       let mut min_distance_worker = f32::MAX;
@@ -169,10 +172,10 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
     // Timestamps start at 0.0. That's why it's + 1. It's a zero counted container.
     let required_frames = (max_time / min_distance).round() as usize + 1;
 
-    println!(
-      "min_time: {}\nmax_time: {}\nmin_distance: {}\nrequired_frames: {}",
-      min_time, max_time, min_distance, required_frames
-    );
+    // println!(
+    //   "min_time: {}\nmax_time: {}\nmin_distance: {}\nrequired_frames: {}",
+    //   min_time, max_time, min_distance, required_frames
+    // );
 
     let enable_timestamp_spam = false;
 
@@ -202,7 +205,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
       }
 
       if animation.translation_timestamps.is_empty() {
-        error!("hit none");
+        // error!("hit none");
         // If it's blank, we want to polyfill in default data.
         for i in 0..required_frames {
           new_finalized_channel
@@ -214,7 +217,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         }
       } else if animation.translation_timestamps.len() == 1 {
         // If there's only one, we can simply use the one translation point as the entire translation animation.
-        error!("hit one");
+        // error!("hit one");
         let polyfill = match animation.translations.first() {
           Some(translation) => translation,
           None => panic!("what?!"),
@@ -230,9 +233,9 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         // Now if we can't polyfill with the easiest data set,
         // we're going to have to get creative.
 
-        error!("Hit another?");
-        println!("got: {}", animation.translation_timestamps.len());
-        println!("got: {}", animation.translations.len());
+        // error!("Hit another?");
+        // println!("got: {}", animation.translation_timestamps.len());
+        // println!("got: {}", animation.translations.len());
 
         let mut raw_add = false;
 
@@ -256,12 +259,12 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         // Now if we can raw add let's see if we can just dump the raw frames in because they're finalized.
         if raw_add && animation.translation_timestamps.len() == required_frames {
           // We can!
-          error!("OKAY TO RAW ADD!");
+          // error!("OKAY TO RAW ADD!");
           new_finalized_channel.translation_timestamps = animation.translation_timestamps.clone();
           new_finalized_channel.translations = animation.translations.clone();
         } else if raw_add && animation.translation_timestamps.len() == 2 {
           // But if we only have the start and finish, we now have to polyfill between beginning and end.
-          error!("POLYFILLING FROM START TO FINISH!");
+          // error!("POLYFILLING FROM START TO FINISH!");
           let start = match animation.translations.first() {
             Some(start) => start,
             None => panic!("wat wat 1"),
@@ -281,7 +284,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
             let result = start.lerp(*finish, current_percentile);
 
-            println!("result: {:?}", result);
+            // println!("result: {:?}", result);
 
             new_finalized_channel
               .translation_timestamps
@@ -332,10 +335,10 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         );
       }
 
-      println!("t: {:?}", new_finalized_channel.translations);
-      println!("t: {:?}", new_finalized_channel.translation_timestamps);
+      // println!("t: {:?}", new_finalized_channel.translations);
+      // println!("t: {:?}", new_finalized_channel.translation_timestamps);
 
-      println!("-=-=-=-=-");
+      // println!("-=-=-=-=-");
 
       // ? ////////////////////////////////////////////////////////////
       // ?            ROTATIONS
@@ -347,7 +350,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
       }
 
       if animation.rotation_timestamps.is_empty() {
-        error!("hit none");
+        // error!("hit none");
         // If it's blank, we want to polyfill in default data.
         for i in 0..required_frames {
           new_finalized_channel
@@ -357,7 +360,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         }
       } else if animation.rotation_timestamps.len() == 1 {
         // If there's only one, we can simply use the one rotation point as the entire rotation animation.
-        error!("hit one");
+        // error!("hit one");
         let polyfill = match animation.rotations.first() {
           Some(rotation) => rotation,
           None => panic!("what?!"),
@@ -373,9 +376,9 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         // Now if we can't polyfill with the easiest data set,
         // we're going to have to get creative.
 
-        error!("Hit another?");
-        println!("got: {}", animation.rotation_timestamps.len());
-        println!("got: {}", animation.rotations.len());
+        // error!("Hit another?");
+        // println!("got: {}", animation.rotation_timestamps.len());
+        // println!("got: {}", animation.rotations.len());
 
         let mut raw_add = false;
 
@@ -399,12 +402,12 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         // Now if we can raw add let's see if we can just dump the raw frames in because they're finalized.
         if raw_add && animation.rotation_timestamps.len() == required_frames {
           // We can!
-          error!("OKAY TO RAW ADD!");
+          // error!("OKAY TO RAW ADD!");
           new_finalized_channel.rotation_timestamps = animation.rotation_timestamps.clone();
           new_finalized_channel.rotations = animation.rotations.clone();
         } else if raw_add && animation.rotation_timestamps.len() == 2 {
           // But if we only have the start and finish, we now have to polyfill between beginning and end.
-          error!("POLYFILLING FROM START TO FINISH!");
+          // error!("POLYFILLING FROM START TO FINISH!");
           let start = match animation.rotations.first() {
             Some(start) => start,
             None => panic!("wat wat 1"),
@@ -424,7 +427,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
             let result = start.lerp(*finish, current_percentile);
 
-            println!("result: {:?}", result);
+            // println!("result: {:?}", result);
 
             new_finalized_channel
               .rotation_timestamps
@@ -473,8 +476,8 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         );
       }
 
-      println!("t: {:?}", new_finalized_channel.rotations);
-      println!("t: {:?}", new_finalized_channel.rotation_timestamps);
+      // println!("t: {:?}", new_finalized_channel.rotations);
+      // println!("t: {:?}", new_finalized_channel.rotation_timestamps);
 
       // ? ////////////////////////////////////////////////////////////
       // ?            SCALES
@@ -486,19 +489,17 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
       }
 
       if animation.scale_timestamps.is_empty() {
-        error!("hit none");
+        // error!("hit none");
         // If it's blank, we want to polyfill in default data.
         for i in 0..required_frames {
           new_finalized_channel
             .scale_timestamps
             .push(i as f32 * min_distance);
-          new_finalized_channel
-            .scales
-            .push(Vec3::new(0.0, 0.0, 0.0));
+          new_finalized_channel.scales.push(Vec3::new(0.0, 0.0, 0.0));
         }
       } else if animation.scale_timestamps.len() == 1 {
         // If there's only one, we can simply use the one scale point as the entire scale animation.
-        error!("hit one");
+        // error!("hit one");
         let polyfill = match animation.scales.first() {
           Some(scale) => scale,
           None => panic!("what?!"),
@@ -514,9 +515,9 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         // Now if we can't polyfill with the easiest data set,
         // we're going to have to get creative.
 
-        error!("Hit another?");
-        println!("got: {}", animation.scale_timestamps.len());
-        println!("got: {}", animation.scales.len());
+        // error!("Hit another?");
+        // println!("got: {}", animation.scale_timestamps.len());
+        // println!("got: {}", animation.scales.len());
 
         let mut raw_add = false;
 
@@ -540,12 +541,12 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         // Now if we can raw add let's see if we can just dump the raw frames in because they're finalized.
         if raw_add && animation.scale_timestamps.len() == required_frames {
           // We can!
-          error!("OKAY TO RAW ADD!");
+          // error!("OKAY TO RAW ADD!");
           new_finalized_channel.scale_timestamps = animation.scale_timestamps.clone();
           new_finalized_channel.scales = animation.scales.clone();
         } else if raw_add && animation.scale_timestamps.len() == 2 {
           // But if we only have the start and finish, we now have to polyfill between beginning and end.
-          error!("POLYFILLING FROM START TO FINISH!");
+          // error!("POLYFILLING FROM START TO FINISH!");
           let start = match animation.scales.first() {
             Some(start) => start,
             None => panic!("wat wat 1"),
@@ -565,11 +566,9 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
             let result = start.lerp(*finish, current_percentile);
 
-            println!("result: {:?}", result);
+            // println!("result: {:?}", result);
 
-            new_finalized_channel
-              .scale_timestamps
-              .push(current_stamp);
+            new_finalized_channel.scale_timestamps.push(current_stamp);
             new_finalized_channel.scales.push(result);
           }
         } else {
@@ -603,9 +602,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         }
       }
 
-      if new_finalized_channel.scale_timestamps.len()
-        != new_finalized_channel.scales.len()
-      {
+      if new_finalized_channel.scale_timestamps.len() != new_finalized_channel.scales.len() {
         panic!("BLEW UP! Mismatched scale lengths.");
       }
       if new_finalized_channel.scale_timestamps.len() != required_frames {
@@ -616,10 +613,10 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         );
       }
 
-      println!("t: {:?}", new_finalized_channel.scales);
-      println!("t: {:?}", new_finalized_channel.scale_timestamps);
+      // println!("t: {:?}", new_finalized_channel.scales);
+      // println!("t: {:?}", new_finalized_channel.scale_timestamps);
 
-      println!("-=-=-=-=-");
+      // println!("-=-=-=-=-");
 
       // Finally add it in.
       // println!("Adding in channel: {}", id);
