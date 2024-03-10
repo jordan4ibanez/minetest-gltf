@@ -274,7 +274,16 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
             // 0.0 to X max time.
             let current_stamp = current_percentile * max_time;
 
-            println!("current: {}", current_stamp);
+            // println!("current: {}", current_stamp);
+
+            let result = start.lerp(*finish, current_percentile);
+
+            println!("result: {:?}", result);
+
+            new_finalized_channel
+              .translation_timestamps
+              .push(current_stamp);
+            new_finalized_channel.translations.push(result);
           }
         } else {
           // And if we can't do either of those, now we have to brute force our way through the calculations. :(
