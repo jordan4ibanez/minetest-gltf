@@ -480,33 +480,146 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
       // ?            SCALES
       // ? ////////////////////////////////////////////////////////////
 
+      // Final check for scale equality.
+      if animation.scale_timestamps.len() != animation.scales.len() {
+        return Err(format!("Unequal animation scale lengths in channel {}.", id).into());
+      }
+
       if animation.scale_timestamps.is_empty() {
+        error!("hit none");
         // If it's blank, we want to polyfill in default data.
         for i in 0..required_frames {
           new_finalized_channel
             .scale_timestamps
             .push(i as f32 * min_distance);
-          new_finalized_channel.scales.push(Vec3::new(1.0, 1.0, 1.0));
+          new_finalized_channel
+            .scales
+            .push(Vec3::new(0.0, 0.0, 0.0));
+        }
+      } else if animation.scale_timestamps.len() == 1 {
+        // If there's only one, we can simply use the one scale point as the entire scale animation.
+        error!("hit one");
+        let polyfill = match animation.scales.first() {
+          Some(scale) => scale,
+          None => panic!("what?!"),
+        };
+
+        for i in 0..required_frames {
+          new_finalized_channel
+            .scale_timestamps
+            .push(i as f32 * min_distance);
+          new_finalized_channel.scales.push(*polyfill);
         }
       } else {
-        let mut old_time = 0.0;
+        // Now if we can't polyfill with the easiest data set,
+        // we're going to have to get creative.
 
-        for (timestamp, value) in animation.scale_timestamps.iter().zip(&animation.scales) {
-          if timestamp - old_time > min_distance {
-            // error!("we need a polyfill in scales.");
-          } else {
-            new_finalized_channel.scale_timestamps.push(*timestamp);
-            new_finalized_channel.scales.push(*value);
+        error!("Hit another?");
+        println!("got: {}", animation.scale_timestamps.len());
+        println!("got: {}", animation.scales.len());
+
+        let mut raw_add = false;
+
+        // Let's see if we can take the easist route with start to finish polyfill.
+        match animation.scale_timestamps.first() {
+          Some(first_timestamp) => {
+            if *first_timestamp == 0.0 {
+              match animation.scale_timestamps.last() {
+                Some(last_timestamp) => {
+                  if *last_timestamp == max_time {
+                    raw_add = true;
+                  }
+                }
+                None => panic!("wat1"),
+              }
+            }
           }
+          None => panic!("wat2"),
+        }
 
-          old_time = *timestamp;
+        // Now if we can raw add let's see if we can just dump the raw frames in because they're finalized.
+        if raw_add && animation.scale_timestamps.len() == required_frames {
+          // We can!
+          error!("OKAY TO RAW ADD!");
+          new_finalized_channel.scale_timestamps = animation.scale_timestamps.clone();
+          new_finalized_channel.scales = animation.scales.clone();
+        } else if raw_add && animation.scale_timestamps.len() == 2 {
+          // But if we only have the start and finish, we now have to polyfill between beginning and end.
+          error!("POLYFILLING FROM START TO FINISH!");
+          let start = match animation.scales.first() {
+            Some(start) => start,
+            None => panic!("wat wat 1"),
+          };
+          let finish = match animation.scales.last() {
+            Some(finish) => finish,
+            None => panic!("wat wat 2"),
+          };
+
+          for i in 0..required_frames {
+            // 0.0 to 1.0.
+            let current_percentile = i as f32 / (required_frames - 1) as f32;
+            // 0.0 to X max time.
+            let current_stamp = current_percentile * max_time;
+
+            // println!("current: {}", current_stamp);
+
+            let result = start.lerp(*finish, current_percentile);
+
+            println!("result: {:?}", result);
+
+            new_finalized_channel
+              .scale_timestamps
+              .push(current_stamp);
+            new_finalized_channel.scales.push(result);
+          }
+        } else {
+          // And if we can't do either of those, now we have to brute force our way through the calculations. :(
+
+          // This is disabled because I have no model that has this available yet. If this is hit. Give me your model.
+
+          panic!("minetest-gltf: This scale logic branch is disabled because I have no model that has this available yet. If this is hit. Give me your model.")
+
+          // for (timestamp, value) in animation
+          //   .scale_timestamps
+          //   .iter()
+          //   .zip(&animation.scales)
+          // {
+          //   // println!("old timestamp: {}", old_time);
+          //   if timestamp - old_time > min_distance {
+          //     // println!("current timestamp: {}", timestamp);
+          //     // println!("current distance: {}", timestamp - old_time);
+          //     // error!("we need a polyfill in scales.");
+          //     let fill_in = ((timestamp - old_time) / min_distance).round() as usize;
+          //     // println!("need to fill in {} frames!", fill_in);
+          //   } else {
+          //     new_finalized_channel
+          //       .scale_timestamps
+          //       .push(*timestamp);
+          //     new_finalized_channel.scales.push(*value);
+          //   }
+
+          //   old_time = *timestamp;
+          // }
         }
       }
 
-      // println!("s: {:?}", new_finalized_channel.scales);
-      // println!("s: {:?}", new_finalized_channel.scale_timestamps);
+      if new_finalized_channel.scale_timestamps.len()
+        != new_finalized_channel.scales.len()
+      {
+        panic!("BLEW UP! Mismatched scale lengths.");
+      }
+      if new_finalized_channel.scale_timestamps.len() != required_frames {
+        panic!(
+          "BLEW UP! scale frames Expected: {} got: {}",
+          required_frames,
+          new_finalized_channel.scale_timestamps.len()
+        );
+      }
 
-      // println!("-=-=-=-=-");
+      println!("t: {:?}", new_finalized_channel.scales);
+      println!("t: {:?}", new_finalized_channel.scale_timestamps);
+
+      println!("-=-=-=-=-");
 
       // Finally add it in.
       // println!("Adding in channel: {}", id);
