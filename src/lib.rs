@@ -198,6 +198,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
       }
 
       if animation.translation_timestamps.is_empty() {
+        error!("hit none");
         // If it's blank, we want to polyfill in default data.
         for i in 0..required_frames {
           new_finalized_channel
@@ -205,30 +206,74 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
             .push(i as f32 * min_distance);
           new_finalized_channel
             .translations
-            .push(Vec3::new(0.0, 0.0, 0.0))
+            .push(Vec3::new(0.0, 0.0, 0.0));
+        }
+      } else if animation.translation_timestamps.len() == 1 {
+        // If there's only one, we can simply use the one translation point as the entire translation animation.
+        error!("hit one");
+        let polyfill = match animation.translations.first() {
+          Some(translation) => translation,
+          None => panic!("what?!"),
+        };
+
+        for i in 0..required_frames {
+          new_finalized_channel
+            .translation_timestamps
+            .push(i as f32 * min_distance);
+          new_finalized_channel.translations.push(*polyfill);
         }
       } else {
+        error!("Hit another?");
+        println!("got: {}", animation.translation_timestamps.len());
+        println!("got: {}", animation.translations.len());
         let mut old_time = 0.0;
 
-        for (timestamp, value) in animation
-          .translation_timestamps
-          .iter()
-          .zip(&animation.translations)
-        {
-          if timestamp - old_time > min_distance {
-            println!("current timestamp: {}", timestamp);
-            println!("current distance: {}", timestamp - old_time);
-            // error!("we need a polyfill in translations.");
-            let fill_in = ((timestamp - old_time) / min_distance).round() as usize;
-            println!("need to fill in {} frames!", fill_in);
-          } else {
-            new_finalized_channel
-              .translation_timestamps
-              .push(*timestamp);
-            new_finalized_channel.translations.push(*value);
-          }
+        let mut raw_add = false;
 
-          old_time = *timestamp;
+        match animation.translation_timestamps.first() {
+          Some(first_timestamp) => {
+            if *first_timestamp == 0.0 {
+              match animation.translation_timestamps.last() {
+                Some(last_timestamp) => {
+                  if *last_timestamp == max_time {
+                    raw_add = true;
+                  }
+                }
+                None => panic!("wat1"),
+              }
+            }
+          }
+          None => panic!("wat2"),
+        }
+
+        if raw_add && animation.translation_timestamps.len() == required_frames {
+          error!("OKAY TO RAW ADD!");
+          new_finalized_channel.translation_timestamps = animation.translation_timestamps.clone();
+          new_finalized_channel.translations = animation.translations.clone();
+        } else if raw_add && animation.translation_timestamps.len() == 2 {
+          error!("POLYFILLING FROM START TO FINISH!");
+        } else {
+          for (timestamp, value) in animation
+            .translation_timestamps
+            .iter()
+            .zip(&animation.translations)
+          {
+            // println!("old timestamp: {}", old_time);
+            if timestamp - old_time > min_distance {
+              // println!("current timestamp: {}", timestamp);
+              // println!("current distance: {}", timestamp - old_time);
+              // error!("we need a polyfill in translations.");
+              let fill_in = ((timestamp - old_time) / min_distance).round() as usize;
+              // println!("need to fill in {} frames!", fill_in);
+            } else {
+              new_finalized_channel
+                .translation_timestamps
+                .push(*timestamp);
+              new_finalized_channel.translations.push(*value);
+            }
+
+            old_time = *timestamp;
+          }
         }
       }
 
@@ -239,7 +284,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
       }
       if new_finalized_channel.translation_timestamps.len() != required_frames {
         panic!(
-          "BLEW UP! Expected: {} got: {}",
+          "BLEW UP! translation frames Expected: {} got: {}",
           required_frames,
           new_finalized_channel.translation_timestamps.len()
         );
