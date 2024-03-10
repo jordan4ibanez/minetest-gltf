@@ -871,6 +871,15 @@ mod tests {
 
     println!("sam animations: {},", animations.len());
 
+    for (_, animation) in animations {
+      assert!(animation.translation_timestamps.len() == 221);
+      assert!(animation.translations.len() == 221);
+      assert!(animation.rotation_timestamps.len() == 221);
+      assert!(animation.rotations.len() == 221);
+      assert!(animation.scale_timestamps.len() == 221);
+      assert!(animation.scales.len() == 221);
+    }
+
     // let weights = match &scene.weights {
     //   Some(weights) => weights,
     //   None => panic!("sam has no weights!"),
