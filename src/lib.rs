@@ -220,7 +220,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         // error!("hit one");
         let polyfill = match animation.translations.first() {
           Some(translation) => translation,
-          None => panic!("what?!"),
+          None => panic!("translation was already checked, why did this panic!? 1"),
         };
 
         for i in 0..required_frames {
@@ -249,11 +249,11 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
                     raw_add = true;
                   }
                 }
-                None => panic!("wat1"),
+                None => panic!("translation was already checked, why did this panic!? 2"),
               }
             }
           }
-          None => panic!("wat2"),
+          None => panic!("translation was already checked, why did this panic!? 3"),
         }
 
         // Now if we can raw add let's see if we can just dump the raw frames in because they're finalized.
@@ -267,11 +267,11 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
           // error!("POLYFILLING FROM START TO FINISH!");
           let start = match animation.translations.first() {
             Some(start) => start,
-            None => panic!("wat wat 1"),
+            None => panic!("translation was already checked, why did this panic!? 4"),
           };
           let finish = match animation.translations.last() {
             Some(finish) => finish,
-            None => panic!("wat wat 2"),
+            None => panic!("translation was already checked, why did this panic!? 5"),
           };
 
           for i in 0..required_frames {
@@ -363,7 +363,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         // error!("hit one");
         let polyfill = match animation.rotations.first() {
           Some(rotation) => rotation,
-          None => panic!("what?!"),
+          None => panic!("rotation was already checked, why did this panic!? 1"),
         };
 
         for i in 0..required_frames {
@@ -392,11 +392,11 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
                     raw_add = true;
                   }
                 }
-                None => panic!("wat1"),
+                None => panic!("rotation was already checked, why did this panic!? 2"),
               }
             }
           }
-          None => panic!("wat2"),
+          None => panic!("rotation was already checked, why did this panic!? 3"),
         }
 
         // Now if we can raw add let's see if we can just dump the raw frames in because they're finalized.
@@ -410,11 +410,11 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
           // error!("POLYFILLING FROM START TO FINISH!");
           let start = match animation.rotations.first() {
             Some(start) => start,
-            None => panic!("wat wat 1"),
+            None => panic!("rotation was already checked, why did this panic!? 4"),
           };
           let finish = match animation.rotations.last() {
             Some(finish) => finish,
-            None => panic!("wat wat 2"),
+            None => panic!("rotation was already checked, why did this panic!? 5"),
           };
 
           for i in 0..required_frames {
@@ -502,7 +502,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         // error!("hit one");
         let polyfill = match animation.scales.first() {
           Some(scale) => scale,
-          None => panic!("what?!"),
+          None => panic!("scale was already checked, why did this panic!? 1"),
         };
 
         for i in 0..required_frames {
@@ -531,11 +531,11 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
                     raw_add = true;
                   }
                 }
-                None => panic!("wat1"),
+                None => panic!("scale was already checked, why did this panic!? 2"),
               }
             }
           }
-          None => panic!("wat2"),
+          None => panic!("scale was already checked, why did this panic!? 3"),
         }
 
         // Now if we can raw add let's see if we can just dump the raw frames in because they're finalized.
@@ -549,11 +549,11 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
           // error!("POLYFILLING FROM START TO FINISH!");
           let start = match animation.scales.first() {
             Some(start) => start,
-            None => panic!("wat wat 1"),
+            None => panic!("scale was already checked, why did this panic!? 4"),
           };
           let finish = match animation.scales.last() {
             Some(finish) => finish,
-            None => panic!("wat wat 2"),
+            None => panic!("scale was already checked, why did this panic!? 5"),
           };
 
           for i in 0..required_frames {
