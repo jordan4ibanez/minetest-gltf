@@ -673,17 +673,7 @@ fn file_name_from_path(path: &str) -> Result<&str, &str> {
 
 #[cfg(test)]
 mod tests {
-  // use crate::primitive::Mode;
-  use crate::*;
-  // use glam::Vec3;
-
-  // macro_rules! assert_delta {
-  //   ($x:expr, $y:expr, $d:expr) => {
-  //     if !($x - $y < $d || $y - $x < $d) {
-  //       panic!();
-  //     }
-  //   };
-  // }
+  use crate::{primitive::Mode, *};
 
   #[test]
   fn check_cube_glb() {
@@ -704,137 +694,145 @@ mod tests {
     }
   }
 
-  // #[test]
-  // fn check_different_meshes() {
-  //   drop(env_logger::try_init());
-
-  //   let mine_gltf = match load("tests/complete.glb") {
-  //     Ok(mine_gltf) => {
-  //       println!("Complete loaded!");
-  //       mine_gltf
-  //     }
-  //     Err(e) => panic!("Complete: failed to load. {}", e),
-  //   };
-  //   assert_eq!(mine_gltf.scenes.len(), 1);
-  //   let scene = &mine_gltf.scenes[0];
-  //   for model in scene.models.iter() {
-  //     match model.mode() {
-  //       Mode::Triangles | Mode::TriangleFan | Mode::TriangleStrip => {
-  //         assert!(model.triangles().is_ok());
-  //       }
-  //       Mode::Lines | Mode::LineLoop | Mode::LineStrip => {
-  //         assert!(model.lines().is_ok());
-  //       }
-  //       Mode::Points => {
-  //         assert!(model.points().is_ok());
-  //       }
-  //     }
-  //   }
-  // }
-
-  // #[test]
-  // fn check_cube_gltf() {
-  //   drop(env_logger::try_init());
-
-  //   let _ = match load("tests/cube_classic.gltf") {
-  //     Ok(mine_gltf) => {
-  //       println!("cube_classic loaded!");
-  //       mine_gltf
-  //     }
-  //     Err(e) => panic!("cube_classic: failed to load. {}", e),
-  //   };
-  // }
-
-  // #[test]
-  // fn check_model() {
-  //   drop(env_logger::try_init());
-
-  //   let mine_gltf = match load("tests/cube.glb") {
-  //     Ok(mine_gltf) => {
-  //       println!("cube loaded!");
-  //       mine_gltf
-  //     }
-  //     Err(e) => panic!("cube: failed to load. {}", e),
-  //   };
-  //   let primitive = match &mine_gltf.model {
-  //     Some(model) => match model.primitives.first() {
-  //       Some(primitive) => primitive,
-  //       None => panic!("cube.glb has no primitives."),
-  //     },
-  //     None => panic!("cube.glb has no model."),
-  //   };
-  //   assert!(primitive.has_normals());
-  //   assert!(primitive.has_tex_coords());
-  //   assert!(primitive.has_tangents());
-  //   for t in match primitive.triangles() {
-  //     Ok(tris) => tris,
-  //     Err(e) => panic!("Failed to get cube tris. {}", e),
-  //   }
-  //   .iter()
-  //   .flatten()
-  //   {
-  //     let pos = t.position;
-  //     assert!(pos.x > -0.01 && pos.x < 1.01);
-  //     assert!(pos.y > -0.01 && pos.y < 1.01);
-  //     assert!(pos.z > -0.01 && pos.z < 1.01);
-
-  //     // Check that the tangent w component is 1 or -1
-  //     assert_eq!(t.tangent.w.abs(), 1.);
-  //   }
-  // }
-
-  // #[test]
-  // fn check_invalid_path() {
-  //   drop(env_logger::try_init());
-
-  //   assert!(load("tests/invalid.glb").is_err());
-  // }
-
-  // #[test]
-  // fn load_snowman() {
-  //   drop(env_logger::try_init());
-
-  //   let mine_gltf = match load("tests/snowman.gltf") {
-  //     Ok(mine_gltf) => {
-  //       println!("Snowman loaded!");
-  //       mine_gltf
-  //     }
-  //     Err(e) => panic!("Snowman: failed to load. {}", e),
-  //   };
-
-  //   match mine_gltf.model {
-  //     Some(model) => assert_eq!(model.primitives.len(), 5),
-  //     None => panic!("Snowman: has no model."),
-  //   }
-  // }
-
   #[test]
-  fn test_the_spider_animations() {
+  fn check_different_meshes() {
     drop(env_logger::try_init());
 
-    let spider = match load("tests/spider_animated.gltf") {
+    let mine_gltf = match load("tests/complete.glb") {
       Ok(mine_gltf) => {
-        println!("spider loaded!");
+        println!("Complete loaded!");
         mine_gltf
       }
-      Err(e) => panic!("spider: failed to load. {}", e),
+      Err(e) => panic!("Complete: failed to load. {}", e),
     };
 
-    let animations = match spider.bone_animations {
-      Some(animations) => animations,
-      None => panic!("spider has no bone animations!"),
-    };
-
-    for (_, animation) in animations {
-      error!("spider: {}", animation.translation_timestamps.len());
-      assert!(animation.translation_timestamps.len() == 2);
-      assert!(animation.translations.len() == 2);
-      assert!(animation.rotation_timestamps.len() == 2);
-      assert!(animation.rotations.len() == 2);
-      assert!(animation.scale_timestamps.len() == 2);
-      assert!(animation.scales.len() == 2);
+    match mine_gltf.model {
+      Some(model) => {
+        for model in model.primitives {
+          match model.mode() {
+            Mode::Triangles | Mode::TriangleFan | Mode::TriangleStrip => {
+              assert!(model.triangles().is_ok());
+            }
+            Mode::Lines | Mode::LineLoop | Mode::LineStrip => {
+              assert!(model.lines().is_ok());
+            }
+            Mode::Points => {
+              assert!(model.points().is_ok());
+            }
+          }
+        }
+      }
+      None => panic!("complete has no model!"),
     }
   }
+
+  #[test]
+  fn check_cube_gltf() {
+    drop(env_logger::try_init());
+
+    let _ = match load("tests/cube_classic.gltf") {
+      Ok(mine_gltf) => {
+        println!("cube_classic loaded!");
+        mine_gltf
+      }
+      Err(e) => panic!("cube_classic: failed to load. {}", e),
+    };
+  }
+
+  #[test]
+  fn check_model() {
+    drop(env_logger::try_init());
+
+    let mine_gltf = match load("tests/cube.glb") {
+      Ok(mine_gltf) => {
+        println!("cube loaded!");
+        mine_gltf
+      }
+      Err(e) => panic!("cube: failed to load. {}", e),
+    };
+    let primitive = match &mine_gltf.model {
+      Some(model) => match model.primitives.first() {
+        Some(primitive) => primitive,
+        None => panic!("cube.glb has no primitives."),
+      },
+      None => panic!("cube.glb has no model."),
+    };
+    assert!(primitive.has_normals());
+    assert!(primitive.has_tex_coords());
+    assert!(primitive.has_tangents());
+    for t in match primitive.triangles() {
+      Ok(tris) => tris,
+      Err(e) => panic!("Failed to get cube tris. {}", e),
+    }
+    .iter()
+    .flatten()
+    {
+      let pos = t.position;
+      assert!(pos.x > -0.01 && pos.x < 1.01);
+      assert!(pos.y > -0.01 && pos.y < 1.01);
+      assert!(pos.z > -0.01 && pos.z < 1.01);
+
+      // Check that the tangent w component is 1 or -1
+      assert_eq!(t.tangent.w.abs(), 1.);
+    }
+  }
+
+  #[test]
+  fn check_invalid_path() {
+    drop(env_logger::try_init());
+
+    assert!(load("tests/invalid.glb").is_err());
+  }
+
+  #[test]
+  fn load_snowman() {
+    drop(env_logger::try_init());
+
+    let snowman = match load("tests/snowman.gltf") {
+      Ok(mine_gltf) => {
+        println!("Snowman loaded!");
+        mine_gltf
+      }
+      Err(e) => panic!("Snowman: failed to load. {}", e),
+    };
+
+    match snowman.model {
+      Some(model) => {
+        assert_eq!(model.primitives.len(), 5);
+      }
+      None => panic!("Snowman: has no model."),
+    }
+
+    assert!(!snowman.is_animated);
+  }
+
+  // #[test]
+  // fn test_the_spider_animations() {
+  //   drop(env_logger::try_init());
+
+  //   let spider = match load("tests/spider_animated.gltf") {
+  //     Ok(mine_gltf) => {
+  //       println!("spider loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("spider: failed to load. {}", e),
+  //   };
+
+  //   let animations = match spider.bone_animations {
+  //     Some(animations) => animations,
+  //     None => panic!("spider has no bone animations!"),
+  //   };
+
+  //   for (_, animation) in animations {
+  //     error!("spider: {}", animation.translation_timestamps.len());
+  //     assert!(animation.translation_timestamps.len() == 2);
+  //     assert!(animation.translations.len() == 2);
+  //     assert!(animation.rotation_timestamps.len() == 2);
+  //     assert!(animation.rotations.len() == 2);
+  //     assert!(animation.scale_timestamps.len() == 2);
+  //     assert!(animation.scales.len() == 2);
+  //   }
+  // }
 
   #[test]
   fn test_sam() {
