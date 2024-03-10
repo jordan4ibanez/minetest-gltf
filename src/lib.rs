@@ -175,8 +175,12 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
       min_time, max_time, min_distance, required_frames
     );
 
-    for i in 0..required_frames {
-      println!("test: {}", i as f32 * min_distance);
+    let enable_timestamp_spam = false;
+
+    if enable_timestamp_spam {
+      for i in 0..required_frames {
+        println!("test: {}", i as f32 * min_distance);
+      }
     }
 
     // Now we finalize all animation channels.
