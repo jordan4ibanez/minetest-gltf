@@ -233,7 +233,6 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         error!("Hit another?");
         println!("got: {}", animation.translation_timestamps.len());
         println!("got: {}", animation.translations.len());
-        let mut old_time = 0.0;
 
         let mut raw_add = false;
 
@@ -291,27 +290,32 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
           }
         } else {
           // And if we can't do either of those, now we have to brute force our way through the calculations. :(
-          for (timestamp, value) in animation
-            .translation_timestamps
-            .iter()
-            .zip(&animation.translations)
-          {
-            // println!("old timestamp: {}", old_time);
-            if timestamp - old_time > min_distance {
-              // println!("current timestamp: {}", timestamp);
-              // println!("current distance: {}", timestamp - old_time);
-              // error!("we need a polyfill in translations.");
-              let fill_in = ((timestamp - old_time) / min_distance).round() as usize;
-              // println!("need to fill in {} frames!", fill_in);
-            } else {
-              new_finalized_channel
-                .translation_timestamps
-                .push(*timestamp);
-              new_finalized_channel.translations.push(*value);
-            }
 
-            old_time = *timestamp;
-          }
+          // This is disabled because I have no model that has this available yet. If this is hit. Give me your model.
+
+          panic!("minetest-gltf: This translation logic branch is disabled because I have no model that has this available yet. If this is hit. Give me your model.")
+
+          // for (timestamp, value) in animation
+          //   .translation_timestamps
+          //   .iter()
+          //   .zip(&animation.translations)
+          // {
+          //   // println!("old timestamp: {}", old_time);
+          //   if timestamp - old_time > min_distance {
+          //     // println!("current timestamp: {}", timestamp);
+          //     // println!("current distance: {}", timestamp - old_time);
+          //     // error!("we need a polyfill in translations.");
+          //     let fill_in = ((timestamp - old_time) / min_distance).round() as usize;
+          //     // println!("need to fill in {} frames!", fill_in);
+          //   } else {
+          //     new_finalized_channel
+          //       .translation_timestamps
+          //       .push(*timestamp);
+          //     new_finalized_channel.translations.push(*value);
+          //   }
+
+          //   old_time = *timestamp;
+          // }
         }
       }
 
@@ -337,7 +341,13 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
       // ?            ROTATIONS
       // ? ////////////////////////////////////////////////////////////
 
+      // Final check for rotation equality.
+      if animation.rotation_timestamps.len() != animation.rotations.len() {
+        return Err(format!("Unequal animation rotation lengths in channel {}.", id).into());
+      }
+
       if animation.rotation_timestamps.is_empty() {
+        error!("hit none");
         // If it's blank, we want to polyfill in default data.
         for i in 0..required_frames {
           new_finalized_channel
@@ -345,30 +355,126 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
             .push(i as f32 * min_distance);
           new_finalized_channel.rotations.push(Quat::IDENTITY);
         }
+      } else if animation.rotation_timestamps.len() == 1 {
+        // If there's only one, we can simply use the one rotation point as the entire rotation animation.
+        error!("hit one");
+        let polyfill = match animation.rotations.first() {
+          Some(rotation) => rotation,
+          None => panic!("what?!"),
+        };
+
+        for i in 0..required_frames {
+          new_finalized_channel
+            .rotation_timestamps
+            .push(i as f32 * min_distance);
+          new_finalized_channel.rotations.push(*polyfill);
+        }
       } else {
-        let mut old_time = 0.0;
+        // Now if we can't polyfill with the easiest data set,
+        // we're going to have to get creative.
 
-        for (timestamp, value) in animation
-          .rotation_timestamps
-          .iter()
-          .zip(&animation.rotations)
-        {
-          if timestamp - old_time > min_distance {
-            // error!("we need a polyfill in rotations.");
-          } else {
-            new_finalized_channel.rotation_timestamps.push(*timestamp);
-            new_finalized_channel.rotations.push(*value);
+        error!("Hit another?");
+        println!("got: {}", animation.rotation_timestamps.len());
+        println!("got: {}", animation.rotations.len());
+
+        let mut raw_add = false;
+
+        // Let's see if we can take the easist route with start to finish polyfill.
+        match animation.rotation_timestamps.first() {
+          Some(first_timestamp) => {
+            if *first_timestamp == 0.0 {
+              match animation.rotation_timestamps.last() {
+                Some(last_timestamp) => {
+                  if *last_timestamp == max_time {
+                    raw_add = true;
+                  }
+                }
+                None => panic!("wat1"),
+              }
+            }
           }
+          None => panic!("wat2"),
+        }
 
-          old_time = *timestamp;
+        // Now if we can raw add let's see if we can just dump the raw frames in because they're finalized.
+        if raw_add && animation.rotation_timestamps.len() == required_frames {
+          // We can!
+          error!("OKAY TO RAW ADD!");
+          new_finalized_channel.rotation_timestamps = animation.rotation_timestamps.clone();
+          new_finalized_channel.rotations = animation.rotations.clone();
+        } else if raw_add && animation.rotation_timestamps.len() == 2 {
+          // But if we only have the start and finish, we now have to polyfill between beginning and end.
+          error!("POLYFILLING FROM START TO FINISH!");
+          let start = match animation.rotations.first() {
+            Some(start) => start,
+            None => panic!("wat wat 1"),
+          };
+          let finish = match animation.rotations.last() {
+            Some(finish) => finish,
+            None => panic!("wat wat 2"),
+          };
+
+          for i in 0..required_frames {
+            // 0.0 to 1.0.
+            let current_percentile = i as f32 / (required_frames - 1) as f32;
+            // 0.0 to X max time.
+            let current_stamp = current_percentile * max_time;
+
+            // println!("current: {}", current_stamp);
+
+            let result = start.lerp(*finish, current_percentile);
+
+            println!("result: {:?}", result);
+
+            new_finalized_channel
+              .rotation_timestamps
+              .push(current_stamp);
+            new_finalized_channel.rotations.push(result);
+          }
+        } else {
+          // And if we can't do either of those, now we have to brute force our way through the calculations. :(
+
+          // This is disabled because I have no model that has this available yet. If this is hit. Give me your model.
+
+          panic!("minetest-gltf: This rotation logic branch is disabled because I have no model that has this available yet. If this is hit. Give me your model.")
+
+          // for (timestamp, value) in animation
+          //   .rotation_timestamps
+          //   .iter()
+          //   .zip(&animation.rotations)
+          // {
+          //   // println!("old timestamp: {}", old_time);
+          //   if timestamp - old_time > min_distance {
+          //     // println!("current timestamp: {}", timestamp);
+          //     // println!("current distance: {}", timestamp - old_time);
+          //     // error!("we need a polyfill in rotations.");
+          //     let fill_in = ((timestamp - old_time) / min_distance).round() as usize;
+          //     // println!("need to fill in {} frames!", fill_in);
+          //   } else {
+          //     new_finalized_channel
+          //       .rotation_timestamps
+          //       .push(*timestamp);
+          //     new_finalized_channel.rotations.push(*value);
+          //   }
+
+          //   old_time = *timestamp;
+          // }
         }
       }
 
-      // println!("r: {:?}", new_finalized_channel.rotations);
-      // println!("r: {:?}", new_finalized_channel.rotation_timestamps);
-      // println!("r: {}", new_finalized_channel.rotation_timestamps.len());
+      if new_finalized_channel.rotation_timestamps.len() != new_finalized_channel.rotations.len() {
+        panic!("BLEW UP! Mismatched rotation lengths.");
+      }
+      if new_finalized_channel.rotation_timestamps.len() != required_frames {
+        panic!(
+          "BLEW UP! rotation frames Expected: {} got: {}",
+          required_frames,
+          new_finalized_channel.rotation_timestamps.len()
+        );
+      }
 
-      // println!("-=-=-=-=-");
+      println!("t: {:?}", new_finalized_channel.rotations);
+      println!("t: {:?}", new_finalized_channel.rotation_timestamps);
 
       // ? ////////////////////////////////////////////////////////////
       // ?            SCALES
