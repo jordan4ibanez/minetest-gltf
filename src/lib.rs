@@ -216,7 +216,11 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
           .zip(&animation.translations)
         {
           if timestamp - old_time > min_distance {
-            error!("we need a polyfill in translations.");
+            println!("current timestamp: {}", timestamp);
+            println!("current distance: {}", timestamp - old_time);
+            // error!("we need a polyfill in translations.");
+            let fill_in = ((timestamp - old_time) / min_distance).round() as usize;
+            println!("need to fill in {} frames!", fill_in);
           } else {
             new_finalized_channel
               .translation_timestamps
