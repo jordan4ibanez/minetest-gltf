@@ -808,47 +808,47 @@ mod tests {
   //   }
   // }
 
-  // #[test]
-  // fn test_the_spider_animations() {
-  //   drop(env_logger::try_init());
+  #[test]
+  fn test_the_spider_animations() {
+    drop(env_logger::try_init());
 
-  //   let spider = match load("tests/fixed_spider.glb") {
-  //     Ok(mine_gltf) => {
-  //       println!("spider loaded!");
-  //       mine_gltf
-  //     }
-  //     Err(e) => panic!("spider: failed to load. {}", e),
-  //   };
+    let spider = match load("tests/fixed_spider.glb") {
+      Ok(mine_gltf) => {
+        println!("spider loaded!");
+        mine_gltf
+      }
+      Err(e) => panic!("spider: failed to load. {}", e),
+    };
 
-  //   assert!(!spider.bone_animations.is_empty());
+    // assert!(!spider.bone_animations.is_empty());
 
-  //   let animations = spider.bone_animations;
+    // let animations = spider.bone_animations;
 
-  //   println!("spider animations: {},", animations.len());
+    // println!("spider animations: {},", animations.len());
 
-  //   let _model = match spider.model {
-  //     Some(model) => model,
-  //     None => panic!("Spider has no model!"),
-  //   };
+    // let _model = match spider.model {
+    //   Some(model) => model,
+    //   None => panic!("Spider has no model!"),
+    // };
 
-  //   // let weights = match &scene.weights {
-  //   //   Some(weights) => weights,
-  //   //   None => panic!("Spider has no weights!"),
-  //   // };
+    // // let weights = match &scene.weights {
+    // //   Some(weights) => weights,
+    // //   None => panic!("Spider has no weights!"),
+    // // };
 
-  //   let keyframe_id = match animations.keys().next() {
-  //     Some(keyframe_id) => keyframe_id,
-  //     None => panic!("spider has no animations."),
-  //   };
+    // let keyframe_id = match animations.keys().next() {
+    //   Some(keyframe_id) => keyframe_id,
+    //   None => panic!("spider has no animations."),
+    // };
 
-  //   let keyframe = match animations.get(keyframe_id) {
-  //     Some(keyframe) => keyframe,
-  //     None => panic!("spider has had a strange bug happen."),
-  //   };
+    // let keyframe = match animations.get(keyframe_id) {
+    //   Some(keyframe) => keyframe,
+    //   None => panic!("spider has had a strange bug happen."),
+    // };
 
-  //   println!("{:?}", keyframe.translations);
-  //   println!("{:?}", keyframe.translation_timestamps);
-  // }
+    // println!("{:?}", keyframe.translations);
+    // println!("{:?}", keyframe.translation_timestamps);
+  }
 
   #[test]
   fn test_sam() {
@@ -899,15 +899,15 @@ mod tests {
   fn load_simple_skin() {
     drop(env_logger::try_init());
 
-    let mine_gltf = match load("tests/simple_skin.gltf") {
-      Ok(mine_gltf) => {
+    let simple_skin = match load("tests/simple_skin.gltf") {
+      Ok(simple_skin) => {
         println!("simple_skin loaded!");
-        mine_gltf
+        simple_skin
       }
       Err(e) => panic!("simple_skin: failed to load. {}", e),
     };
 
-    match mine_gltf.model {
+    match simple_skin.model {
       Some(model) => {
         assert!(model.primitives.len() == 1);
         for primitive in model.primitives {
@@ -921,7 +921,7 @@ mod tests {
     }
 
     // This one's a curve ball. This is an ultra simple model so let's see if tries to iterate more than one channel!
-    match mine_gltf.bone_animations {
+    match simple_skin.bone_animations {
       Some(bone_animations) => {
         for (_, channel) in bone_animations {
           assert!(
