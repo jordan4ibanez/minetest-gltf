@@ -192,6 +192,10 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
       // Add a channel to the current id in the finalized animations container.
       let mut new_finalized_channel = BoneAnimationChannel::new();
 
+      // ? ////////////////////////////////////////////////////////////
+      // ?            TRANSLATIONS
+      // ? ////////////////////////////////////////////////////////////
+
       // Final check for translation equality.
       if animation.translation_timestamps.len() != animation.translations.len() {
         return Err(format!("Unequal animation translation lengths in channel {}.", id).into());
@@ -329,6 +333,10 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
       println!("-=-=-=-=-");
 
+      // ? ////////////////////////////////////////////////////////////
+      // ?            ROTATIONS
+      // ? ////////////////////////////////////////////////////////////
+
       if animation.rotation_timestamps.is_empty() {
         // If it's blank, we want to polyfill in default data.
         for i in 0..required_frames {
@@ -361,6 +369,10 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
       // println!("r: {}", new_finalized_channel.rotation_timestamps.len());
 
       // println!("-=-=-=-=-");
+
+      // ? ////////////////////////////////////////////////////////////
+      // ?            SCALES
+      // ? ////////////////////////////////////////////////////////////
 
       if animation.scale_timestamps.is_empty() {
         // If it's blank, we want to polyfill in default data.
