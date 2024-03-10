@@ -223,6 +223,9 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
           new_finalized_channel.translations.push(*polyfill);
         }
       } else {
+        // Now if we can't polyfill with the easiest data set,
+        // we're going to have to get creative.
+
         error!("Hit another?");
         println!("got: {}", animation.translation_timestamps.len());
         println!("got: {}", animation.translations.len());
@@ -230,6 +233,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
         let mut raw_add = false;
 
+        // Let's see if we can take the easist route with start to finish polyfill.
         match animation.translation_timestamps.first() {
           Some(first_timestamp) => {
             if *first_timestamp == 0.0 {
@@ -246,13 +250,34 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
           None => panic!("wat2"),
         }
 
+        // Now if we can raw add let's see if we can just dump the raw frames in because they're finalized.
         if raw_add && animation.translation_timestamps.len() == required_frames {
+          // We can!
           error!("OKAY TO RAW ADD!");
           new_finalized_channel.translation_timestamps = animation.translation_timestamps.clone();
           new_finalized_channel.translations = animation.translations.clone();
         } else if raw_add && animation.translation_timestamps.len() == 2 {
+          // But if we only have the start and finish, we now have to polyfill between beginning and end.
           error!("POLYFILLING FROM START TO FINISH!");
+          let start = match animation.translations.first() {
+            Some(start) => start,
+            None => panic!("wat wat 1"),
+          };
+          let finish = match animation.translations.last() {
+            Some(finish) => finish,
+            None => panic!("wat wat 2"),
+          };
+
+          for i in 0..required_frames {
+            // 0.0 to 1.0.
+            let current_percentile = i as f32 / (required_frames - 1) as f32;
+            // 0.0 to X max time.
+            let current_stamp = current_percentile * max_time;
+
+            println!("current: {}", current_stamp);
+          }
         } else {
+          // And if we can't do either of those, now we have to brute force our way through the calculations. :(
           for (timestamp, value) in animation
             .translation_timestamps
             .iter()
