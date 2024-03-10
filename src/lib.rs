@@ -812,7 +812,7 @@ mod tests {
   fn test_the_spider_animations() {
     drop(env_logger::try_init());
 
-    let spider = match load("tests/fixed_spider.glb") {
+    let spider = match load("tests/spider_animated.gltf") {
       Ok(mine_gltf) => {
         println!("spider loaded!");
         mine_gltf
@@ -820,34 +820,20 @@ mod tests {
       Err(e) => panic!("spider: failed to load. {}", e),
     };
 
-    // assert!(!spider.bone_animations.is_empty());
+    let animations = match spider.bone_animations {
+      Some(animations) => animations,
+      None => panic!("spider has no bone animations!"),
+    };
 
-    // let animations = spider.bone_animations;
-
-    // println!("spider animations: {},", animations.len());
-
-    // let _model = match spider.model {
-    //   Some(model) => model,
-    //   None => panic!("Spider has no model!"),
-    // };
-
-    // // let weights = match &scene.weights {
-    // //   Some(weights) => weights,
-    // //   None => panic!("Spider has no weights!"),
-    // // };
-
-    // let keyframe_id = match animations.keys().next() {
-    //   Some(keyframe_id) => keyframe_id,
-    //   None => panic!("spider has no animations."),
-    // };
-
-    // let keyframe = match animations.get(keyframe_id) {
-    //   Some(keyframe) => keyframe,
-    //   None => panic!("spider has had a strange bug happen."),
-    // };
-
-    // println!("{:?}", keyframe.translations);
-    // println!("{:?}", keyframe.translation_timestamps);
+    for (_, animation) in animations {
+      error!("spider: {}", animation.translation_timestamps.len());
+      assert!(animation.translation_timestamps.len() == 2);
+      assert!(animation.translations.len() == 2);
+      assert!(animation.rotation_timestamps.len() == 2);
+      assert!(animation.rotations.len() == 2);
+      assert!(animation.scale_timestamps.len() == 2);
+      assert!(animation.scales.len() == 2);
+    }
   }
 
   #[test]
@@ -869,7 +855,7 @@ mod tests {
       None => panic!("sam has no bone animations!"),
     };
 
-    println!("sam animations: {},", animations.len());
+    // println!("sam animations: {},", animations.len());
 
     for (_, animation) in animations {
       assert!(animation.translation_timestamps.len() == 221);
