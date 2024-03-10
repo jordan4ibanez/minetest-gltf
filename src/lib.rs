@@ -880,10 +880,19 @@ mod tests {
       assert!(animation.scales.len() == 221);
     }
 
-    // let weights = match &scene.weights {
-    //   Some(weights) => weights,
-    //   None => panic!("sam has no weights!"),
-    // };
+    match sam.model {
+      Some(model) => {
+        assert!(model.primitives.len() == 1);
+        for primitive in model.primitives {
+          assert!(primitive.has_joints);
+          assert!(primitive.has_weights);
+          assert!(primitive.has_tex_coords());
+          assert_eq!(primitive.weights.len(), 168);
+          assert_eq!(primitive.joints.len(), 168);
+        }
+      }
+      None => panic!("sam has no model?!"),
+    }
   }
 
   // #[test]
