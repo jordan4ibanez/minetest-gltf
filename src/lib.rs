@@ -685,24 +685,24 @@ mod tests {
   //   };
   // }
 
-  // #[test]
-  // fn check_cube_glb() {
-  //   drop(env_logger::try_init());
+  #[test]
+  fn check_cube_glb() {
+    drop(env_logger::try_init());
 
-  //   let mine_gltf = match load("tests/cube.glb", true) {
-  //     Ok(mine_gltf) => {
-  //       println!("Cube loaded!");
-  //       mine_gltf
-  //     }
-  //     Err(e) => panic!("Cube: failed to load. {}", e),
-  //   };
-
-  //   assert_eq!(mine_gltf.scenes.len(), 1);
-  //   let scene = &mine_gltf.scenes[0];
-  //   assert_eq!(scene.cameras.len(), 1);
-  //   assert_eq!(scene.lights.len(), 3);
-  //   assert_eq!(scene.models.len(), 1);
-  // }
+    let mine_gltf = match load("tests/cube.glb") {
+      Ok(mine_gltf) => {
+        println!("Cube loaded!");
+        mine_gltf
+      }
+      Err(e) => panic!("Cube: failed to load. {}", e),
+    };
+    match mine_gltf.model {
+      Some(model) => {
+        assert_eq!(model.primitives.len(), 1);
+      }
+      None => panic!("cube_glb exploded into pieces. :("),
+    }
+  }
 
   // #[test]
   // fn check_different_meshes() {
