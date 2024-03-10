@@ -30,11 +30,10 @@ mod model;
 
 use ahash::AHashMap;
 use glam::{Quat, Vec3};
-use gltf::animation::util;
 use gltf::Gltf;
 use log::error;
 use minetest_gltf::MinetestGLTF;
-use model::animation::{grab_animations, BoneAnimationChannel, Keyframes};
+use model::animation::{grab_animations, BoneAnimationChannel};
 use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
