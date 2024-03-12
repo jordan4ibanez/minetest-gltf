@@ -435,9 +435,15 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
             new_finalized_channel.rotations.push(result);
           }
         } else {
-          // And if we can't do either of those, now we have to brute force our way through the calculations. :(
+          // And if we can't do either of those, now we have to brute force our way through the polyfill calculations. :(
 
-          // This is disabled because I have no model that has this available yet. If this is hit. Give me your model.
+          println!("rotation timestamps: {:?}", animation.rotation_timestamps);
+
+          // This gives me great pain.
+          for i in 0..required_frames {
+            println!("{}", i);
+            
+          }
 
           panic!("minetest-gltf: This rotation logic branch is disabled because I have no model that has this available yet. If this is hit. Give me your model.")
 
