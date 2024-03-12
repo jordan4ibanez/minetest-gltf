@@ -438,7 +438,8 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         } else {
           // And if we can't do either of those, now we have to brute force our way through the polyfill calculations. :(
 
-          // println!("rotation timestamps: {:?}", animation.rotation_timestamps);
+          // To begin this atrocity let's start by grabbing the current size of the animation container.
+          let old_frame_size = animation.rotation_timestamps.len();
 
           // This gives me great pain.
           for i in 0..required_frames {
@@ -448,6 +449,23 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
             let current_stamp = current_percentile * max_time;
             // 5 points of precision integral positioning.
             let precise_stamp = into_precision(current_stamp);
+
+            // Okay now that we got our data, let's see if this model has it.
+            // We need index ONLY cause we have to walk back and forth.
+            // There might be a logic thing missing in here. If you find it. Halp.
+            // ? Fun begins here.
+            let mut test = None;
+            for i in 0..old_frame_size {
+              let gotten = animation.rotation_timestamps[i];
+
+              let gotten_precise = into_precision(gotten);
+
+              if gotten_precise == precise_stamp {
+                test = Some(i);
+              }
+            }
+
+            println!("test: {:?}", test);
 
             println!("{} {}", current_stamp, precise_stamp);
           }
