@@ -336,7 +336,9 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
                   .translation_timestamps
                   .push(current_stamp);
                 // If this crashes, there's something truly horrible that has happened.
-                new_finalized_channel.translations.push(animation.translations[1]);
+                new_finalized_channel
+                  .translations
+                  .push(animation.translations[1]);
               }
             } else {
               // If it's some we have an existing good frame, work with it.
@@ -497,6 +499,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
             // ? Fun begins here.
             let mut found_frame_key = None;
 
+            // Let's find if we have a frame that already exists in the animation.
             for i in 0..old_frame_size {
               let gotten = animation.rotation_timestamps[i];
 
@@ -507,6 +510,8 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
                 found_frame_key = Some(i);
                 break;
               }
+
+              // And if this loop completes and we didn't find anything. We gotta get creative.
             }
 
             // If it's none we now have to either interpolate this thing or we have to insert it.
@@ -521,6 +526,14 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
                   .push(current_stamp);
                 // If this crashes, there's something truly horrible that has happened.
                 new_finalized_channel.rotations.push(animation.rotations[1]);
+              } else {
+                // Else we're going to have to figure this mess out.
+                // ! Here is where the program performance just tanks.
+
+                // So we have no direct frame, we have to find out 2 things:
+                // 1.) The leading frame.
+                // 2.) The following frame.
+                // Then we have to interpolate them together.
               }
             } else {
               // If it's some we have an existing good frame, work with it.
