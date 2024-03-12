@@ -456,7 +456,12 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
             // ? Fun begins here.
             let mut test = None;
             for i in 0..old_frame_size {
+
               let gotten = animation.rotation_timestamps[i];
+
+              if i == 0 {
+                println!("wat {}", gotten);
+              }
 
               let gotten_precise = into_precision(gotten);
 
