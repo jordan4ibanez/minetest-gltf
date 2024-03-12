@@ -297,7 +297,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
           // This is disabled because I have no model that has this available yet. If this is hit. Give me your model.
 
-          // panic!("minetest-gltf: This translation logic branch is disabled because I have no model that has this available yet. If this is hit. Give me your model.")
+          panic!("minetest-gltf: This translation logic branch is disabled because I have no model that has this available yet. If this is hit. Give me your model.")
 
           // for (timestamp, value) in animation
           //   .translation_timestamps
@@ -454,28 +454,56 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
             // We need index ONLY cause we have to walk back and forth.
             // There might be a logic thing missing in here. If you find it. Halp.
             // ? Fun begins here.
-            let mut test = None;
+            let mut found_frame_key = None;
+
             for i in 0..old_frame_size {
-
               let gotten = animation.rotation_timestamps[i];
-
-              if i == 0 {
-                println!("wat {}", gotten);
-              }
 
               let gotten_precise = into_precision(gotten);
 
+              // We got lucky and found an existing frame! :D
               if gotten_precise == precise_stamp {
-                test = Some(i);
+                found_frame_key = Some(i);
+                break;
               }
             }
 
-            println!("test: {:?}", test);
+            // If it's none we now have to either interpolate this thing or we have to insert it.
+            if found_frame_key.is_none() {
+              // If there's no starting keyframe.
+              // First of all, why is this allowed?
+              // Second of all, polyfill from the next available frame.
+              // We know this thing has more than 2 available frames at this point.
+              if precise_stamp == 0 {
+                new_finalized_channel
+                  .rotation_timestamps
+                  .push(current_stamp);
+                // If this crashes, there's something truly horrible that has happened.
+                new_finalized_channel.rotations.push(animation.rotations[1]);
+              }
+            } else {
+              // If it's some we have an existing good frame, work with it.
+              let key = match found_frame_key {
+                Some(key) => key,
+                None => panic!("how is that even possible?!"),
+              };
 
-            println!("{} {}", current_stamp, precise_stamp);
+              // This should never blow up. That's immutable data it's working with, within range!
+              new_finalized_channel
+                .rotation_timestamps
+                .push(animation.rotation_timestamps[key]);
+
+              new_finalized_channel
+                .rotations
+                .push(animation.rotations[key]);
+            }
+
+            // println!("test: {:?}", found_frame_key);
+
+            // println!("{} {}", current_stamp, precise_stamp);
           }
 
-          panic!("minetest-gltf: This rotation logic branch is disabled because I have no model that has this available yet. If this is hit. Give me your model.")
+          // panic!("minetest-gltf: This rotation logic branch is disabled because I have no model that has this available yet. If this is hit. Give me your model.")
         }
       }
 
