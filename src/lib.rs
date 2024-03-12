@@ -293,33 +293,74 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
             new_finalized_channel.translations.push(result);
           }
         } else {
-          // And if we can't do either of those, now we have to brute force our way through the calculations. :(
+          // And if we can't do either of those, now we have to brute force our way through the polyfill calculations. :(
 
-          // This is disabled because I have no model that has this available yet. If this is hit. Give me your model.
+          // To begin this atrocity let's start by grabbing the current size of the animation container.
+          let old_frame_size = animation.translation_timestamps.len();
 
-          panic!("minetest-gltf: This translation logic branch is disabled because I have no model that has this available yet. If this is hit. Give me your model.")
+          // This gives me great pain.
+          for i in 0..required_frames {
+            // 0.0 to 1.0.
+            let current_percentile = i as f32 / (required_frames - 1) as f32;
+            // 0.0 to X max time.
+            let current_stamp = current_percentile * max_time;
+            // 5 points of precision integral positioning.
+            let precise_stamp = into_precision(current_stamp);
 
-          // for (timestamp, value) in animation
-          //   .translation_timestamps
-          //   .iter()
-          //   .zip(&animation.translations)
-          // {
-          //   // println!("old timestamp: {}", old_time);
-          //   if timestamp - old_time > min_distance {
-          //     // println!("current timestamp: {}", timestamp);
-          //     // println!("current distance: {}", timestamp - old_time);
-          //     // error!("we need a polyfill in translations.");
-          //     let fill_in = ((timestamp - old_time) / min_distance).round() as usize;
-          //     // println!("need to fill in {} frames!", fill_in);
-          //   } else {
-          //     new_finalized_channel
-          //       .translation_timestamps
-          //       .push(*timestamp);
-          //     new_finalized_channel.translations.push(*value);
-          //   }
+            // Okay now that we got our data, let's see if this model has it.
+            // We need index ONLY cause we have to walk back and forth.
+            // There might be a logic thing missing in here. If you find it. Halp.
+            // ? Fun begins here.
+            let mut found_frame_key = None;
 
-          //   old_time = *timestamp;
-          // }
+            for i in 0..old_frame_size {
+              let gotten = animation.translation_timestamps[i];
+
+              let gotten_precise = into_precision(gotten);
+
+              // We got lucky and found an existing frame! :D
+              if gotten_precise == precise_stamp {
+                found_frame_key = Some(i);
+                break;
+              }
+            }
+
+            // If it's none we now have to either interpolate this thing or we have to insert it.
+            if found_frame_key.is_none() {
+              // If there's no starting keyframe.
+              // First of all, why is this allowed?
+              // Second of all, polyfill from the next available frame.
+              // We know this thing has more than 2 available frames at this point.
+              if precise_stamp == 0 {
+                new_finalized_channel
+                  .translation_timestamps
+                  .push(current_stamp);
+                // If this crashes, there's something truly horrible that has happened.
+                new_finalized_channel.translations.push(animation.translations[1]);
+              }
+            } else {
+              // If it's some we have an existing good frame, work with it.
+              let key = match found_frame_key {
+                Some(key) => key,
+                None => panic!("how is that even possible?!"),
+              };
+
+              // This should never blow up. That's immutable data it's working with, within range!
+              new_finalized_channel
+                .translation_timestamps
+                .push(animation.translation_timestamps[key]);
+
+              new_finalized_channel
+                .translations
+                .push(animation.translations[key]);
+            }
+
+            // println!("test: {:?}", found_frame_key);
+
+            // println!("{} {}", current_stamp, precise_stamp);
+          }
+
+          // panic!("minetest-gltf: This translation logic branch is disabled because I have no model that has this available yet. If this is hit. Give me your model.")
         }
       }
 
