@@ -673,7 +673,7 @@ fn file_name_from_path(path: &str) -> Result<&str, &str> {
 
 #[cfg(test)]
 mod tests {
-  use crate::{primitive::Mode, *};
+  use crate::*;
 
   // #[test]
   // fn check_cube_glb() {
