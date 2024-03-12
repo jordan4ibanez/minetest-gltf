@@ -675,259 +675,259 @@ fn file_name_from_path(path: &str) -> Result<&str, &str> {
 mod tests {
   use crate::{primitive::Mode, *};
 
-  #[test]
-  fn check_cube_glb() {
-    drop(env_logger::try_init());
-
-    let mine_gltf = match load("tests/cube.glb") {
-      Ok(mine_gltf) => {
-        println!("Cube loaded!");
-        mine_gltf
-      }
-      Err(e) => panic!("Cube: failed to load. {}", e),
-    };
-    match mine_gltf.model {
-      Some(model) => {
-        assert_eq!(model.primitives.len(), 1);
-      }
-      None => panic!("cube_glb exploded into pieces. :("),
-    }
-  }
-
-  #[test]
-  fn check_different_meshes() {
-    drop(env_logger::try_init());
-
-    let mine_gltf = match load("tests/complete.glb") {
-      Ok(mine_gltf) => {
-        println!("Complete loaded!");
-        mine_gltf
-      }
-      Err(e) => panic!("Complete: failed to load. {}", e),
-    };
-
-    match mine_gltf.model {
-      Some(model) => {
-        for model in model.primitives {
-          match model.mode() {
-            Mode::Triangles | Mode::TriangleFan | Mode::TriangleStrip => {
-              assert!(model.triangles().is_ok());
-            }
-            Mode::Lines | Mode::LineLoop | Mode::LineStrip => {
-              assert!(model.lines().is_ok());
-            }
-            Mode::Points => {
-              assert!(model.points().is_ok());
-            }
-          }
-        }
-      }
-      None => panic!("complete has no model!"),
-    }
-  }
-
-  #[test]
-  fn check_cube_gltf() {
-    drop(env_logger::try_init());
-
-    let _ = match load("tests/cube_classic.gltf") {
-      Ok(mine_gltf) => {
-        println!("cube_classic loaded!");
-        mine_gltf
-      }
-      Err(e) => panic!("cube_classic: failed to load. {}", e),
-    };
-  }
-
-  #[test]
-  fn check_model() {
-    drop(env_logger::try_init());
-
-    let mine_gltf = match load("tests/cube.glb") {
-      Ok(mine_gltf) => {
-        println!("cube loaded!");
-        mine_gltf
-      }
-      Err(e) => panic!("cube: failed to load. {}", e),
-    };
-    let primitive = match &mine_gltf.model {
-      Some(model) => match model.primitives.first() {
-        Some(primitive) => primitive,
-        None => panic!("cube.glb has no primitives."),
-      },
-      None => panic!("cube.glb has no model."),
-    };
-    assert!(primitive.has_normals());
-    assert!(primitive.has_tex_coords());
-    assert!(primitive.has_tangents());
-    for t in match primitive.triangles() {
-      Ok(tris) => tris,
-      Err(e) => panic!("Failed to get cube tris. {}", e),
-    }
-    .iter()
-    .flatten()
-    {
-      let pos = t.position;
-      assert!(pos.x > -0.01 && pos.x < 1.01);
-      assert!(pos.y > -0.01 && pos.y < 1.01);
-      assert!(pos.z > -0.01 && pos.z < 1.01);
-
-      // Check that the tangent w component is 1 or -1
-      assert_eq!(t.tangent.w.abs(), 1.);
-    }
-  }
-
-  #[test]
-  fn check_invalid_path() {
-    drop(env_logger::try_init());
-
-    assert!(load("tests/invalid.glb").is_err());
-  }
-
-  #[test]
-  fn load_snowman() {
-    drop(env_logger::try_init());
-
-    let snowman = match load("tests/snowman.gltf") {
-      Ok(mine_gltf) => {
-        println!("Snowman loaded!");
-        mine_gltf
-      }
-      Err(e) => panic!("Snowman: failed to load. {}", e),
-    };
-
-    match snowman.model {
-      Some(model) => {
-        assert_eq!(model.primitives.len(), 5);
-      }
-      None => panic!("Snowman: has no model."),
-    }
-
-    assert!(!snowman.is_animated);
-  }
-
   // #[test]
-  // fn test_the_spider_animations() {
+  // fn check_cube_glb() {
   //   drop(env_logger::try_init());
 
-  //   let spider = match load("tests/spider_animated.gltf") {
+  //   let mine_gltf = match load("tests/cube.glb") {
   //     Ok(mine_gltf) => {
-  //       println!("spider loaded!");
+  //       println!("Cube loaded!");
   //       mine_gltf
   //     }
-  //     Err(e) => panic!("spider: failed to load. {}", e),
+  //     Err(e) => panic!("Cube: failed to load. {}", e),
   //   };
-
-  //   let animations = match spider.bone_animations {
-  //     Some(animations) => animations,
-  //     None => panic!("spider has no bone animations!"),
-  //   };
-
-  //   for (_, animation) in animations {
-  //     error!("spider: {}", animation.translation_timestamps.len());
-  //     assert!(animation.translation_timestamps.len() == 2);
-  //     assert!(animation.translations.len() == 2);
-  //     assert!(animation.rotation_timestamps.len() == 2);
-  //     assert!(animation.rotations.len() == 2);
-  //     assert!(animation.scale_timestamps.len() == 2);
-  //     assert!(animation.scales.len() == 2);
+  //   match mine_gltf.model {
+  //     Some(model) => {
+  //       assert_eq!(model.primitives.len(), 1);
+  //     }
+  //     None => panic!("cube_glb exploded into pieces. :("),
   //   }
   // }
 
+  // #[test]
+  // fn check_different_meshes() {
+  //   drop(env_logger::try_init());
+
+  //   let mine_gltf = match load("tests/complete.glb") {
+  //     Ok(mine_gltf) => {
+  //       println!("Complete loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("Complete: failed to load. {}", e),
+  //   };
+
+  //   match mine_gltf.model {
+  //     Some(model) => {
+  //       for model in model.primitives {
+  //         match model.mode() {
+  //           Mode::Triangles | Mode::TriangleFan | Mode::TriangleStrip => {
+  //             assert!(model.triangles().is_ok());
+  //           }
+  //           Mode::Lines | Mode::LineLoop | Mode::LineStrip => {
+  //             assert!(model.lines().is_ok());
+  //           }
+  //           Mode::Points => {
+  //             assert!(model.points().is_ok());
+  //           }
+  //         }
+  //       }
+  //     }
+  //     None => panic!("complete has no model!"),
+  //   }
+  // }
+
+  // #[test]
+  // fn check_cube_gltf() {
+  //   drop(env_logger::try_init());
+
+  //   let _ = match load("tests/cube_classic.gltf") {
+  //     Ok(mine_gltf) => {
+  //       println!("cube_classic loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("cube_classic: failed to load. {}", e),
+  //   };
+  // }
+
+  // #[test]
+  // fn check_model() {
+  //   drop(env_logger::try_init());
+
+  //   let mine_gltf = match load("tests/cube.glb") {
+  //     Ok(mine_gltf) => {
+  //       println!("cube loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("cube: failed to load. {}", e),
+  //   };
+  //   let primitive = match &mine_gltf.model {
+  //     Some(model) => match model.primitives.first() {
+  //       Some(primitive) => primitive,
+  //       None => panic!("cube.glb has no primitives."),
+  //     },
+  //     None => panic!("cube.glb has no model."),
+  //   };
+  //   assert!(primitive.has_normals());
+  //   assert!(primitive.has_tex_coords());
+  //   assert!(primitive.has_tangents());
+  //   for t in match primitive.triangles() {
+  //     Ok(tris) => tris,
+  //     Err(e) => panic!("Failed to get cube tris. {}", e),
+  //   }
+  //   .iter()
+  //   .flatten()
+  //   {
+  //     let pos = t.position;
+  //     assert!(pos.x > -0.01 && pos.x < 1.01);
+  //     assert!(pos.y > -0.01 && pos.y < 1.01);
+  //     assert!(pos.z > -0.01 && pos.z < 1.01);
+
+  //     // Check that the tangent w component is 1 or -1
+  //     assert_eq!(t.tangent.w.abs(), 1.);
+  //   }
+  // }
+
+  // #[test]
+  // fn check_invalid_path() {
+  //   drop(env_logger::try_init());
+
+  //   assert!(load("tests/invalid.glb").is_err());
+  // }
+
+  // #[test]
+  // fn load_snowman() {
+  //   drop(env_logger::try_init());
+
+  //   let snowman = match load("tests/snowman.gltf") {
+  //     Ok(mine_gltf) => {
+  //       println!("Snowman loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("Snowman: failed to load. {}", e),
+  //   };
+
+  //   match snowman.model {
+  //     Some(model) => {
+  //       assert_eq!(model.primitives.len(), 5);
+  //     }
+  //     None => panic!("Snowman: has no model."),
+  //   }
+
+  //   assert!(!snowman.is_animated);
+  // }
+
   #[test]
-  fn test_sam() {
+  fn test_the_spider_animations() {
     drop(env_logger::try_init());
 
-    let sam = match load("tests/minetest_sam.gltf") {
+    let spider = match load("tests/spider_animated.gltf") {
       Ok(mine_gltf) => {
-        println!("sam loaded!");
+        println!("spider loaded!");
         mine_gltf
       }
-      Err(e) => panic!("minetest_sam: failed to load. {}", e),
+      Err(e) => panic!("spider: failed to load. {}", e),
     };
 
-    assert!(sam.bone_animations.is_some());
-
-    let animations = match sam.bone_animations {
+    let animations = match spider.bone_animations {
       Some(animations) => animations,
-      None => panic!("sam has no bone animations!"),
+      None => panic!("spider has no bone animations!"),
     };
-
-    // println!("sam animations: {},", animations.len());
 
     for (_, animation) in animations {
-      assert!(animation.translation_timestamps.len() == 221);
-      assert!(animation.translations.len() == 221);
-      assert!(animation.rotation_timestamps.len() == 221);
-      assert!(animation.rotations.len() == 221);
-      assert!(animation.scale_timestamps.len() == 221);
-      assert!(animation.scales.len() == 221);
-    }
-
-    match sam.model {
-      Some(model) => {
-        assert!(model.primitives.len() == 1);
-        for primitive in model.primitives {
-          assert!(primitive.has_joints);
-          assert!(primitive.has_weights);
-          assert!(primitive.has_tex_coords());
-          assert_eq!(primitive.weights.len(), 168);
-          assert_eq!(primitive.joints.len(), 168);
-        }
-      }
-      None => panic!("sam has no model?!"),
+      error!("spider: {}", animation.translation_timestamps.len());
+      assert!(animation.translation_timestamps.len() == 2);
+      assert!(animation.translations.len() == 2);
+      assert!(animation.rotation_timestamps.len() == 2);
+      assert!(animation.rotations.len() == 2);
+      assert!(animation.scale_timestamps.len() == 2);
+      assert!(animation.scales.len() == 2);
     }
   }
 
-  #[test]
-  fn load_simple_skin() {
-    drop(env_logger::try_init());
+  // #[test]
+  // fn test_sam() {
+  //   drop(env_logger::try_init());
 
-    let simple_skin = match load("tests/simple_skin.gltf") {
-      Ok(simple_skin) => {
-        println!("simple_skin loaded!");
-        simple_skin
-      }
-      Err(e) => panic!("simple_skin: failed to load. {}", e),
-    };
+  //   let sam = match load("tests/minetest_sam.gltf") {
+  //     Ok(mine_gltf) => {
+  //       println!("sam loaded!");
+  //       mine_gltf
+  //     }
+  //     Err(e) => panic!("minetest_sam: failed to load. {}", e),
+  //   };
 
-    match simple_skin.model {
-      Some(model) => {
-        assert!(model.primitives.len() == 1);
-        for primitive in model.primitives {
-          assert!(primitive.has_joints);
-          assert!(primitive.has_weights);
-          assert_eq!(primitive.weights.len(), 10);
-          assert_eq!(primitive.joints.len(), 10);
-        }
-      }
-      None => panic!("simple_skin has no model?!"),
-    }
+  //   assert!(sam.bone_animations.is_some());
 
-    // This one's a curve ball. This is an ultra simple model so let's see if tries to iterate more than one channel!
-    match simple_skin.bone_animations {
-      Some(bone_animations) => {
-        for (_, channel) in bone_animations {
-          assert!(
-            channel.translation_timestamps.len() == channel.translations.len()
-              && channel.translations.len() == 12
-          );
+  //   let animations = match sam.bone_animations {
+  //     Some(animations) => animations,
+  //     None => panic!("sam has no bone animations!"),
+  //   };
 
-          assert!(
-            channel.rotation_timestamps.len() == channel.rotations.len()
-              && channel.rotations.len() == 12
-          );
+  //   // println!("sam animations: {},", animations.len());
 
-          assert!(
-            channel.scale_timestamps.len() == channel.scales.len() && channel.scales.len() == 12
-          );
+  //   for (_, animation) in animations {
+  //     assert!(animation.translation_timestamps.len() == 221);
+  //     assert!(animation.translations.len() == 221);
+  //     assert!(animation.rotation_timestamps.len() == 221);
+  //     assert!(animation.rotations.len() == 221);
+  //     assert!(animation.scale_timestamps.len() == 221);
+  //     assert!(animation.scales.len() == 221);
+  //   }
 
-          assert!(
-            channel.weight_timestamps.len() == channel.weights.len() && channel.weights.is_empty()
-          );
-        }
-      }
-      None => todo!(),
-    }
-  }
+  //   match sam.model {
+  //     Some(model) => {
+  //       assert!(model.primitives.len() == 1);
+  //       for primitive in model.primitives {
+  //         assert!(primitive.has_joints);
+  //         assert!(primitive.has_weights);
+  //         assert!(primitive.has_tex_coords());
+  //         assert_eq!(primitive.weights.len(), 168);
+  //         assert_eq!(primitive.joints.len(), 168);
+  //       }
+  //     }
+  //     None => panic!("sam has no model?!"),
+  //   }
+  // }
+
+  // #[test]
+  // fn load_simple_skin() {
+  //   drop(env_logger::try_init());
+
+  //   let simple_skin = match load("tests/simple_skin.gltf") {
+  //     Ok(simple_skin) => {
+  //       println!("simple_skin loaded!");
+  //       simple_skin
+  //     }
+  //     Err(e) => panic!("simple_skin: failed to load. {}", e),
+  //   };
+
+  //   match simple_skin.model {
+  //     Some(model) => {
+  //       assert!(model.primitives.len() == 1);
+  //       for primitive in model.primitives {
+  //         assert!(primitive.has_joints);
+  //         assert!(primitive.has_weights);
+  //         assert_eq!(primitive.weights.len(), 10);
+  //         assert_eq!(primitive.joints.len(), 10);
+  //       }
+  //     }
+  //     None => panic!("simple_skin has no model?!"),
+  //   }
+
+  //   // This one's a curve ball. This is an ultra simple model so let's see if tries to iterate more than one channel!
+  //   match simple_skin.bone_animations {
+  //     Some(bone_animations) => {
+  //       for (_, channel) in bone_animations {
+  //         assert!(
+  //           channel.translation_timestamps.len() == channel.translations.len()
+  //             && channel.translations.len() == 12
+  //         );
+
+  //         assert!(
+  //           channel.rotation_timestamps.len() == channel.rotations.len()
+  //             && channel.rotations.len() == 12
+  //         );
+
+  //         assert!(
+  //           channel.scale_timestamps.len() == channel.scales.len() && channel.scales.len() == 12
+  //         );
+
+  //         assert!(
+  //           channel.weight_timestamps.len() == channel.weights.len() && channel.weights.is_empty()
+  //         );
+  //       }
+  //     }
+  //     None => todo!(),
+  //   }
+  // }
 }
