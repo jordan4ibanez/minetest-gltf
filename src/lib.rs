@@ -637,7 +637,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 /// We need a comparable data set. Cast this this thing 0.00001 f32 5 precision points into 1 i32
 ///
 fn into_precision(x: f32) -> i32 {
-  (x * 100_000.0).round() as i32
+  (x * 100_000.0) as i32
 }
 
 ///
