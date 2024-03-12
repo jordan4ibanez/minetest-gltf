@@ -29,6 +29,7 @@ mod minetest_gltf;
 mod model;
 
 use ahash::AHashMap;
+use float_cmp::{approx_eq, Ulps};
 use glam::{Quat, Vec3};
 use gltf::Gltf;
 use log::error;
@@ -296,7 +297,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 
           // This is disabled because I have no model that has this available yet. If this is hit. Give me your model.
 
-          panic!("minetest-gltf: This translation logic branch is disabled because I have no model that has this available yet. If this is hit. Give me your model.")
+          // panic!("minetest-gltf: This translation logic branch is disabled because I have no model that has this available yet. If this is hit. Give me your model.")
 
           // for (timestamp, value) in animation
           //   .translation_timestamps
@@ -437,37 +438,25 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         } else {
           // And if we can't do either of those, now we have to brute force our way through the polyfill calculations. :(
 
-          println!("rotation timestamps: {:?}", animation.rotation_timestamps);
+          // println!("rotation timestamps: {:?}", animation.rotation_timestamps);
 
           // This gives me great pain.
           for i in 0..required_frames {
-            println!("{}", i);
-            
+            // 0.0 to 1.0.
+            let current_percentile = i as f32 / (required_frames - 1) as f32;
+            // 0.0 to X max time.
+            let _current_stamp = current_percentile * max_time;
+
+            // println!("current: {}", current_stamp);
+
+            // let result = start.lerp(*finish, current_percentile);
+
+            let x = approx_eq!(f32, 1.00030001, 1.0003, ulps = 5);
+
+            println!("{}", x);
           }
 
           panic!("minetest-gltf: This rotation logic branch is disabled because I have no model that has this available yet. If this is hit. Give me your model.")
-
-          // for (timestamp, value) in animation
-          //   .rotation_timestamps
-          //   .iter()
-          //   .zip(&animation.rotations)
-          // {
-          //   // println!("old timestamp: {}", old_time);
-          //   if timestamp - old_time > min_distance {
-          //     // println!("current timestamp: {}", timestamp);
-          //     // println!("current distance: {}", timestamp - old_time);
-          //     // error!("we need a polyfill in rotations.");
-          //     let fill_in = ((timestamp - old_time) / min_distance).round() as usize;
-          //     // println!("need to fill in {} frames!", fill_in);
-          //   } else {
-          //     new_finalized_channel
-          //       .rotation_timestamps
-          //       .push(*timestamp);
-          //     new_finalized_channel.rotations.push(*value);
-          //   }
-
-          //   old_time = *timestamp;
-          // }
         }
       }
 
@@ -642,6 +631,20 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
   minetest_gltf.buffers.clear();
 
   Ok(minetest_gltf)
+}
+
+///
+/// We need a comparable data set. Cast this this thing 0.00001 f32 5 precision points into 1 i32
+///
+fn into_precision(x: f32) -> i32 {
+  (x * 100_000.0).round() as i32
+}
+
+///
+/// We need to move it back into floating point. Cast this thing 1 i32 5 precision points into 0.00001 f32
+///
+fn out_of_precision(x: i32) -> f32 {
+  (x as f32) / 100_000.0
 }
 
 ///
