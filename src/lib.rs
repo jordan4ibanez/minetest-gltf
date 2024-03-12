@@ -445,15 +445,11 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
             // 0.0 to 1.0.
             let current_percentile = i as f32 / (required_frames - 1) as f32;
             // 0.0 to X max time.
-            let _current_stamp = current_percentile * max_time;
+            let current_stamp = current_percentile * max_time;
+            // 5 points of precision integral positioning.
+            let precise_stamp = into_precision(current_stamp);
 
-            // println!("current: {}", current_stamp);
-
-            // let result = start.lerp(*finish, current_percentile);
-
-            let x = approx_eq!(f32, 1.00030001, 1.0003, ulps = 5);
-
-            println!("{}", x);
+            println!("{} {}", current_stamp, precise_stamp);
           }
 
           panic!("minetest-gltf: This rotation logic branch is disabled because I have no model that has this available yet. If this is hit. Give me your model.")
