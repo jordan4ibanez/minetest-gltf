@@ -530,12 +530,28 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
                 // Else we're going to have to figure this mess out.
                 // ! Here is where the program performance just tanks.
 
-                // So we have no direct frame, we have to find out 2 things:
-                // 1.) The leading frame.
-                // 2.) The following frame.
-                // Then we have to interpolate them together.
+                // ? So we have no direct frame, we have to find out 2 things:
+                // ? 1.) The leading frame.
+                // ? 2.) The following frame.
+                // ? Then we have to interpolate them together.
+
+                for i in 0..old_frame_size {
+                  let gotten = animation.rotation_timestamps[i];
+
+                  let gotten_precise = into_precision(gotten);
+
+                  // todo: here we check for a frame that is less than.
+                  // aka, leading frame.
+                  if gotten_precise == precise_stamp {
+                    break;
+                  }
+                  // todo: here we check for a frame that is greater than.
+                  // todo: if no greater than we take the leading frame and use it raw.
+                  // aka, following frame.
+                }
               }
             } else {
+              // ! We found a keyframe! :D
               // If it's some we have an existing good frame, work with it.
               let key = match found_frame_key {
                 Some(key) => key,
