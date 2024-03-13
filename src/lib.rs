@@ -165,6 +165,8 @@ fn file_name_from_path(path: &str) -> Result<&str, &str> {
 mod tests {
   use crate::*;
 
+use self::primitive::Mode;
+
   #[test]
   fn check_cube_glb() {
     drop(env_logger::try_init());
