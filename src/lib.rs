@@ -313,6 +313,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
             // ? Fun begins here.
             let mut found_frame_key = None;
 
+            // Let's find if we have a frame that already exists in the animation.
             for i in 0..old_frame_size {
               let gotten = animation.translation_timestamps[i];
 
@@ -323,6 +324,8 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
                 found_frame_key = Some(i);
                 break;
               }
+
+              // And if this loop completes and we didn't find anything. We gotta get creative.
             }
 
             // If it's none we now have to either interpolate this thing or we have to insert it.
@@ -339,8 +342,107 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
                 new_finalized_channel
                   .translations
                   .push(animation.translations[1]);
+              } else {
+                // Else we're going to have to figure this mess out.
+                // ! Here is where the program performance just tanks.
+
+                // ? So we have no direct frame, we have to find out 2 things:
+                // ? 1.) The leading frame.
+                // ? 2.) The following frame.
+                // ? Then we have to interpolate them together.
+
+                // This is an option because if it's none, we have to brute force with animation frame 0.
+                let mut leading_frame = None;
+
+                for i in 0..old_frame_size {
+                  let gotten = animation.translation_timestamps[i];
+
+                  let gotten_precise = into_precision(gotten);
+
+                  // Here we check for a frame that is less than goal.
+                  // aka, the leading frame.
+                  // We already checked if it's got an equal to frame, there's only unequal to frames now.
+                  // We need to let this keep going until it overshoots or else it won't be accurate.
+                  if gotten_precise < precise_stamp {
+                    leading_frame = Some(i);
+                  } else {
+                    // We overshot, now time to abort.
+                    break;
+                  }
+                }
+
+                // ! If we have no leading leading frame is now whatever is first.
+                if leading_frame.is_none() {
+                  leading_frame = Some(0);
+                }
+
+                // This is an option because if it's none, we have to brute force with animation frame 0.
+                let mut following_frame = None;
+
+                for i in 0..old_frame_size {
+                  let gotten = animation.translation_timestamps[i];
+
+                  let gotten_precise = into_precision(gotten);
+
+                  // Here we check for a frame that is less than goal.
+                  // aka, the leading frame.
+                  // We already checked if it's got an equal to frame, there's only unequal to frames now.
+                  // We need to let this keep going until it overshoots or else it won't be accurate.
+                  if gotten_precise > precise_stamp {
+                    following_frame = Some(i);
+                  }
+
+                  // Can't do a logic gate in the previous statement. If it's found then break.
+                  if following_frame.is_some() {
+                    break;
+                  }
+                }
+
+                // ? If it's none, the safe fallback is to just equalize the start and finish, which is extremely wrong.
+                if following_frame.is_none() {
+                  following_frame = leading_frame;
+                }
+
+                // Now we do the interpolation.
+                // This isn't perfect, but it's something.
+                match leading_frame {
+                  Some(leader) => match following_frame {
+                    Some(follower) => {
+                      let lead_timestamp = animation.translation_timestamps[leader];
+                      let lead_translation = animation.translations[leader];
+
+                      let follow_timestamp = animation.translation_timestamps[follower];
+                      let follow_translation = animation.translations[follower];
+
+                      // This is a simple zeroing out of the scales.
+                      let scale = follow_timestamp - lead_timestamp;
+
+                      // Shift the current timestamp into the range of our work.
+                      let shifted_stamp = current_stamp - lead_timestamp;
+
+                      // Get it into 0.0 - 1.0.
+                      let finalized_percentile = shifted_stamp / scale;
+
+                      // println!("finalized: {}", finalized_percentile);
+
+                      let finalized_translation_interpolation =
+                        lead_translation.lerp(follow_translation, finalized_percentile);
+
+                      // Now we finally push the interpolated translation into the finalized animation channel.
+                      new_finalized_channel
+                        .translations
+                        .push(finalized_translation_interpolation);
+                      new_finalized_channel
+                        .translation_timestamps
+                        .push(current_stamp);
+                    }
+                    None => panic!("how?!"),
+                  },
+                  None => panic!("how?!"),
+                }
               }
             } else {
+              // ! We found a keyframe! :D
               // If it's some we have an existing good frame, work with it.
               let key = match found_frame_key {
                 Some(key) => key,
