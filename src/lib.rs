@@ -29,7 +29,6 @@ mod minetest_gltf;
 mod model;
 
 use ahash::AHashMap;
-use float_cmp::{approx_eq, Ulps};
 use glam::{Quat, Vec3};
 use gltf::Gltf;
 use log::error;
