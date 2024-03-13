@@ -535,7 +535,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
                 // ? 2.) The following frame.
                 // ? Then we have to interpolate them together.
 
-                // This is an option because if it's none, something EXTREMELY wrong has happened.
+                // This is an option because if it's none, we have to brute force with animation frame 0.
                 let mut leading_frame = None;
 
                 for i in 0..old_frame_size {
