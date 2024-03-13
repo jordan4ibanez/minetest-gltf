@@ -1,30 +1,27 @@
-// ! This crate is intended to load [glTF 2.0](https://www.khronos.org/gltf), a
-// ! file format designed for the efficient transmission of 3D assets.
-// !
-// ! It's base on [gltf](https://github.com/gltf-rs/gltf) crate but has an easy to use output.
-// !
-// ! # Installation
-// !
-// ! ```toml
-// ! [dependencies]
-// ! easy-gltf="1.1.1"
-// ! ```
-// !
-// ! # Example
-// !
-// ! ```
-// ! let mine_gltf = minetest_gltf::load("tests/cube.glb", true).expect("Failed to load glTF");
-// ! for scene in mine_gltf.scenes {
-// !     println!(
-// !         "Models: #{}",
-// !         scene.models.len()
-// !     )
-// ! }
-// ! ```
+//! This crate is intended to load [glTF 2.0](https://www.khronos.org/gltf), a
+//! file format designed for the efficient transmission of 3D assets.
+//!
+//! It's base on [gltf](https://github.com/gltf-rs/gltf) crate but has an easy to use output.
+//!
+//! # Installation
+//!
+//! ```toml
+//! [dependencies]
+//! easy-gltf="1.1.1"
+//! ```
+//!
+//! # Example
+//!
+//! ```
+//! let mine_gltf = minetest_gltf::load("tests/cube.glb", true).expect("Failed to load glTF");
+//! for scene in mine_gltf.scenes {
+//!     println!(
+//!         "Models: #{}",
+//!         scene.models.len()
+//!     )
+//! }
+//! ```
 
-//!
-//! I am a crate, wow.
-//!
 mod minetest_gltf;
 mod model;
 
