@@ -13,12 +13,17 @@
 //! # Example
 //!
 //! ```
-//! let mine_gltf = minetest_gltf::load("tests/cube.glb", true).expect("Failed to load glTF");
-//! for scene in mine_gltf.scenes {
-//!     println!(
-//!         "Models: #{}",
-//!         scene.models.len()
-//!     )
+//! let minetest_gltf = minetest_gltf::load("tests/cube.glb").expect("Failed to load glTF");
+//!
+//! match minetest_gltf.model {
+//!   Some(model) => {
+//!     // We can work with primitives! Yay.
+//!     println!("primitives: {}", model.primitives.len());
+//!   },
+//!   None => {
+//!     // Something blew up. Boo.
+//!     panic!("No model. :(")
+//!   }
 //! }
 //! ```
 
