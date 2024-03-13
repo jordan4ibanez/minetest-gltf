@@ -560,9 +560,32 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
                   leading_frame = Some(0);
                 }
 
-                // todo: here we check for a frame that is greater than.
-                // todo: if no greater than we take the leading frame and use it raw.
-                // aka, following frame.
+                // This is an option because if it's none, we have to brute force with animation frame 0.
+                let mut following_frame = None;
+
+                for i in 0..old_frame_size {
+                  let gotten = animation.rotation_timestamps[i];
+
+                  let gotten_precise = into_precision(gotten);
+
+                  // Here we check for a frame that is less than goal.
+                  // aka, the leading frame.
+                  // We already checked if it's got an equal to frame, there's only unequal to frames now.
+                  // We need to let this keep going until it overshoots or else it won't be accurate.
+                  if gotten_precise > precise_stamp {
+                    following_frame = Some(i);
+                  }
+
+                  // Can't do a logic gate in the previous statement. If it's found then break.
+                  if following_frame.is_some() {
+                    break;
+                  }
+                }
+
+                // ? If it's none, the safe fallback is to just equalize the start and finish, which is extremely wrong.
+                if following_frame.is_none() {
+                  following_frame = leading_frame;
+                }
               }
             } else {
               // ! We found a keyframe! :D
