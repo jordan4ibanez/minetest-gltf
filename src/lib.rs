@@ -586,6 +586,44 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
                 if following_frame.is_none() {
                   following_frame = leading_frame;
                 }
+
+                // Now we do the interpolation.
+                // This isn't perfect, but it's something.
+                match leading_frame {
+                  Some(leader) => match following_frame {
+                    Some(follower) => {
+                      let lead_timestamp = animation.rotation_timestamps[leader];
+                      let lead_rotation = animation.rotations[leader];
+
+                      let follow_timestamp = animation.rotation_timestamps[follower];
+                      let follow_rotation = animation.rotations[follower];
+
+                      // This is a simple zeroing out of the scales.
+                      let scale = follow_timestamp - lead_timestamp;
+
+                      // Shift the current timestamp into the range of our work.
+                      let shifted_stamp = current_stamp - lead_timestamp;
+
+                      // Get it into 0.0 - 1.0.
+                      let finalized_percentile = shifted_stamp / scale;
+
+                      // println!("finalized: {}", finalized_percentile);
+
+                      let finalized_rotation_interpolation =
+                        lead_rotation.lerp(follow_rotation, finalized_percentile);
+
+                      // Now we finally push the interpolated rotation into the finalized animation channel.
+                      new_finalized_channel
+                        .rotations
+                        .push(finalized_rotation_interpolation);
+                      new_finalized_channel
+                        .rotation_timestamps
+                        .push(current_stamp);
+                    }
+                    None => panic!("how?!"),
+                  },
+                  None => panic!("how?!"),
+                }
               }
             } else {
               // ! We found a keyframe! :D
