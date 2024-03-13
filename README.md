@@ -28,7 +28,7 @@ To install it, just add the dependency in your `Cargo.toml`.
 
 ```toml
 [dependencies]
-minetest-gltf="2.5.7"
+minetest-gltf="3.0.0"
 ```
 
 ### Usage
