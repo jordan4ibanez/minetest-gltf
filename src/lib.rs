@@ -243,10 +243,10 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         // Let's see if we can take the easist route with start to finish polyfill.
         match animation.translation_timestamps.first() {
           Some(first_timestamp) => {
-            if *first_timestamp == 0.0 {
+            if into_precision(*first_timestamp) == 0 {
               match animation.translation_timestamps.last() {
                 Some(last_timestamp) => {
-                  if *last_timestamp == max_time {
+                  if into_precision(*last_timestamp) == into_precision(max_time) {
                     raw_add = true;
                   }
                 }
@@ -531,10 +531,10 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         // Let's see if we can take the easist route with start to finish polyfill.
         match animation.rotation_timestamps.first() {
           Some(first_timestamp) => {
-            if *first_timestamp == 0.0 {
+            if into_precision(*first_timestamp) == 0 {
               match animation.rotation_timestamps.last() {
                 Some(last_timestamp) => {
-                  if *last_timestamp == max_time {
+                  if into_precision(*last_timestamp) == into_precision(max_time) {
                     raw_add = true;
                   }
                 }
@@ -813,10 +813,10 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
         // Let's see if we can take the easist route with start to finish polyfill.
         match animation.scale_timestamps.first() {
           Some(first_timestamp) => {
-            if *first_timestamp == 0.0 {
+            if into_precision(*first_timestamp) == 0 {
               match animation.scale_timestamps.last() {
                 Some(last_timestamp) => {
-                  if *last_timestamp == max_time {
+                  if into_precision(*last_timestamp) == into_precision(max_time) {
                     raw_add = true;
                   }
                 }
