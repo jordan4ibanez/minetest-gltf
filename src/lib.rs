@@ -1070,14 +1070,6 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
 fn into_precision(x: f32) -> i32 {
   (x * 100_000.0) as i32
 }
-
-///
-/// We need to move it back into floating point. Cast this thing 1 i32 5 precision points into 0.00001 f32
-///
-fn out_of_precision(x: i32) -> f32 {
-  (x as f32) / 100_000.0
-}
-
 ///
 /// Automatically parse a file path into a BufReader<File>.
 ///
