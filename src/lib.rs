@@ -535,20 +535,34 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
                 // ? 2.) The following frame.
                 // ? Then we have to interpolate them together.
 
+                // This is an option because if it's none, something EXTREMELY wrong has happened.
+                let mut leading_frame = None;
+
                 for i in 0..old_frame_size {
                   let gotten = animation.rotation_timestamps[i];
 
                   let gotten_precise = into_precision(gotten);
 
-                  // todo: here we check for a frame that is less than.
-                  // aka, leading frame.
-                  if gotten_precise == precise_stamp {
+                  // Here we check for a frame that is less than goal.
+                  // aka, the leading frame.
+                  // We already checked if it's got an equal to frame, there's only unequal to frames now.
+                  // We need to let this keep going until it overshoots or else it won't be accurate.
+                  if gotten_precise < precise_stamp {
+                    leading_frame = Some(i);
+                  } else {
+                    // We overshot, now time to abort.
                     break;
                   }
-                  // todo: here we check for a frame that is greater than.
-                  // todo: if no greater than we take the leading frame and use it raw.
-                  // aka, following frame.
                 }
+
+                // ! If we have no leading leading frame is now whatever is first.
+                if leading_frame.is_none() {
+                  leading_frame = Some(0);
+                }
+
+                // todo: here we check for a frame that is greater than.
+                // todo: if no greater than we take the leading frame and use it raw.
+                // aka, following frame.
               }
             } else {
               // ! We found a keyframe! :D
