@@ -784,7 +784,7 @@ pub fn load(path: &str) -> Result<MinetestGLTF, Box<dyn Error + Send + Sync>> {
           new_finalized_channel
             .scale_timestamps
             .push(i as f32 * min_distance);
-          new_finalized_channel.scales.push(Vec3::new(0.0, 0.0, 0.0));
+          new_finalized_channel.scales.push(Vec3::new(1.0, 1.0, 1.0));
         }
       } else if animation.scale_timestamps.len() == 1 {
         // If there's only one, we can simply use the one scale point as the entire scale animation.
