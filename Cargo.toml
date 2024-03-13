@@ -35,4 +35,3 @@ base64 = "0.22.0"
 env_logger = "0.11.2"
 log = "0.4.20"
 ahash = "0.8.8"
-float-cmp = { version = "0.9.0", features = ["std"] }
