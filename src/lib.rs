@@ -1265,12 +1265,12 @@ mod tests {
 
     for (_, animation) in animations {
       error!("spider: {}", animation.translation_timestamps.len());
-      assert!(animation.translation_timestamps.len() == 2);
-      assert!(animation.translations.len() == 2);
-      assert!(animation.rotation_timestamps.len() == 2);
-      assert!(animation.rotations.len() == 2);
-      assert!(animation.scale_timestamps.len() == 2);
-      assert!(animation.scales.len() == 2);
+      assert!(animation.translation_timestamps.len() == 121);
+      assert!(animation.translations.len() == 121);
+      assert!(animation.rotation_timestamps.len() == 121);
+      assert!(animation.rotations.len() == 121);
+      assert!(animation.scale_timestamps.len() == 121);
+      assert!(animation.scales.len() == 121);
     }
   }
 
