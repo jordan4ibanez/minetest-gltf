@@ -165,7 +165,7 @@ fn file_name_from_path(path: &str) -> Result<&str, &str> {
 mod tests {
   use crate::*;
 
-use self::primitive::Mode;
+  use self::primitive::Mode;
 
   #[test]
   fn check_cube_glb() {
@@ -419,7 +419,7 @@ use self::primitive::Mode;
           );
         }
       }
-      None => todo!(),
+      None => panic!("ain't got no bones!"),
     }
   }
 }
