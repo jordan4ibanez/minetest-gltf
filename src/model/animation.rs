@@ -333,7 +333,6 @@ pub(crate) fn finalize_animations(
 
   // Then finalize it.
   // (finalization is interpolating the frames so they're all equal distance from eachother in the scale of time.)
-  // todo: turn this into a function so it's not a mess here.
 
   // Chuck this into a scope so we can have immutable values.
   let (_min_time, max_time, min_distance) = {
