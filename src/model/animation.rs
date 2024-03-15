@@ -90,6 +90,12 @@ pub(crate) fn grab_animations(
     for (channel_index, channel) in first_animation.channels().enumerate() {
       let reader = channel.reader(|buffer| Some(&buffers[buffer.index()]));
 
+      // println!("channel target: {}", channel_index);
+
+      let x = channel.target().node().index();
+
+      println!("channel_target: {}", x);
+
       // * If the timestamp accessor is sparse, or something has gone horribly wrong, it's a static model.
       let result_timestamps = if let Some(inputs) = reader.read_inputs() {
         match inputs {
