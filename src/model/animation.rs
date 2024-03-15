@@ -199,7 +199,10 @@ pub(crate) fn grab_animations(
             break;
           };
 
+          // ! THIS IS EXTREMELY WRONG !
           let bone_id = channel.target().node().index() as i32;
+
+          println!("bone_id: {}", bone_id);
 
           let enable_debug_spam = false;
 
